@@ -2,13 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <meta name="theme-color" content="#11110f" />
-    <meta name="description" content="A low-light, mobile-first way to browse ranked technical books." />
+    <meta
+      name="description"
+      content="A low-light, mobile-first way to browse ranked technical books."
+    />
     <title>Night Shelf | Book Browser Prototype</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="prototype.css" />
   </head>
   <body>
@@ -17,8 +26,15 @@
         <p class="kicker">Night Shelf</p>
         <h1>What should I read next?</h1>
       </div>
-      <button class="quiet-button" id="random-book" type="button" aria-label="Show a random book">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" /></svg>
+      <button
+        class="quiet-button"
+        id="random-book"
+        type="button"
+        aria-label="Show a random book"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
+        </svg>
       </button>
     </header>
 
@@ -34,27 +50,49 @@
         <p>Pulling books from the shelf...</p>
       </div>
 
-      <section class="book-browser" id="book-browser" aria-live="polite"></section>
+      <section
+        class="book-browser"
+        id="book-browser"
+        aria-live="polite"
+      ></section>
     </main>
 
     <nav class="mode-dock" aria-label="Display style">
       <button type="button" data-mode="swipe" aria-pressed="true">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2" /><path d="m3 9-2 3 2 3M21 9l2 3-2 3" /></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="6" y="3" width="12" height="18" rx="2" />
+          <path d="m3 9-2 3 2 3M21 9l2 3-2 3" />
+        </svg>
         <span>Swipe</span>
       </button>
       <button type="button" data-mode="feed" aria-pressed="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="8" rx="2" /><rect x="4" y="15" width="16" height="6" rx="2" /></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="3" width="16" height="8" rx="2" />
+          <rect x="4" y="15" width="16" height="6" rx="2" />
+        </svg>
         <span>Feed</span>
       </button>
       <button type="button" data-mode="list" aria-pressed="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11" /><circle cx="4" cy="6" r="1" /><circle cx="4" cy="12" r="1" /><circle cx="4" cy="18" r="1" /></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 6h11M9 12h11M9 18h11" />
+          <circle cx="4" cy="6" r="1" />
+          <circle cx="4" cy="12" r="1" />
+          <circle cx="4" cy="18" r="1" />
+        </svg>
         <span>List</span>
       </button>
     </nav>
 
     <dialog class="book-sheet" id="book-sheet" aria-labelledby="sheet-title">
       <div class="sheet-handle" aria-hidden="true"></div>
-      <button class="sheet-close" id="sheet-close" type="button" aria-label="Close details">Close</button>
+      <button
+        class="sheet-close"
+        id="sheet-close"
+        type="button"
+        aria-label="Close details"
+      >
+        Close
+      </button>
       <div id="sheet-content"></div>
     </dialog>
 

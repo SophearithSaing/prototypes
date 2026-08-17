@@ -46,13 +46,17 @@ function categoryName(name) {
 }
 
 function collectionOptionsMarkup() {
-  return state.bundles.map((bundle, index) => `
+  return state.bundles
+    .map(
+      (bundle, index) => `
     <button class="collection-option" type="button" role="option" aria-selected="${index === state.collectionIndex}" data-collection-index="${index}">
       <span class="collection-option-index">${padded(index + 1)}</span>
       <span class="collection-option-name">${shortBundleName(bundle.bundle)}</span>
       <span class="collection-option-count">${bundle.books.length} books</span>
       <span class="collection-option-check" aria-hidden="true">${index === state.collectionIndex ? "&#10003;" : ""}</span>
-    </button>`).join("");
+    </button>`,
+    )
+    .join("");
 }
 
 function setCollectionMenu(open) {
@@ -60,13 +64,17 @@ function setCollectionMenu(open) {
   elements.collectionMenu.classList.toggle("is-open", open);
 
   if (open) {
-    const selected = elements.collectionMenu.querySelector('[aria-selected="true"]');
+    const selected = elements.collectionMenu.querySelector(
+      '[aria-selected="true"]',
+    );
     selected?.focus();
   }
 }
 
 function renderCollectionControl() {
-  elements.collectionValue.textContent = shortBundleName(state.bundles[state.collectionIndex].bundle);
+  elements.collectionValue.textContent = shortBundleName(
+    state.bundles[state.collectionIndex].bundle,
+  );
   elements.collectionMenu.innerHTML = collectionOptionsMarkup();
 }
 
@@ -85,12 +93,16 @@ function metricMarkup(book) {
     ["Practical", book.scores.practicality],
   ];
 
-  return metrics.map(([label, score]) => `
+  return metrics
+    .map(
+      ([label, score]) => `
     <div class="metric">
       <span>${label}</span>
       <div class="metric-track"><i style="width:${score * 10}%"></i></div>
       <strong>${score.toFixed(1)}</strong>
-    </div>`).join("");
+    </div>`,
+    )
+    .join("");
 }
 
 function updateSlider(length) {
@@ -99,7 +111,10 @@ function updateSlider(length) {
   elements.slider.value = state.bookIndex + 1;
   elements.slider.style.setProperty("--progress", `${progress}%`);
   elements.sliderEnd.textContent = padded(length);
-  elements.slider.setAttribute("aria-valuetext", `${state.bookIndex + 1} of ${length}`);
+  elements.slider.setAttribute(
+    "aria-valuetext",
+    `${state.bookIndex + 1} of ${length}`,
+  );
 }
 
 function renderBook() {
@@ -113,7 +128,9 @@ function renderBook() {
   elements.cover.src = book.cover_url;
   elements.cover.alt = `Cover of ${book.title}`;
   elements.position.textContent = `${padded(state.bookIndex + 1)} / ${padded(books.length)}`;
-  elements.category.textContent = categoryName(state.bundles[state.collectionIndex].bundle);
+  elements.category.textContent = categoryName(
+    state.bundles[state.collectionIndex].bundle,
+  );
   elements.title.textContent = book.title;
   elements.authors.textContent = book.authors.join(", ");
   elements.description.textContent = book.description;
@@ -179,7 +196,8 @@ function showRandomBook() {
   if (books.length < 2) return;
 
   let index = state.bookIndex;
-  while (index === state.bookIndex) index = Math.floor(Math.random() * books.length);
+  while (index === state.bookIndex)
+    index = Math.floor(Math.random() * books.length);
   showBook(index, index > state.bookIndex ? "next" : "previous");
 }
 
@@ -188,7 +206,9 @@ function attachEvents() {
   elements.next.addEventListener("click", () => moveBook(1));
   elements.shuffle.addEventListener("click", showRandomBook);
   elements.collectionTrigger.addEventListener("click", () => {
-    setCollectionMenu(elements.collectionTrigger.getAttribute("aria-expanded") !== "true");
+    setCollectionMenu(
+      elements.collectionTrigger.getAttribute("aria-expanded") !== "true",
+    );
   });
   elements.collectionMenu.addEventListener("click", (event) => {
     const option = event.target.closest("[data-collection-index]");
@@ -209,7 +229,9 @@ function attachEvents() {
       return;
     }
 
-    const options = [...elements.collectionMenu.querySelectorAll(".collection-option")];
+    const options = [
+      ...elements.collectionMenu.querySelectorAll(".collection-option"),
+    ];
     const currentIndex = options.indexOf(document.activeElement);
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault();
@@ -218,7 +240,8 @@ function attachEvents() {
     }
   });
   document.addEventListener("click", (event) => {
-    if (!elements.collectionPicker.contains(event.target)) setCollectionMenu(false);
+    if (!elements.collectionPicker.contains(event.target))
+      setCollectionMenu(false);
   });
   elements.slider.addEventListener("change", (event) => {
     const index = Number(event.target.value) - 1;
@@ -226,25 +249,38 @@ function attachEvents() {
   });
 
   document.addEventListener("keydown", (event) => {
-    if (elements.collectionPicker.contains(event.target) || event.target.matches("input")) return;
+    if (
+      elements.collectionPicker.contains(event.target) ||
+      event.target.matches("input")
+    )
+      return;
     if (event.key === "ArrowLeft") moveBook(-1);
     if (event.key === "ArrowRight") moveBook(1);
   });
 
   let touchStartX = 0;
-  elements.stage.addEventListener("touchstart", (event) => {
-    touchStartX = event.changedTouches[0].clientX;
-  }, { passive: true });
-  elements.stage.addEventListener("touchend", (event) => {
-    const distance = event.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(distance) > 45) moveBook(distance < 0 ? 1 : -1);
-  }, { passive: true });
+  elements.stage.addEventListener(
+    "touchstart",
+    (event) => {
+      touchStartX = event.changedTouches[0].clientX;
+    },
+    { passive: true },
+  );
+  elements.stage.addEventListener(
+    "touchend",
+    (event) => {
+      const distance = event.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(distance) > 45) moveBook(distance < 0 ? 1 : -1);
+    },
+    { passive: true },
+  );
 }
 
 async function init() {
   try {
     const response = await fetch("data.json");
-    if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+    if (!response.ok)
+      throw new Error(`Request failed with status ${response.status}`);
 
     state.bundles = await response.json();
     renderCollectionControl();
@@ -252,7 +288,8 @@ async function init() {
     showBook(0, "next", true);
     elements.loading.classList.add("is-hidden");
   } catch (error) {
-    elements.loading.querySelector("p").textContent = "The collection could not be opened";
+    elements.loading.querySelector("p").textContent =
+      "The collection could not be opened";
     console.error(error);
   }
 }

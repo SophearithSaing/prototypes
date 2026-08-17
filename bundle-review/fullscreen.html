@@ -2,13 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <meta name="theme-color" content="#171713" />
-    <meta name="description" content="A full-screen, focused browser for ranked technical books." />
+    <meta
+      name="description"
+      content="A full-screen, focused browser for ranked technical books."
+    />
     <title>Full Volume | Immersive Book Browser</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="fullscreen.css" />
   </head>
   <body>
@@ -22,34 +31,60 @@
         </a>
 
         <div class="collection-picker" id="collection-picker">
-          <button class="collection-trigger" id="collection-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="collection-menu">
+          <button
+            class="collection-trigger"
+            id="collection-trigger"
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-controls="collection-menu"
+          >
             <span>Collection</span>
             <strong id="collection-value">Choose a collection</strong>
           </button>
-          <div class="collection-menu" id="collection-menu" role="listbox" aria-label="Choose a book collection" tabindex="-1"></div>
+          <div
+            class="collection-menu"
+            id="collection-menu"
+            role="listbox"
+            aria-label="Choose a book collection"
+            tabindex="-1"
+          ></div>
         </div>
 
         <button class="shuffle" id="shuffle" type="button">
           <span>Surprise me</span>
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M14.5 3.5h3v3M2.5 15.5l4.2-4.2M17.5 3.5l-6.2 6.2M13.5 13.5l4 4M17.5 14.5v3h-3M2.5 4.5l3.9 3.9" /></svg>
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path
+              d="M14.5 3.5h3v3M2.5 15.5l4.2-4.2M17.5 3.5l-6.2 6.2M13.5 13.5l4 4M17.5 14.5v3h-3M2.5 4.5l3.9 3.9"
+            />
+          </svg>
         </button>
       </header>
 
       <section class="book-stage" id="book-stage" aria-live="polite">
-        <div class="rank-watermark" id="rank-watermark" aria-hidden="true">01</div>
+        <div class="rank-watermark" id="rank-watermark" aria-hidden="true">
+          01
+        </div>
 
         <div class="cover-column">
           <div class="cover-frame">
-            <span class="cover-label">Editor&rsquo;s rank <strong id="cover-rank">01</strong></span>
+            <span class="cover-label"
+              >Editor&rsquo;s rank <strong id="cover-rank">01</strong></span
+            >
             <img id="book-cover" src="" alt="" />
           </div>
         </div>
 
         <article class="book-copy" id="book-copy">
-          <p class="book-kicker"><span id="book-position">01 / 26</span><i></i><span id="book-category">Software engineering</span></p>
+          <p class="book-kicker">
+            <span id="book-position">01 / 26</span><i></i
+            ><span id="book-category">Software engineering</span>
+          </p>
           <h1 id="book-title">Loading the shelf</h1>
           <p class="book-authors" id="book-authors"></p>
-          <p class="book-description" id="book-description">Preparing a focused reading recommendation.</p>
+          <p class="book-description" id="book-description">
+            Preparing a focused reading recommendation.
+          </p>
 
           <div class="scoreboard" aria-label="Book scores">
             <div class="overall">
@@ -64,18 +99,31 @@
 
       <footer class="controls">
         <div class="arrow-controls">
-          <button id="previous" type="button" aria-label="Previous book"><span aria-hidden="true">&larr;</span> Prev</button>
-          <button id="next" type="button" aria-label="Next book">Next <span aria-hidden="true">&rarr;</span></button>
+          <button id="previous" type="button" aria-label="Previous book">
+            <span aria-hidden="true">&larr;</span> Prev
+          </button>
+          <button id="next" type="button" aria-label="Next book">
+            Next <span aria-hidden="true">&rarr;</span>
+          </button>
         </div>
 
         <label class="scrubber">
           <span class="sr-only">Jump to a book</span>
-          <input id="book-slider" type="range" min="1" max="1" value="1" aria-label="Book position" />
+          <input
+            id="book-slider"
+            type="range"
+            min="1"
+            max="1"
+            value="1"
+            aria-label="Book position"
+          />
           <span class="scrubber-start">01</span>
           <span class="scrubber-end" id="scrubber-end">01</span>
         </label>
 
-        <p class="keyboard-hint"><kbd>&larr;</kbd><kbd>&rarr;</kbd> to explore</p>
+        <p class="keyboard-hint">
+          <kbd>&larr;</kbd><kbd>&rarr;</kbd> to explore
+        </p>
       </footer>
     </main>
 

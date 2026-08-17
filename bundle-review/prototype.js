@@ -37,12 +37,16 @@ function scoreMarkup(book) {
     ["Practical", book.scores.practicality],
   ];
 
-  return `<div class="score-breakdown">${metrics.map(([label, value]) => `
+  return `<div class="score-breakdown">${metrics
+    .map(
+      ([label, value]) => `
     <div class="metric">
       <span>${label}</span>
       <div class="metric-track"><i style="width:${value * 10}%"></i></div>
       <strong>${value.toFixed(1)}</strong>
-    </div>`).join("")}</div>`;
+    </div>`,
+    )
+    .join("")}</div>`;
 }
 
 function swipeCard(book, index) {
@@ -123,20 +127,29 @@ function installSwipeCounter() {
   const track = elements.browser.querySelector(".swipe-track");
   const counter = elements.browser.querySelector(".browser-intro strong");
   const cards = [...track.querySelectorAll(".swipe-card")];
-  const observer = new IntersectionObserver((entries) => {
-    const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-    if (!visible) return;
-    const index = cards.indexOf(visible.target);
-    counter.textContent = `${String(index + 1).padStart(2, "0")} / ${String(cards.length).padStart(2, "0")}`;
-  }, { root: track, threshold: [.55, .75] });
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (!visible) return;
+      const index = cards.indexOf(visible.target);
+      counter.textContent = `${String(index + 1).padStart(2, "0")} / ${String(cards.length).padStart(2, "0")}`;
+    },
+    { root: track, threshold: [0.55, 0.75] },
+  );
   cards.forEach((card) => observer.observe(card));
 }
 
 function installImageFallbacks() {
   elements.browser.querySelectorAll("img").forEach((image) => {
-    image.addEventListener("error", () => {
-      image.style.visibility = "hidden";
-    }, { once: true });
+    image.addEventListener(
+      "error",
+      () => {
+        image.style.visibility = "hidden";
+      },
+      { once: true },
+    );
   });
 }
 
@@ -164,7 +177,13 @@ function showRandomBook() {
   const index = Math.floor(Math.random() * books.length);
 
   if (state.mode === "swipe") {
-    elements.browser.querySelector(`[data-book-index="${index}"]`)?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    elements.browser
+      .querySelector(`[data-book-index="${index}"]`)
+      ?.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest",
+      });
   } else {
     openSheet(index);
   }
@@ -197,7 +216,8 @@ function attachEvents() {
     }
 
     const details = event.target.closest("[data-open-sheet]");
-    if (details) openSheet(Number(details.closest("[data-book-index]").dataset.bookIndex));
+    if (details)
+      openSheet(Number(details.closest("[data-book-index]").dataset.bookIndex));
   });
 
   elements.random.addEventListener("click", showRandomBook);
@@ -210,10 +230,15 @@ function attachEvents() {
 async function init() {
   try {
     const response = await fetch("data.json");
-    if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+    if (!response.ok)
+      throw new Error(`Request failed with status ${response.status}`);
     state.bundles = await response.json();
-    elements.collection.innerHTML = state.bundles.map((bundle, index) => `
-      <option value="${index}">${escapeHtml(shortBundleName(bundle.bundle))}</option>`).join("");
+    elements.collection.innerHTML = state.bundles
+      .map(
+        (bundle, index) => `
+      <option value="${index}">${escapeHtml(shortBundleName(bundle.bundle))}</option>`,
+      )
+      .join("");
     elements.loading.hidden = true;
     attachEvents();
     render();

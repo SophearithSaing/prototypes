@@ -45,10 +45,16 @@ function formatBundleName(name) {
 }
 
 function renderHero() {
-  const totalBooks = state.bundles.reduce((total, bundle) => total + bundle.books.length, 0);
+  const totalBooks = state.bundles.reduce(
+    (total, bundle) => total + bundle.books.length,
+    0,
+  );
   const averageScore = state.bundles
     .flatMap((bundle) => bundle.books)
-    .reduce((total, book, _, books) => total + book.scores.overall / books.length, 0);
+    .reduce(
+      (total, book, _, books) => total + book.scores.overall / books.length,
+      0,
+    );
 
   elements.heroFigures.innerHTML = `
     <div><strong>${totalBooks}</strong><span>Selected titles</span></div>
@@ -64,28 +70,40 @@ function renderWeights(bundle) {
     ["Practicality", weights.practicality_weight],
   ];
   elements.methodNote.textContent = weights.note;
-  elements.weightList.innerHTML = rows.map(([label, weight]) => `
+  elements.weightList.innerHTML = rows
+    .map(
+      ([label, weight]) => `
     <div class="weight-row">
       <span>${label}</span>
       <div class="weight-bar"><i style="width:${weight * 100}%"></i></div>
       <strong>${Math.round(weight * 100)}%</strong>
-    </div>`).join("");
+    </div>`,
+    )
+    .join("");
 }
 
 function renderTabs() {
-  elements.tabs.innerHTML = state.bundles.map((bundle, index) => `
+  elements.tabs.innerHTML = state.bundles
+    .map(
+      (bundle, index) => `
     <button class="bundle-tab" type="button" role="tab" aria-selected="${index === state.activeBundle}" aria-controls="catalog" data-index="${index}">
       ${String(index + 1).padStart(2, "0")} / ${formatBundleName(bundle.bundle)}
-    </button>`).join("");
+    </button>`,
+    )
+    .join("");
 }
 
 function scoreMarkup(book) {
-  return Object.entries(scoreLabels).map(([key, label]) => `
+  return Object.entries(scoreLabels)
+    .map(
+      ([key, label]) => `
     <div class="score-row">
       <span>${label}</span>
       <div class="score-track"><i style="width:${book.scores[key] * 10}%"></i></div>
       <strong>${book.scores[key].toFixed(1)}</strong>
-    </div>`).join("");
+    </div>`,
+    )
+    .join("");
 }
 
 function featuredCard(book, index) {
@@ -127,21 +145,32 @@ function filteredBooks() {
   const books = [...state.bundles[state.activeBundle].books];
   const query = state.query.trim().toLocaleLowerCase();
   const matchingBooks = query
-    ? books.filter((book) => [book.title, book.authors.join(" "), book.description].join(" ").toLocaleLowerCase().includes(query))
+    ? books.filter((book) =>
+        [book.title, book.authors.join(" "), book.description]
+          .join(" ")
+          .toLocaleLowerCase()
+          .includes(query),
+      )
     : books;
 
-  return matchingBooks.sort((a, b) => state.sort === "ranking"
-    ? a.ranking - b.ranking
-    : b.scores[state.sort] - a.scores[state.sort] || a.ranking - b.ranking);
+  return matchingBooks.sort((a, b) =>
+    state.sort === "ranking"
+      ? a.ranking - b.ranking
+      : b.scores[state.sort] - a.scores[state.sort] || a.ranking - b.ranking,
+  );
 }
 
 function installImageFallbacks() {
   document.querySelectorAll("img").forEach((image) => {
-    image.addEventListener("error", () => {
-      image.style.background = "var(--paper-deep)";
-      image.style.boxShadow = "none";
-      image.alt = `${image.alt} (image unavailable)`;
-    }, { once: true });
+    image.addEventListener(
+      "error",
+      () => {
+        image.style.background = "var(--paper-deep)";
+        image.style.boxShadow = "none";
+        image.alt = `${image.alt} (image unavailable)`;
+      },
+      { once: true },
+    );
   });
 }
 
@@ -158,7 +187,9 @@ function renderCollection() {
   elements.collectionSummary.textContent = `${bundle.books.length} books evaluated for relevance, durability, and usefulness in real work.`;
   elements.resultCount.textContent = `${books.length} of ${bundle.books.length} titles`;
   elements.featured.hidden = Boolean(isFiltered);
-  elements.featuredGrid.innerHTML = isFiltered ? "" : bundle.books.slice(0, 3).map(featuredCard).join("");
+  elements.featuredGrid.innerHTML = isFiltered
+    ? ""
+    : bundle.books.slice(0, 3).map(featuredCard).join("");
   elements.bookGrid.innerHTML = books.map(bookCard).join("");
   elements.emptyState.hidden = books.length > 0;
   installImageFallbacks();
@@ -181,11 +212,19 @@ function renderViewer(direction = "next") {
   const book = state.viewerBooks[state.viewerIndex];
   if (!book) return;
   elements.viewerBook.innerHTML = viewerMarkup(book);
-  elements.viewerBook.classList.remove("is-entering-next", "is-entering-previous");
+  elements.viewerBook.classList.remove(
+    "is-entering-next",
+    "is-entering-previous",
+  );
   void elements.viewerBook.offsetWidth;
   elements.viewerBook.classList.add(`is-entering-${direction}`);
   elements.viewerCount.textContent = `${String(state.viewerIndex + 1).padStart(2, "0")} / ${String(state.viewerBooks.length).padStart(2, "0")}`;
-  elements.viewerProgress.innerHTML = state.viewerBooks.map((_, index) => `<i class="${index === state.viewerIndex ? "is-active" : ""}"></i>`).join("");
+  elements.viewerProgress.innerHTML = state.viewerBooks
+    .map(
+      (_, index) =>
+        `<i class="${index === state.viewerIndex ? "is-active" : ""}"></i>`,
+    )
+    .join("");
   elements.viewerPrevious.disabled = state.viewerBooks.length < 2;
   elements.viewerNext.disabled = state.viewerBooks.length < 2;
   installImageFallbacks();
@@ -206,7 +245,9 @@ function closeViewer() {
 
 function changeViewer(step) {
   if (state.viewerBooks.length < 2) return;
-  state.viewerIndex = (state.viewerIndex + step + state.viewerBooks.length) % state.viewerBooks.length;
+  state.viewerIndex =
+    (state.viewerIndex + step + state.viewerBooks.length) %
+    state.viewerBooks.length;
   renderViewer(step > 0 ? "next" : "previous");
 }
 
@@ -256,7 +297,9 @@ function attachEvents() {
       const card = toggle.closest(".book-card");
       const isOpen = card.classList.toggle("is-open");
       toggle.setAttribute("aria-expanded", String(isOpen));
-      toggle.querySelector("span:nth-child(2)").textContent = isOpen ? "Hide score" : "View score";
+      toggle.querySelector("span:nth-child(2)").textContent = isOpen
+        ? "Hide score"
+        : "View score";
       return;
     }
 
@@ -269,14 +312,16 @@ function attachEvents() {
     if (card) openViewer(Number(card.dataset.bookIndex), card);
   });
 
-  [elements.bookGrid, elements.featuredGrid].forEach((grid) => grid.addEventListener("keydown", (event) => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    if (event.target.closest("button")) return;
-    const card = event.target.closest("[data-book-index]");
-    if (!card) return;
-    event.preventDefault();
-    openViewer(Number(card.dataset.bookIndex), card);
-  }));
+  [elements.bookGrid, elements.featuredGrid].forEach((grid) =>
+    grid.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      if (event.target.closest("button")) return;
+      const card = event.target.closest("[data-book-index]");
+      if (!card) return;
+      event.preventDefault();
+      openViewer(Number(card.dataset.bookIndex), card);
+    }),
+  );
 
   elements.viewerClose.addEventListener("click", closeViewer);
   elements.viewerPrevious.addEventListener("click", () => changeViewer(-1));
@@ -295,13 +340,21 @@ function attachEvents() {
   });
 
   let touchStartX = 0;
-  elements.viewerBook.addEventListener("touchstart", (event) => {
-    touchStartX = event.changedTouches[0].clientX;
-  }, { passive: true });
-  elements.viewerBook.addEventListener("touchend", (event) => {
-    const distance = event.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(distance) > 45) changeViewer(distance < 0 ? 1 : -1);
-  }, { passive: true });
+  elements.viewerBook.addEventListener(
+    "touchstart",
+    (event) => {
+      touchStartX = event.changedTouches[0].clientX;
+    },
+    { passive: true },
+  );
+  elements.viewerBook.addEventListener(
+    "touchend",
+    (event) => {
+      const distance = event.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(distance) > 45) changeViewer(distance < 0 ? 1 : -1);
+    },
+    { passive: true },
+  );
 }
 
 async function init() {
@@ -314,7 +367,8 @@ async function init() {
     attachEvents();
   } catch (error) {
     elements.collectionTitle.textContent = "The shelf is unavailable.";
-    elements.collectionSummary.textContent = "Serve this folder with a local web server so the book data can be loaded.";
+    elements.collectionSummary.textContent =
+      "Serve this folder with a local web server so the book data can be loaded.";
     console.error(error);
   }
 }
