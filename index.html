@@ -3,32 +3,22 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#f2f0e9">
+    <meta name="theme-color" content="#f5f4ef">
     <meta
       name="description"
-      content="A curated collection of interface prototypes, interaction studies, and visual experiments."
+      content="An index of interface prototypes, interaction experiments, and visual systems."
     >
-    <title>Prototype Index | Interface Experiments</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap"
-      rel="stylesheet"
-    >
+    <title>Prototype Index</title>
     <style>
       :root {
-        --paper: #f2f0e9;
-        --paper-bright: #faf9f5;
-        --ink: #171a1d;
-        --muted: #6c6c67;
+        --paper: #f5f4ef;
+        --ink: #1d1d1b;
+        --secondary: #68665f;
         --line: #cbc8be;
-        --orange: #ed5a2a;
-        --blue: #194f78;
-        --acid: #cbff3d;
-        --sans: "Instrument Sans", Arial, sans-serif;
-        --serif: "Newsreader", Georgia, serif;
-        --mono: "DM Mono", monospace;
-        --ease: cubic-bezier(0.22, 0.8, 0.2, 1);
+        --accent: #8c3027;
+        --serif: Georgia, "Times New Roman", serif;
+        --sans: Arial, Helvetica, sans-serif;
+        --mono: "Courier New", Courier, monospace;
       }
 
       * {
@@ -46,17 +36,8 @@
         color: var(--ink);
         background: var(--paper);
         font-family: var(--sans);
+        font-size: 16px;
         text-rendering: optimizeLegibility;
-      }
-
-      body::before {
-        position: fixed;
-        inset: 0;
-        z-index: 10;
-        content: "";
-        opacity: 0.055;
-        pointer-events: none;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitchTiles'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       }
 
       a {
@@ -64,1021 +45,358 @@
       }
 
       a:focus-visible {
-        outline: 2px solid var(--orange);
-        outline-offset: 5px;
+        outline: 2px solid var(--accent);
+        outline-offset: 4px;
       }
 
-      .shell {
-        width: min(100% - 64px, 1480px);
+      .page {
+        width: min(100% - 64px, 1120px);
         margin-inline: auto;
       }
 
-      .masthead {
+      .site-header {
         display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        align-items: center;
-        min-height: 78px;
-        border-bottom: 1px solid var(--line);
+        grid-template-columns: 1fr auto;
+        align-items: baseline;
+        min-height: 74px;
+        padding: 24px 0 18px;
+        border-top: 4px solid var(--ink);
+        border-bottom: 1px solid var(--ink);
       }
 
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 11px;
-        width: fit-content;
-        font-size: 0.84rem;
-        font-weight: 600;
-        letter-spacing: -0.02em;
-        text-decoration: none;
+      .site-title {
+        margin: 0;
+        font-family: var(--serif);
+        font-size: 1.08rem;
+        font-weight: 700;
+        letter-spacing: -0.015em;
       }
 
-      .brand-mark {
-        position: relative;
-        display: grid;
-        width: 29px;
-        height: 29px;
-        place-items: center;
-        border: 1px solid var(--ink);
-        border-radius: 50%;
-      }
-
-      .brand-mark::before,
-      .brand-mark::after {
-        position: absolute;
-        content: "";
-        background: var(--orange);
-      }
-
-      .brand-mark::before {
-        width: 1px;
-        height: 39px;
-      }
-
-      .brand-mark::after {
-        width: 39px;
-        height: 1px;
-      }
-
-      .edition,
-      .status,
-      .eyebrow,
-      .project-number,
-      .tag,
-      .footer-note {
+      .issue {
+        margin: 0;
+        color: var(--secondary);
         font-family: var(--mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.04em;
         text-transform: uppercase;
       }
 
-      .edition {
-        margin: 0;
-        color: var(--muted);
-        font-size: 0.62rem;
-        letter-spacing: 0.1em;
+      main {
+        padding-bottom: 100px;
       }
 
-      .status {
-        display: inline-flex;
-        align-items: center;
-        justify-self: end;
-        gap: 8px;
-        margin: 0;
-        font-size: 0.61rem;
-        letter-spacing: 0.08em;
-      }
-
-      .status-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: var(--orange);
-        box-shadow: 0 0 0 4px rgba(237, 90, 42, 0.12);
-        animation: breathe 2.8s ease-in-out infinite;
-      }
-
-      @keyframes breathe {
-        50% {
-          box-shadow: 0 0 0 7px rgba(237, 90, 42, 0);
-        }
-      }
-
-      .hero {
+      .introduction {
         display: grid;
-        grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.55fr);
-        gap: clamp(60px, 10vw, 170px);
-        align-items: end;
-        padding: clamp(80px, 11vw, 160px) 0 clamp(70px, 9vw, 128px);
+        grid-template-columns: 150px minmax(0, 1fr);
+        gap: clamp(40px, 9vw, 110px);
+        padding: clamp(70px, 10vw, 120px) 0 clamp(76px, 10vw, 118px);
       }
 
-      .eyebrow {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin: 0 0 27px;
-        color: var(--orange);
-        font-size: 0.65rem;
-        font-weight: 500;
-        letter-spacing: 0.13em;
+      .section-label {
+        margin: 8px 0 0;
+        color: var(--accent);
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
       }
 
-      .eyebrow::before {
-        width: 26px;
+      .section-label::before {
+        display: inline-block;
+        width: 22px;
         height: 1px;
+        margin: 0 9px 3px 0;
         content: "";
         background: currentColor;
       }
 
-      .hero h1 {
-        max-width: 920px;
+      .intro-copy h1 {
+        max-width: 760px;
         margin: 0;
         font-family: var(--serif);
-        font-size: clamp(4.25rem, 8.3vw, 8.6rem);
-        font-weight: 400;
-        letter-spacing: -0.072em;
-        line-height: 0.82;
-      }
-
-      .hero h1 em {
-        color: var(--blue);
-        font-weight: 400;
-      }
-
-      .hero-aside {
-        padding-bottom: 7px;
-      }
-
-      .hero-aside p {
-        max-width: 390px;
-        margin: 0;
-        color: #4f504d;
-        font-size: clamp(1rem, 1.3vw, 1.18rem);
-        line-height: 1.55;
-      }
-
-      .index-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        margin-top: 30px;
-        font-family: var(--mono);
-        font-size: 0.64rem;
-        letter-spacing: 0.08em;
-        text-decoration: none;
-        text-transform: uppercase;
-      }
-
-      .index-link span {
-        display: grid;
-        width: 31px;
-        height: 31px;
-        place-items: center;
-        border: 1px solid var(--ink);
-        border-radius: 50%;
-        transition: color 180ms ease, background 180ms ease, transform 180ms ease;
-      }
-
-      .index-link:hover span {
-        color: var(--paper);
-        background: var(--ink);
-        transform: translateY(3px);
-      }
-
-      .registry-heading {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: end;
-        padding: 25px 0 21px;
-        border-top: 1px solid var(--ink);
-      }
-
-      .registry-heading h2 {
-        margin: 0;
-        font-size: 0.77rem;
-        font-weight: 600;
-        letter-spacing: 0.03em;
-        text-transform: uppercase;
-      }
-
-      .registry-heading p {
-        margin: 0;
-        color: var(--muted);
-        font-family: var(--mono);
-        font-size: 0.6rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .project-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 22px;
-      }
-
-      .project {
-        --pointer-x: 50%;
-        --pointer-y: 50%;
-        position: relative;
-        overflow: hidden;
-        border: 1px solid var(--line);
-        background: rgba(250, 249, 245, 0.55);
-        transition: border-color 250ms ease, transform 350ms var(--ease), box-shadow 350ms var(--ease);
-      }
-
-      .project::after {
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-        content: "";
-        opacity: 0;
-        pointer-events: none;
-        background: radial-gradient(circle 260px at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.48), transparent 75%);
-        transition: opacity 250ms ease;
-      }
-
-      .project:hover {
-        border-color: #a8a59c;
-        box-shadow: 0 24px 60px rgba(28, 30, 28, 0.09);
-        transform: translateY(-5px);
-      }
-
-      .project:hover::after {
-        opacity: 1;
-      }
-
-      .project-featured {
-        display: grid;
-        grid-column: 1 / -1;
-        grid-template-columns: minmax(0, 1.48fr) minmax(300px, 0.52fr);
-        min-height: 610px;
-      }
-
-      .preview,
-      .project-copy {
-        position: relative;
-        z-index: 1;
-      }
-
-      .preview {
-        overflow: hidden;
-      }
-
-      .circuit-preview {
-        min-height: 610px;
-        color: #e8f2f2;
-        background:
-          radial-gradient(circle at 68% 40%, rgba(18, 241, 243, 0.12), transparent 34%),
-          #03080a;
-      }
-
-      .circuit-preview::before {
-        position: absolute;
-        inset: 0;
-        content: "";
-        opacity: 0.34;
-        background-image:
-          linear-gradient(rgba(93, 150, 158, 0.1) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(93, 150, 158, 0.1) 1px, transparent 1px);
-        background-size: 42px 42px;
-        mask-image: radial-gradient(circle at 60% 50%, black, transparent 76%);
-      }
-
-      .circuit-ui {
-        position: absolute;
-        inset: 0;
-      }
-
-      .circuit-label {
-        position: absolute;
-        top: 30px;
-        left: 34px;
-        margin: 0;
-        color: #12f1f3;
-        font-family: var(--mono);
-        font-size: 0.58rem;
-        letter-spacing: 0.11em;
-        text-transform: uppercase;
-      }
-
-      .circuit-title {
-        position: absolute;
-        bottom: 39px;
-        left: 34px;
-        max-width: 310px;
-        margin: 0;
-        font-size: clamp(2.2rem, 4vw, 4.5rem);
-        font-weight: 500;
-        letter-spacing: -0.06em;
-        line-height: 0.92;
-      }
-
-      .circuit-title span {
-        display: block;
-        color: #12f1f3;
-      }
-
-      .board {
-        position: absolute;
-        top: 49%;
-        right: -2%;
-        width: min(72%, 730px);
-        transform: translateY(-50%) rotate(-5deg);
-        filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.42));
-      }
-
-      .board .trace {
-        fill: none;
-        stroke: #12f1f3;
-        stroke-width: 1.4;
-        stroke-dasharray: 8 6;
-        animation: trace 16s linear infinite;
-      }
-
-      .board .trace.secondary {
-        stroke: #9dff45;
-        stroke-dasharray: 4 8;
-        animation-direction: reverse;
-      }
-
-      .board .plate {
-        fill: rgba(5, 17, 20, 0.92);
-        stroke: rgba(18, 241, 243, 0.3);
-      }
-
-      .board .node {
-        fill: #071114;
-        stroke: #12f1f3;
-        stroke-width: 2;
-      }
-
-      .board .node.acid {
-        stroke: #9dff45;
-      }
-
-      .board .pulse {
-        fill: #12f1f3;
-        transform-box: fill-box;
-        transform-origin: center;
-        animation: node-pulse 2.2s ease-in-out infinite;
-      }
-
-      @keyframes trace {
-        to {
-          stroke-dashoffset: -220;
-        }
-      }
-
-      @keyframes node-pulse {
-        50% {
-          opacity: 0.25;
-          transform: scale(1.8);
-        }
-      }
-
-      .project-copy {
-        display: flex;
-        min-height: 330px;
-        padding: clamp(27px, 3.2vw, 48px);
-        flex-direction: column;
-      }
-
-      .project-number {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin: 0;
-        color: var(--muted);
-        font-size: 0.58rem;
-        letter-spacing: 0.09em;
-      }
-
-      .project-number::after {
-        width: 38px;
-        height: 1px;
-        content: "";
-        background: var(--line);
-      }
-
-      .project-copy h3 {
-        margin: auto 0 15px;
-        font-family: var(--serif);
-        font-size: clamp(2.4rem, 4vw, 4.3rem);
+        font-size: clamp(2.9rem, 6.2vw, 5rem);
         font-weight: 400;
         letter-spacing: -0.055em;
-        line-height: 0.92;
+        line-height: 0.98;
       }
 
-      .project:not(.project-featured) .project-copy h3 {
-        font-size: clamp(2.3rem, 3.6vw, 3.8rem);
-      }
-
-      .description {
-        max-width: 410px;
-        margin: 0;
-        color: #555652;
-        font-size: 0.92rem;
+      .intro-copy > p {
+        max-width: 590px;
+        margin: 34px 0 0;
+        color: var(--secondary);
+        font-family: var(--serif);
+        font-size: 1.18rem;
         line-height: 1.55;
       }
 
-      .project-meta {
+      .summary {
         display: flex;
-        align-items: end;
-        justify-content: space-between;
-        gap: 20px;
-        margin-top: 35px;
+        gap: 34px;
+        margin-top: 38px;
         padding-top: 18px;
         border-top: 1px solid var(--line);
       }
 
-      .tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 7px;
+      .summary p {
         margin: 0;
-        padding: 0;
-        list-style: none;
       }
 
-      .tag {
-        padding: 6px 8px;
-        border: 1px solid var(--line);
-        border-radius: 20px;
-        color: var(--muted);
-        font-size: 0.52rem;
-        letter-spacing: 0.05em;
-      }
-
-      .launch {
-        display: grid;
-        width: 43px;
-        height: 43px;
-        flex: 0 0 auto;
-        place-items: center;
-        border: 1px solid var(--ink);
-        border-radius: 50%;
-        text-decoration: none;
-        transition: color 200ms ease, background 200ms ease, transform 250ms var(--ease);
-      }
-
-      .launch svg {
-        width: 17px;
-        fill: none;
-        stroke: currentColor;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-width: 1.6;
-      }
-
-      .launch::before {
-        position: absolute;
-        inset: 0;
-        content: "";
-      }
-
-      .launch:hover {
-        color: var(--paper);
-        background: var(--ink);
-        transform: rotate(-5deg) scale(1.06);
-      }
-
-      .atlas-preview {
-        min-height: 390px;
-        padding: clamp(24px, 4vw, 46px);
-        color: #182330;
-        background: #e7e1d4;
-      }
-
-      .atlas-window {
-        position: relative;
-        height: 100%;
-        min-height: 315px;
-        padding: 24px;
-        overflow: hidden;
-        border: 1px solid #aaa69d;
-        background: #f7f4ec;
-        box-shadow: 16px 20px 0 #274a78;
-      }
-
-      .atlas-topline {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-bottom: 14px;
-        border-bottom: 1px solid #c9c5bb;
-        font-family: var(--mono);
-        font-size: 0.48rem;
-        letter-spacing: 0.07em;
-        text-transform: uppercase;
-      }
-
-      .atlas-heading {
-        width: 67%;
-        margin: 28px 0 23px;
-        font-family: var(--serif);
-        font-size: clamp(2.1rem, 4vw, 3.8rem);
-        font-weight: 500;
-        letter-spacing: -0.06em;
-        line-height: 0.85;
-      }
-
-      .atlas-heading em {
-        color: #274a78;
-      }
-
-      .book-row {
-        display: flex;
-        align-items: end;
-        gap: 15px;
-      }
-
-      .book {
-        position: relative;
-        width: clamp(48px, 8vw, 82px);
-        aspect-ratio: 0.69;
-        padding: 8px 6px;
-        color: #f7f4ec;
-        font-family: var(--sans);
-        font-size: clamp(0.35rem, 0.65vw, 0.57rem);
-        font-weight: 600;
-        line-height: 1.05;
-        box-shadow: 5px 7px 10px rgba(28, 36, 48, 0.2);
-        transform: rotate(var(--tilt));
-      }
-
-      .book:nth-child(1) {
-        --tilt: -3deg;
-        background: #274a78;
-      }
-
-      .book:nth-child(2) {
-        --tilt: 2deg;
-        background: #b6553c;
-      }
-
-      .book:nth-child(3) {
-        --tilt: -1deg;
-        background: #272d32;
-      }
-
-      .book:nth-child(4) {
-        --tilt: 3deg;
-        background: #d39b46;
-      }
-
-      .book::after {
-        position: absolute;
-        right: 6px;
-        bottom: 7px;
-        left: 6px;
-        height: 1px;
-        content: "";
-        background: rgba(255, 255, 255, 0.48);
-      }
-
-      .night-preview {
-        display: grid;
-        min-height: 390px;
-        padding: clamp(24px, 3.3vw, 43px);
-        place-items: center;
-        color: #f1eee5;
-        background:
-          radial-gradient(circle at 72% 16%, rgba(222, 119, 50, 0.14), transparent 27%),
-          #11110f;
-      }
-
-      .night-browser {
-        display: grid;
-        width: min(100%, 520px);
-        grid-template-columns: 0.72fr 1fr;
-        gap: 24px;
-        align-items: center;
-      }
-
-      .night-cover {
-        position: relative;
-        width: 100%;
-        max-width: 190px;
-        aspect-ratio: 0.68;
-        justify-self: end;
-        padding: 20px 15px;
-        background: #b95137;
-        box-shadow: 15px 19px 35px rgba(0, 0, 0, 0.42);
-        transform: rotate(-2deg);
-      }
-
-      .night-cover::before {
+      .summary strong {
         display: block;
-        width: 28px;
-        height: 4px;
-        margin-bottom: 22px;
-        content: "";
-        background: #f1cc68;
-      }
-
-      .night-cover strong {
-        display: block;
-        font-size: clamp(1rem, 2vw, 1.65rem);
-        line-height: 0.98;
-      }
-
-      .night-details {
-        align-self: stretch;
-        padding: 12px 0;
-      }
-
-      .night-rank {
-        margin: 0;
-        color: #d48355;
-        font-family: var(--mono);
-        font-size: 0.55rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-      }
-
-      .night-details h4 {
-        margin: 23px 0 10px;
+        margin-bottom: 3px;
         font-family: var(--serif);
-        font-size: clamp(2rem, 4vw, 3.4rem);
+        font-size: 1.4rem;
         font-weight: 400;
-        letter-spacing: -0.055em;
-        line-height: 0.87;
       }
 
-      .night-details > span {
-        color: #9f9d96;
-        font-size: 0.69rem;
+      .summary span {
+        color: var(--secondary);
+        font-family: var(--mono);
+        font-size: 0.62rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
       }
 
-      .night-score {
-        display: flex;
+      .catalogue {
+        border-top: 2px solid var(--ink);
+      }
+
+      .catalogue-title {
+        display: grid;
+        grid-template-columns: 70px minmax(210px, 1.15fr) minmax(280px, 1fr) 130px;
+        gap: 28px;
         align-items: baseline;
-        gap: 7px;
-        margin-top: 34px;
-        padding-top: 13px;
-        border-top: 1px solid #3a3935;
-      }
-
-      .night-score strong {
-        color: #f1cc68;
-        font-family: var(--serif);
-        font-size: 2rem;
+        padding: 15px 0 13px;
+        border-bottom: 1px solid var(--ink);
+        color: var(--secondary);
+        font-family: var(--mono);
+        font-size: 0.62rem;
         font-weight: 400;
-      }
-
-      .night-score span {
-        color: #77756f;
-        font-family: var(--mono);
-        font-size: 0.47rem;
+        letter-spacing: 0.05em;
         text-transform: uppercase;
       }
 
-      .project-wide {
+      .catalogue-title h2 {
+        margin: 0;
+        color: var(--ink);
+        font: inherit;
+      }
+
+      .catalogue-title span:last-child {
+        text-align: right;
+      }
+
+      .entry {
         display: grid;
-        grid-column: 1 / -1;
-        grid-template-columns: minmax(0, 1.25fr) minmax(330px, 0.75fr);
+        grid-template-columns: 70px minmax(210px, 1.15fr) minmax(280px, 1fr) 130px;
+        gap: 28px;
+        align-items: start;
+        padding: 34px 0 38px;
+        border-bottom: 1px solid var(--line);
       }
 
-      .project-wide .project-copy {
-        min-height: 430px;
-      }
-
-      .volume-preview {
-        min-height: 430px;
-        color: #f2eee3;
-        background:
-          radial-gradient(circle at 28% 48%, rgba(185, 213, 255, 0.11), transparent 28%),
-          linear-gradient(115deg, transparent 0 64%, rgba(255, 95, 61, 0.08) 64% 64.2%, transparent 64.2%),
-          #171713;
-      }
-
-      .volume-preview::before {
-        position: absolute;
-        top: 50%;
-        left: -2%;
-        content: "01";
-        color: transparent;
-        font-size: clamp(15rem, 27vw, 27rem);
-        font-weight: 700;
-        letter-spacing: -0.12em;
-        line-height: 0.7;
-        opacity: 0.1;
-        transform: translateY(-50%);
-        -webkit-text-stroke: 1px #f2eee3;
-      }
-
-      .volume-ui {
-        position: absolute;
-        inset: clamp(24px, 3.5vw, 45px);
-        z-index: 1;
-        display: grid;
-        grid-template-columns: minmax(150px, 0.72fr) minmax(220px, 1.28fr);
-        gap: clamp(28px, 5vw, 70px);
-        align-items: center;
-      }
-
-      .volume-cover-frame {
-        display: grid;
-        width: min(100%, 250px);
-        aspect-ratio: 0.78;
-        justify-self: end;
-        place-items: center;
-        border: 1px solid rgba(242, 238, 227, 0.18);
-        background: rgba(32, 32, 27, 0.82);
-      }
-
-      .volume-cover {
-        display: flex;
-        width: 58%;
-        aspect-ratio: 0.68;
-        padding: 14px 11px;
-        flex-direction: column;
-        justify-content: space-between;
-        background: #326295;
-        box-shadow: 13px 18px 26px rgba(0, 0, 0, 0.42);
-        transform: rotate(-2deg);
-      }
-
-      .volume-cover span {
-        color: #bfd7ef;
+      .entry-number {
+        margin: 5px 0 0;
+        color: var(--accent);
         font-family: var(--mono);
-        font-size: 0.42rem;
-        letter-spacing: 0.07em;
-        text-transform: uppercase;
+        font-size: 0.72rem;
       }
 
-      .volume-cover strong {
-        font-size: clamp(0.75rem, 1.3vw, 1.18rem);
+      .entry-citation h3 {
+        margin: 0 0 8px;
+        font-family: var(--serif);
+        font-size: clamp(1.8rem, 3vw, 2.45rem);
+        font-weight: 400;
+        letter-spacing: -0.035em;
         line-height: 1;
       }
 
-      .volume-copy {
-        max-width: 430px;
-      }
-
-      .volume-kicker {
-        margin: 0 0 20px;
-        color: #b9d5ff;
-        font-family: var(--mono);
-        font-size: 0.52rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-      }
-
-      .volume-copy h4 {
+      .entry-type {
         margin: 0;
-        font-family: var(--serif);
-        font-size: clamp(2.7rem, 5.5vw, 5.8rem);
-        font-weight: 400;
-        letter-spacing: -0.057em;
-        line-height: 0.8;
-      }
-
-      .volume-author {
-        margin: 18px 0 0;
-        color: #a9a69c;
-        font-size: 0.67rem;
-      }
-
-      .volume-metric {
-        display: flex;
-        align-items: baseline;
-        gap: 8px;
-        margin-top: 30px;
-        padding-top: 13px;
-        border-top: 1px solid rgba(242, 238, 227, 0.16);
-      }
-
-      .volume-metric strong {
-        color: #ff5f3d;
-        font-family: var(--serif);
-        font-size: 2.4rem;
-        font-weight: 400;
-      }
-
-      .volume-metric span {
-        color: #a9a69c;
+        color: var(--secondary);
         font-family: var(--mono);
-        font-size: 0.47rem;
-        letter-spacing: 0.07em;
+        font-size: 0.63rem;
+        line-height: 1.5;
         text-transform: uppercase;
+      }
+
+      .entry-abstract {
+        margin: 2px 0 0;
+        color: #4f4e49;
+        font-family: var(--serif);
+        font-size: 1rem;
+        line-height: 1.55;
+      }
+
+      .entry-actions {
+        display: flex;
+        min-height: 76px;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: space-between;
+      }
+
+      .entry-year {
+        color: var(--secondary);
+        font-family: var(--mono);
+        font-size: 0.61rem;
+      }
+
+      .entry-link {
+        padding-bottom: 2px;
+        border-bottom: 1px solid currentColor;
+        font-family: var(--mono);
+        font-size: 0.65rem;
+        letter-spacing: 0.03em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .entry-link:hover {
+        color: var(--accent);
+      }
+
+      .notes {
+        display: grid;
+        grid-template-columns: 150px minmax(0, 1fr);
+        gap: clamp(40px, 9vw, 110px);
+        padding: 62px 0 0;
+      }
+
+      .notes h2 {
+        margin: 0;
+        color: var(--secondary);
+        font-family: var(--mono);
+        font-size: 0.66rem;
+        font-weight: 400;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .notes p {
+        max-width: 620px;
+        margin: 0;
+        color: var(--secondary);
+        font-family: var(--serif);
+        font-size: 0.96rem;
+        line-height: 1.6;
       }
 
       .site-footer {
         display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        align-items: end;
-        min-height: 220px;
-        margin-top: 90px;
-        padding: 40px 0;
+        grid-template-columns: 1fr auto;
+        gap: 24px;
+        padding: 22px 0 32px;
         border-top: 1px solid var(--ink);
+        color: var(--secondary);
+        font-family: var(--mono);
+        font-size: 0.61rem;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
       }
 
-      .footer-note {
+      .site-footer p {
         margin: 0;
-        color: var(--muted);
-        font-size: 0.56rem;
-        letter-spacing: 0.08em;
       }
 
-      .footer-center {
-        margin: 0;
-        font-family: var(--serif);
-        font-size: 1.45rem;
-        font-style: italic;
-      }
-
-      .footer-year {
-        justify-self: end;
-      }
-
-      [data-reveal] {
-        animation: index-reveal 700ms var(--ease) both;
-      }
-
-      @keyframes index-reveal {
-        from {
-          opacity: 0;
-          transform: translateY(22px);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateY(0);
+      @media (max-width: 800px) {
+        .catalogue-title,
+        .entry {
+          grid-template-columns: 54px minmax(190px, 0.9fr) minmax(230px, 1.1fr) 100px;
+          gap: 20px;
         }
       }
 
-      @media (max-width: 980px) {
-        .hero {
-          grid-template-columns: 1fr;
-          gap: 46px;
+      @media (max-width: 680px) {
+        .page {
+          width: min(100% - 36px, 1120px);
         }
 
-        .hero h1 {
-          max-width: 780px;
+        .site-header {
+          min-height: 66px;
         }
 
-        .project-featured {
-          grid-template-columns: 1fr;
+        .issue {
+          font-size: 0.58rem;
         }
 
-        .circuit-preview {
-          min-height: 520px;
-        }
-
-        .project-featured .project-copy {
-          min-height: 340px;
-        }
-
-        .board {
-          width: 70%;
-        }
-      }
-
-      @media (max-width: 720px) {
-        .shell {
-          width: min(100% - 36px, 1480px);
-        }
-
-        .masthead {
-          grid-template-columns: 1fr auto;
-          min-height: 68px;
-        }
-
-        .edition {
-          display: none;
-        }
-
-        .hero {
-          padding: 76px 0 72px;
-        }
-
-        .hero h1 {
-          font-size: clamp(3.75rem, 20vw, 6rem);
-        }
-
-        .project-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .project-featured {
-          grid-column: auto;
-        }
-
-        .project-wide {
+        .introduction {
           display: block;
-          grid-column: auto;
+          padding: 62px 0 72px;
         }
 
-        .circuit-preview {
-          min-height: 430px;
+        .section-label {
+          margin: 0 0 25px;
         }
 
-        .circuit-title {
-          bottom: 28px;
-          left: 24px;
+        .intro-copy h1 {
+          font-size: clamp(2.7rem, 14vw, 4rem);
         }
 
-        .circuit-label {
-          top: 24px;
-          left: 24px;
+        .intro-copy > p {
+          margin-top: 27px;
+          font-size: 1.06rem;
         }
 
-        .board {
-          top: 44%;
-          right: -21%;
-          width: 96%;
+        .summary {
+          gap: 26px;
+          margin-top: 31px;
         }
 
-        .atlas-preview,
-        .night-preview {
-          min-height: 350px;
+        .catalogue-title {
+          display: flex;
+          justify-content: space-between;
         }
 
-        .project-copy {
-          min-height: 320px;
-        }
-
-        .site-footer {
-          grid-template-columns: 1fr auto;
-          min-height: 170px;
-          margin-top: 60px;
-        }
-
-        .footer-center {
-          display: none;
-        }
-      }
-
-      @media (max-width: 460px) {
-        .status {
-          font-size: 0.53rem;
-        }
-
-        .status span:last-child {
+        .catalogue-title span:nth-of-type(2),
+        .catalogue-title span:last-child {
           display: none;
         }
 
-        .registry-heading p {
-          display: none;
+        .entry {
+          display: grid;
+          grid-template-columns: 38px 1fr;
+          gap: 0 16px;
+          padding: 28px 0 31px;
         }
 
-        .circuit-preview {
-          min-height: 370px;
+        .entry-number {
+          grid-row: 1 / 4;
         }
 
-        .board {
-          right: -42%;
-          width: 125%;
+        .entry-citation,
+        .entry-abstract,
+        .entry-actions {
+          grid-column: 2;
         }
 
-        .atlas-preview {
-          padding: 19px;
+        .entry-citation h3 {
+          font-size: 2rem;
         }
 
-        .atlas-window {
-          min-height: 280px;
-          padding: 18px;
-          box-shadow: 10px 12px 0 #274a78;
+        .entry-abstract {
+          margin-top: 20px;
         }
 
-        .atlas-heading {
-          margin-top: 22px;
+        .entry-actions {
+          display: flex;
+          min-height: 0;
+          margin-top: 25px;
+          flex-direction: row;
+          align-items: center;
         }
 
-        .book-row {
-          gap: 9px;
+        .notes {
+          display: block;
+          padding-top: 48px;
         }
 
-        .night-browser {
-          gap: 17px;
+        .notes h2 {
+          margin-bottom: 17px;
         }
 
-        .volume-preview {
-          min-height: 370px;
-        }
-
-        .volume-ui {
-          inset: 24px 18px;
-          grid-template-columns: 0.78fr 1.22fr;
-          gap: 18px;
-        }
-
-        .volume-cover-frame {
-          aspect-ratio: 0.72;
-        }
-
-        .volume-copy h4 {
-          font-size: clamp(2.35rem, 12vw, 3.4rem);
-        }
-
-        .volume-author {
-          line-height: 1.4;
-        }
-
-        .night-cover {
-          padding: 14px 10px;
-        }
-
-        .night-details h4 {
-          margin-top: 17px;
+        main {
+          padding-bottom: 76px;
         }
       }
 
@@ -1086,217 +404,111 @@
         html {
           scroll-behavior: auto;
         }
-
-        *,
-        *::before,
-        *::after {
-          scroll-behavior: auto !important;
-          animation-duration: 0.01ms !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0.01ms !important;
-        }
-
-        [data-reveal] {
-          animation: none;
-          opacity: 1;
-          transform: none;
-        }
       }
     </style>
   </head>
   <body>
-    <header class="masthead shell">
-      <a class="brand" href="#top" aria-label="Prototype Index home">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span>Prototype Index</span>
-      </a>
-      <p class="edition">Interface studies / Edition 01</p>
-      <p class="status"><span class="status-dot" aria-hidden="true"></span><span>04 live studies</span></p>
+    <header class="site-header page">
+      <p class="site-title">Prototype Index</p>
+      <p class="issue">Vol. I &nbsp;·&nbsp; 2026</p>
     </header>
 
-    <main id="top" class="shell">
-      <section class="hero" aria-labelledby="page-title">
-        <div data-reveal>
-          <p class="eyebrow">A working archive</p>
-          <h1 id="page-title">Interfaces in <em>motion.</em></h1>
-        </div>
-        <div class="hero-aside" data-reveal>
+    <main class="page">
+      <section class="introduction" aria-labelledby="page-title">
+        <p class="section-label">Abstract</p>
+        <div class="intro-copy">
+          <h1 id="page-title">Selected prototypes and interaction experiments.</h1>
           <p>
-            A collection of visual systems, interaction ideas, and product experiments. Each one is built to test a different way of navigating information.
+            A working index of small web experiments exploring spatial interfaces, editorial systems, and alternative ways to browse information.
           </p>
-          <a class="index-link" href="#registry">Browse the index <span aria-hidden="true">↓</span></a>
+          <div class="summary" role="group" aria-label="Archive summary">
+            <p><strong>04</strong><span>Prototypes</span></p>
+            <p><strong>03</strong><span>Disciplines</span></p>
+            <p><strong>2026</strong><span>Edition</span></p>
+          </div>
         </div>
       </section>
 
-      <section id="registry" aria-labelledby="registry-title">
-        <div class="registry-heading">
-          <h2 id="registry-title">Selected experiments</h2>
-          <p>2026 / Web interfaces</p>
+      <section class="catalogue" aria-labelledby="catalogue-title">
+        <div class="catalogue-title">
+          <span>No.</span>
+          <h2 id="catalogue-title">Catalogue</h2>
+          <span>Abstract</span>
+          <span>Access</span>
         </div>
 
-        <div class="project-grid">
-          <article class="project project-featured" data-reveal>
-            <div class="preview circuit-preview" aria-hidden="true">
-              <div class="circuit-ui">
-                <p class="circuit-label">Three.js / Interactive resume</p>
-                <p class="circuit-title">Career.<span>Visualized.</span></p>
-                <svg class="board" viewBox="0 0 760 470" role="img">
-                  <path class="plate" d="M70 94 626 25l83 307-563 106z" />
-                  <path class="trace" d="M122 335h96v-74h105v-95h105V91h160" />
-                  <path class="trace secondary" d="M193 370v-56h102v53h116v-118h134v-77h110" />
-                  <path class="trace" d="M122 199h86v-62h126V82h107" />
-                  <rect class="node" x="94" y="309" width="58" height="52" rx="5" />
-                  <rect class="node acid" x="290" y="235" width="65" height="57" rx="5" />
-                  <rect class="node" x="398" y="138" width="64" height="57" rx="5" />
-                  <rect class="node acid" x="575" y="63" width="64" height="57" rx="5" />
-                  <circle class="pulse" cx="123" cy="335" r="5" />
-                  <circle class="pulse" cx="322" cy="263" r="5" style="animation-delay: -0.7s" />
-                  <circle class="pulse" cx="430" cy="166" r="5" style="animation-delay: -1.4s" />
-                  <circle class="pulse" cx="607" cy="91" r="5" style="animation-delay: -2s" />
-                </svg>
-              </div>
-            </div>
-            <div class="project-copy">
-              <p class="project-number"><span>No. 001 / Featured</span></p>
-              <h3>Circuit Resume</h3>
-              <p class="description">
-                A spatial portfolio that turns a career into an explorable circuit board, connecting milestones and skills in a responsive 3D scene.
-              </p>
-              <div class="project-meta">
-                <ul class="tags" aria-label="Technologies">
-                  <li class="tag">React</li>
-                  <li class="tag">Three.js</li>
-                  <li class="tag">TypeScript</li>
-                </ul>
-                <a class="launch" href="./portolio-board/dist/" aria-label="Open Circuit Resume prototype">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M8 5h11v11" /></svg>
-                </a>
-              </div>
-            </div>
-          </article>
+        <article class="entry">
+          <p class="entry-number">01</p>
+          <div class="entry-citation">
+            <h3>Circuit Resume</h3>
+            <p class="entry-type">Spatial interface · React, Three.js</p>
+          </div>
+          <p class="entry-abstract">
+            An explorable circuit board that maps career milestones and skills into a responsive three-dimensional scene.
+          </p>
+          <div class="entry-actions">
+            <span class="entry-year">2026</span>
+            <a class="entry-link" href="./portolio-board/dist/">View prototype ↗</a>
+          </div>
+        </article>
 
-          <article class="project" data-reveal>
-            <div class="preview atlas-preview" aria-hidden="true">
-              <div class="atlas-window">
-                <div class="atlas-topline"><strong>Reading Atlas</strong><span>Collection 01</span></div>
-                <p class="atlas-heading">Books to build <em>better systems.</em></p>
-                <div class="book-row">
-                  <div class="book">Designing Data-Intensive Applications</div>
-                  <div class="book">The Well-Grounded Java Developer</div>
-                  <div class="book">System Design</div>
-                  <div class="book">Grokking Algorithms</div>
-                </div>
-              </div>
-            </div>
-            <div class="project-copy">
-              <p class="project-number"><span>No. 002 / Editorial</span></p>
-              <h3>Reading Atlas</h3>
-              <p class="description">
-                A considered, sortable field guide to technical books, balancing current relevance with enduring practical value.
-              </p>
-              <div class="project-meta">
-                <ul class="tags" aria-label="Technologies">
-                  <li class="tag">JavaScript</li>
-                  <li class="tag">Data UI</li>
-                  <li class="tag">Editorial</li>
-                </ul>
-                <a class="launch" href="./bundle-review/" aria-label="Open Reading Atlas prototype">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M8 5h11v11" /></svg>
-                </a>
-              </div>
-            </div>
-          </article>
+        <article class="entry">
+          <p class="entry-number">02</p>
+          <div class="entry-citation">
+            <h3>Reading Atlas</h3>
+            <p class="entry-type">Editorial catalogue · JavaScript</p>
+          </div>
+          <p class="entry-abstract">
+            A sortable field guide to technical books that balances current relevance, durability, and practical value.
+          </p>
+          <div class="entry-actions">
+            <span class="entry-year">2026</span>
+            <a class="entry-link" href="./bundle-review/">View prototype ↗</a>
+          </div>
+        </article>
 
-          <article class="project" data-reveal>
-            <div class="preview night-preview" aria-hidden="true">
-              <div class="night-browser">
-                <div class="night-cover"><strong>Good Code, Bad Code</strong></div>
-                <div class="night-details">
-                  <p class="night-rank">No. 03 / Engineering</p>
-                  <h4>What should I read next?</h4>
-                  <span>Swipe through the shelf</span>
-                  <div class="night-score"><strong>9.2</strong><span>Overall score</span></div>
-                </div>
-              </div>
-            </div>
-            <div class="project-copy">
-              <p class="project-number"><span>No. 003 / Mobile</span></p>
-              <h3>Night Shelf</h3>
-              <p class="description">
-                A low-light, mobile-first book browser with swipe, feed, and list modes for quick, focused discovery.
-              </p>
-              <div class="project-meta">
-                <ul class="tags" aria-label="Technologies">
-                  <li class="tag">Mobile UI</li>
-                  <li class="tag">Gestures</li>
-                  <li class="tag">Vanilla JS</li>
-                </ul>
-                <a class="launch" href="./bundle-review/prototype.html" aria-label="Open Night Shelf prototype">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M8 5h11v11" /></svg>
-                </a>
-              </div>
-            </div>
-          </article>
+        <article class="entry">
+          <p class="entry-number">03</p>
+          <div class="entry-citation">
+            <h3>Night Shelf</h3>
+            <p class="entry-type">Mobile browser · Gesture interface</p>
+          </div>
+          <p class="entry-abstract">
+            A low-light, mobile-first book browser comparing swipe, feed, and list modes for focused discovery.
+          </p>
+          <div class="entry-actions">
+            <span class="entry-year">2026</span>
+            <a class="entry-link" href="./bundle-review/prototype.html">View prototype ↗</a>
+          </div>
+        </article>
 
-          <article class="project project-wide" data-reveal>
-            <div class="preview volume-preview" aria-hidden="true">
-              <div class="volume-ui">
-                <div class="volume-cover-frame">
-                  <div class="volume-cover">
-                    <span>Manning</span>
-                    <strong>Designing Data-Intensive Applications</strong>
-                  </div>
-                </div>
-                <div class="volume-copy">
-                  <p class="volume-kicker">01 / 26 &nbsp; · &nbsp; Software engineering</p>
-                  <h4>One book.<br>Full focus.</h4>
-                  <p class="volume-author">Explore the collection without leaving the page.</p>
-                  <div class="volume-metric"><strong>9.7</strong><span>Overall / 10</span></div>
-                </div>
-              </div>
-            </div>
-            <div class="project-copy">
-              <p class="project-number"><span>No. 004 / Immersive</span></p>
-              <h3>Full Volume</h3>
-              <p class="description">
-                A full-screen, focused browser for ranked technical books, with keyboard navigation, a collection switcher, and cinematic transitions.
-              </p>
-              <div class="project-meta">
-                <ul class="tags" aria-label="Technologies">
-                  <li class="tag">Fullscreen UI</li>
-                  <li class="tag">Keyboard</li>
-                  <li class="tag">Vanilla JS</li>
-                </ul>
-                <a class="launch" href="./bundle-review/fullscreen.html" aria-label="Open Full Volume prototype">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M8 5h11v11" /></svg>
-                </a>
-              </div>
-            </div>
-          </article>
-        </div>
+        <article class="entry">
+          <p class="entry-number">04</p>
+          <div class="entry-citation">
+            <h3>Full Volume</h3>
+            <p class="entry-type">Immersive browser · Keyboard interface</p>
+          </div>
+          <p class="entry-abstract">
+            A full-screen reading interface with collection switching, keyboard navigation, and focused transitions between ranked titles.
+          </p>
+          <div class="entry-actions">
+            <span class="entry-year">2026</span>
+            <a class="entry-link" href="./bundle-review/fullscreen.html">View prototype ↗</a>
+          </div>
+        </article>
       </section>
+
+      <aside class="notes" aria-labelledby="notes-title">
+        <h2 id="notes-title">Scope note</h2>
+        <p>
+          These prototypes are independent experiments. They are presented as working documents rather than finished products and may change as their underlying ideas are tested.
+        </p>
+      </aside>
     </main>
 
-    <footer class="site-footer shell">
-      <p class="footer-note">Built as a place to try things</p>
-      <p class="footer-center">The work is the experiment.</p>
-      <p class="footer-note footer-year">Index / <span id="year">2026</span></p>
+    <footer class="site-footer page">
+      <p>Prototype Index · Independent archive</p>
+      <p>Index 01 / 01</p>
     </footer>
-
-    <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
-
-      document.querySelectorAll("[data-reveal]").forEach((item, index) => {
-        item.style.animationDelay = `${Math.min(index, 2) * 90}ms`;
-      });
-
-      document.querySelectorAll(".project").forEach((project) => {
-        project.addEventListener("pointermove", (event) => {
-          const bounds = project.getBoundingClientRect();
-          project.style.setProperty("--pointer-x", `${event.clientX - bounds.left}px`);
-          project.style.setProperty("--pointer-y", `${event.clientY - bounds.top}px`);
-        });
-      });
-    </script>
   </body>
 </html>
