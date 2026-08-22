@@ -1,0 +1,1339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A development report for Scratchpad, a small auto-saving tabbed text editor built with C, GTK 4, and GLib."
+    />
+    <title>How Scratchpad Was Built</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f4f0e7;
+        --paper-deep: #e9e2d3;
+        --ink: #1f2926;
+        --muted: #67716c;
+        --line: #cfc7b7;
+        --card: rgba(255, 253, 248, 0.78);
+        --card-solid: #fffdf8;
+        --accent: #d85d3f;
+        --accent-soft: #f5d8cc;
+        --teal: #247b71;
+        --teal-soft: #d4e8e2;
+        --code: #17211f;
+        --code-ink: #e8f0ec;
+        --shadow: 0 18px 45px rgba(63, 48, 29, 0.09);
+        --sans:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      [data-theme="dark"] {
+        color-scheme: dark;
+        --paper: #151a19;
+        --paper-deep: #1d2422;
+        --ink: #edf2ee;
+        --muted: #9da9a3;
+        --line: #34413d;
+        --card: rgba(31, 39, 36, 0.86);
+        --card-solid: #202825;
+        --accent: #f08062;
+        --accent-soft: #4a2b24;
+        --teal: #66c2b2;
+        --teal-soft: #183d37;
+        --code: #0c1110;
+        --code-ink: #e7efeb;
+        --shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(
+            circle at 15% 5%,
+            color-mix(in srgb, var(--accent) 10%, transparent),
+            transparent 27rem
+          ),
+          linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px), var(--paper);
+        background-size:
+          auto,
+          28px 28px,
+          28px 28px,
+          auto;
+        font-family: var(--sans);
+        font-size: 16px;
+        line-height: 1.65;
+        transition:
+          background-color 180ms ease,
+          color 180ms ease;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .shell {
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr);
+        max-width: 1440px;
+        min-height: 100vh;
+        margin: 0 auto;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        padding: 32px 24px;
+        border-right: 1px solid var(--line);
+        background: color-mix(in srgb, var(--paper) 88%, transparent);
+        backdrop-filter: blur(16px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin-bottom: 44px;
+        font-weight: 760;
+        letter-spacing: -0.03em;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border-radius: 9px;
+        color: #fff;
+        background: var(--accent);
+        box-shadow: 4px 4px 0 var(--teal);
+        font-family: var(--mono);
+        font-size: 13px;
+      }
+
+      .nav-label,
+      .eyebrow {
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      .nav-label {
+        margin: 0 0 12px 10px;
+      }
+
+      nav {
+        display: grid;
+        gap: 4px;
+      }
+
+      nav a {
+        padding: 8px 10px;
+        border-radius: 8px;
+        color: var(--muted);
+        text-decoration: none;
+        transition:
+          background 150ms ease,
+          color 150ms ease;
+      }
+
+      nav a:hover,
+      nav a.active {
+        color: var(--ink);
+        background: var(--card);
+      }
+
+      nav a.active::before {
+        content: "";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        margin: 0 9px 2px 0;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      .theme-toggle {
+        position: absolute;
+        bottom: 28px;
+        left: 24px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--ink);
+        background: var(--card);
+        cursor: pointer;
+      }
+
+      .theme-toggle:hover {
+        border-color: var(--accent);
+      }
+
+      main {
+        width: min(100%, 1040px);
+        padding: 56px clamp(28px, 6vw, 88px) 100px;
+      }
+
+      section {
+        margin: 0 0 112px;
+        scroll-margin-top: 30px;
+      }
+
+      .hero {
+        position: relative;
+        min-height: 74vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 48px 0 70px;
+      }
+
+      .hero::after {
+        content: "C";
+        position: absolute;
+        z-index: -1;
+        top: 5%;
+        right: 1%;
+        color: color-mix(in srgb, var(--teal) 9%, transparent);
+        font-family: Georgia, serif;
+        font-size: clamp(18rem, 40vw, 36rem);
+        font-weight: 800;
+        line-height: 0.8;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 820px;
+        margin: 18px 0 24px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(3.7rem, 9vw, 7.6rem);
+        font-weight: 500;
+        letter-spacing: -0.065em;
+        line-height: 0.88;
+      }
+
+      h1 em {
+        color: var(--accent);
+        font-weight: inherit;
+      }
+
+      .lede {
+        max-width: 680px;
+        color: var(--muted);
+        font-size: clamp(1.08rem, 2vw, 1.32rem);
+        line-height: 1.65;
+      }
+
+      .facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 34px;
+      }
+
+      .fact {
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--card);
+        font-family: var(--mono);
+        font-size: 0.78rem;
+      }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(240px, 0.7fr);
+        align-items: end;
+        gap: 30px;
+        margin-bottom: 42px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 8px 0 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2.4rem, 5vw, 4.2rem);
+        font-weight: 500;
+        letter-spacing: -0.045em;
+        line-height: 1;
+      }
+
+      h3 {
+        font-size: 1rem;
+        letter-spacing: -0.015em;
+      }
+
+      .section-summary {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .brief-grid,
+      .state-grid,
+      .decision-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        padding: 26px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+      }
+
+      .card p:last-child {
+        margin-bottom: 0;
+      }
+
+      .number {
+        display: inline-grid;
+        width: 30px;
+        height: 30px;
+        margin-bottom: 20px;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--accent);
+        background: var(--accent-soft);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .architecture {
+        padding: 36px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: var(--card-solid);
+        box-shadow: var(--shadow);
+      }
+
+      .architecture-row {
+        display: grid;
+        grid-template-columns: 1fr 52px 1fr 52px 1fr;
+        align-items: stretch;
+      }
+
+      .node {
+        min-height: 136px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--paper);
+      }
+
+      .node strong,
+      .node code {
+        display: block;
+      }
+
+      .node code {
+        margin-bottom: 9px;
+        color: var(--teal);
+        font-family: var(--mono);
+        font-size: 0.74rem;
+      }
+
+      .node span {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .arrow {
+        display: grid;
+        place-items: center;
+        color: var(--accent);
+        font-family: var(--mono);
+        font-size: 1.25rem;
+      }
+
+      .branch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 18px;
+        padding-top: 38px;
+        position: relative;
+      }
+
+      .branch::before {
+        content: "change signal branches into two persistence paths";
+        position: absolute;
+        top: 6px;
+        left: 50%;
+        translate: -50% 0;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        white-space: nowrap;
+      }
+
+      .flow {
+        counter-reset: flow;
+        display: grid;
+        gap: 0;
+      }
+
+      .flow-step {
+        counter-increment: flow;
+        display: grid;
+        grid-template-columns: 54px 1fr;
+        gap: 18px;
+        position: relative;
+        padding-bottom: 34px;
+      }
+
+      .flow-step::before {
+        content: counter(flow, decimal-leading-zero);
+        display: grid;
+        z-index: 1;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border: 1px solid var(--teal);
+        border-radius: 50%;
+        color: var(--teal);
+        background: var(--paper);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+      }
+
+      .flow-step::after {
+        content: "";
+        position: absolute;
+        top: 42px;
+        bottom: 0;
+        left: 21px;
+        width: 1px;
+        background: var(--line);
+      }
+
+      .flow-step:last-child::after {
+        display: none;
+      }
+      .flow-step p {
+        margin: 4px 0 0;
+        color: var(--muted);
+      }
+
+      pre {
+        margin: 22px 0 0;
+        padding: 22px;
+        overflow-x: auto;
+        border-radius: 14px;
+        color: var(--code-ink);
+        background: var(--code);
+        font: 0.82rem/1.65 var(--mono);
+        tab-size: 2;
+      }
+
+      code {
+        font-family: var(--mono);
+      }
+
+      :not(pre) > code {
+        padding: 0.14em 0.36em;
+        border-radius: 4px;
+        color: var(--teal);
+        background: var(--teal-soft);
+        font-size: 0.88em;
+      }
+
+      .state-card {
+        position: relative;
+        overflow: hidden;
+      }
+      .state-card::after {
+        content: attr(data-kind);
+        position: absolute;
+        top: 16px;
+        right: 18px;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        text-transform: uppercase;
+      }
+
+      .storage-tree {
+        padding: 28px;
+        border-radius: 18px;
+        color: var(--code-ink);
+        background: var(--code);
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        line-height: 1.9;
+      }
+
+      .storage-tree .folder {
+        color: #80d4c4;
+      }
+      .storage-tree .file {
+        color: #ffb09a;
+      }
+      .storage-tree .comment {
+        color: #82918b;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 32px;
+        align-items: start;
+      }
+
+      .callout {
+        padding: 20px 22px;
+        border-left: 4px solid var(--accent);
+        border-radius: 0 12px 12px 0;
+        background: var(--accent-soft);
+      }
+
+      .callout strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .callout p {
+        margin: 0;
+      }
+
+      .timeline {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+
+      .milestone {
+        min-height: 210px;
+        padding: 24px;
+        border-top: 3px solid var(--teal);
+        background: var(--card);
+      }
+
+      .milestone:nth-child(even) {
+        border-top-color: var(--accent);
+      }
+
+      .milestone .phase {
+        display: block;
+        margin-bottom: 38px;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+      }
+
+      .milestone p {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .decision {
+        min-height: 198px;
+        box-shadow: none;
+      }
+
+      .decision .choice {
+        display: inline-block;
+        margin-bottom: 16px;
+        padding: 5px 9px;
+        border-radius: 6px;
+        color: var(--teal);
+        background: var(--teal-soft);
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        font-weight: 700;
+      }
+
+      .file-map {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid var(--line);
+        background: var(--card);
+      }
+
+      .file-map th,
+      .file-map td {
+        padding: 17px 20px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .file-map th {
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .file-map td:first-child {
+        color: var(--teal);
+        font-family: var(--mono);
+      }
+
+      footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        padding-top: 26px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.84rem;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          color-scheme: dark;
+          --paper: #151a19;
+          --paper-deep: #1d2422;
+          --ink: #edf2ee;
+          --muted: #9da9a3;
+          --line: #34413d;
+          --card: rgba(31, 39, 36, 0.86);
+          --card-solid: #202825;
+          --accent: #f08062;
+          --accent-soft: #4a2b24;
+          --teal: #66c2b2;
+          --teal-soft: #183d37;
+          --code: #0c1110;
+          --code-ink: #e7efeb;
+          --shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+        }
+      }
+
+      @media (max-width: 900px) {
+        .shell {
+          display: block;
+        }
+        .sidebar {
+          position: sticky;
+          z-index: 10;
+          top: 0;
+          width: 100%;
+          height: auto;
+          padding: 12px 18px;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .brand {
+          margin: 0;
+        }
+        .brand-mark {
+          width: 30px;
+          height: 30px;
+        }
+        .nav-label,
+        nav {
+          display: none;
+        }
+        .theme-toggle {
+          top: 12px;
+          right: 18px;
+          bottom: auto;
+          left: auto;
+          padding: 6px 10px;
+        }
+        main {
+          margin: 0 auto;
+          padding-top: 34px;
+        }
+        .hero {
+          min-height: 76vh;
+        }
+      }
+
+      @media (max-width: 700px) {
+        section {
+          margin-bottom: 82px;
+        }
+        .section-heading,
+        .brief-grid,
+        .state-grid,
+        .decision-grid,
+        .split,
+        .timeline {
+          grid-template-columns: 1fr;
+        }
+        .architecture {
+          padding: 22px;
+        }
+        .architecture-row {
+          grid-template-columns: 1fr;
+        }
+        .arrow {
+          height: 38px;
+          transform: rotate(90deg);
+        }
+        .branch {
+          grid-template-columns: 1fr;
+          padding-top: 54px;
+        }
+        .branch::before {
+          width: 100%;
+          text-align: center;
+          white-space: normal;
+        }
+        .file-map {
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+        footer {
+          flex-direction: column;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand"><span class="brand-mark">sp</span> scratchpad</div>
+        <p class="nav-label">Development report</p>
+        <nav aria-label="Report sections">
+          <a href="#brief" class="active">The brief</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#autosave">Auto-save pipeline</a>
+          <a href="#persistence">Persistence</a>
+          <a href="#development">Development path</a>
+          <a href="#decisions">Engineering decisions</a>
+          <a href="#code-map">Code map</a>
+        </nav>
+        <button
+          class="theme-toggle"
+          type="button"
+          aria-label="Toggle report color theme"
+        >
+          <span aria-hidden="true">◐</span><span>Theme</span>
+        </button>
+      </aside>
+
+      <main>
+        <header class="hero">
+          <span class="eyebrow">Engineering case study · August 2026</span>
+          <h1>How Scratchpad<br />was <em>built.</em></h1>
+          <p class="lede">
+            A compact desktop editor grew from one idea: writing should survive
+            without asking the writer to think about files. This report traces
+            the C structures, GTK event flow, persistence layer, and iterations
+            behind that idea.
+          </p>
+          <div class="facts" aria-label="Project facts">
+            <span class="fact">C11</span>
+            <span class="fact">GTK 4.12+</span>
+            <span class="fact">GLib / GIO</span>
+            <span class="fact">729 lines of authored C</span>
+            <span class="fact">0 database dependencies</span>
+          </div>
+        </header>
+
+        <section id="brief">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">01 · The brief</span>
+              <h2>Two promises shaped the code.</h2>
+            </div>
+            <p class="section-summary">
+              The implementation stayed deliberately local and small. Every
+              later feature had to preserve these two properties.
+            </p>
+          </div>
+          <div class="brief-grid">
+            <article class="card">
+              <span class="number">01</span>
+              <h3>Writing is continuously durable</h3>
+              <p>
+                Each tab owns a private draft. Edits schedule a short delayed
+                write, so the working text survives application restarts without
+                a conventional save workflow.
+              </p>
+            </article>
+            <article class="card">
+              <span class="number">02</span>
+              <h3>Tabs are independent notes</h3>
+              <p>
+                Every tab carries its own identity, text buffer, timer, title,
+                draft path, and optional export path. Adding a tab means adding
+                one complete unit of state.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section id="architecture">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">02 · Architecture</span>
+              <h2>A small object graph, built by hand.</h2>
+            </div>
+            <p class="section-summary">
+              Scratchpad uses GTK objects for the interface and plain C structs
+              for application-owned state.
+            </p>
+          </div>
+
+          <div
+            class="architecture"
+            role="img"
+            aria-label="Application architecture from GTK application to tabs, text buffers, draft storage, and exported files"
+          >
+            <div class="architecture-row">
+              <div class="node">
+                <code>GtkApplication</code><strong>Process lifecycle</strong
+                ><span
+                  >Owns actions, keyboard accelerators, and the single
+                  application window.</span
+                >
+              </div>
+              <div class="arrow" aria-hidden="true">→</div>
+              <div class="node">
+                <code>ScratchpadApp</code><strong>Shared state</strong
+                ><span
+                  >Tracks the notebook, tabs array, status label, and
+                  persistence paths.</span
+                >
+              </div>
+              <div class="arrow" aria-hidden="true">→</div>
+              <div class="node">
+                <code>GtkNotebook</code><strong>Visual tab order</strong
+                ><span
+                  >Hosts pages, exposes the active index, and emits reorder
+                  events.</span
+                >
+              </div>
+            </div>
+            <div class="branch">
+              <div class="node">
+                <code>ScratchpadTab → GtkTextBuffer</code
+                ><strong>Private draft path</strong
+                ><span
+                  >Debounced edits are written beneath the XDG data
+                  directory.</span
+                >
+              </div>
+              <div class="node">
+                <code>ScratchpadTab → export_path</code
+                ><strong>User-selected file</strong
+                ><span
+                  >A separate, optional destination used only for explicit Save
+                  operations.</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="state-grid" style="margin-top: 24px">
+            <article class="card state-card" data-kind="per tab">
+              <h3><code>ScratchpadTab</code></h3>
+              <p>
+                The tab struct is the core unit: stable UUID, label, widgets,
+                text buffer, draft location, optional export location, and the
+                active auto-save timer.
+              </p>
+              <pre>
+typedef struct {
+  char *id;
+  char *draft_path;
+  char *export_path;
+  GtkTextBuffer *buffer;
+  guint autosave_source;
+} ScratchpadTab;</pre>
+            </article>
+            <article class="card state-card" data-kind="application">
+              <h3><code>ScratchpadApp</code></h3>
+              <p>
+                The app struct supplies the context shared by all tabs: the GTK
+                application and window, notebook, status surface, ordered
+                pointer array, and session paths.
+              </p>
+              <pre>
+struct _ScratchpadApp {
+  GtkApplication *application;
+  GtkWidget *notebook;
+  GPtrArray *tabs;
+  char *data_dir;
+  char *session_path;
+};</pre>
+            </article>
+          </div>
+        </section>
+
+        <section id="autosave">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">03 · Auto-save</span>
+              <h2>The hot path is four small steps.</h2>
+            </div>
+            <p class="section-summary">
+              A debounce keeps typing responsive and collapses a burst of
+              keystrokes into one disk write.
+            </p>
+          </div>
+
+          <div class="split">
+            <div class="flow" aria-label="Autosave process">
+              <div class="flow-step">
+                <div>
+                  <h3>GTK emits <code>changed</code></h3>
+                  <p>
+                    Each tab’s <code>GtkTextBuffer</code> is connected to a
+                    buffer-change callback.
+                  </p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div>
+                  <h3>The old timer is cancelled</h3>
+                  <p>
+                    If another keystroke arrives within the delay, its pending
+                    write is removed.
+                  </p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div>
+                  <h3>A 450 ms timer is scheduled</h3>
+                  <p>
+                    The UI immediately reports “Saving…” while GLib’s main loop
+                    holds the work.
+                  </p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div>
+                  <h3>The complete buffer is written</h3>
+                  <p>
+                    Text is read between the buffer bounds and persisted with
+                    <code>g_file_set_contents</code>.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <pre>
+static void buffer_changed_cb(
+    GtkTextBuffer *buffer,
+    gpointer user_data) {
+  ScratchpadTab *tab = user_data;
+
+  if (tab->autosave_source != 0)
+    g_source_remove(tab->autosave_source);
+
+  set_status(tab->app, "Saving…");
+  tab->autosave_source = g_timeout_add(
+      450, autosave_cb, tab);
+}</pre>
+              <div class="callout" style="margin-top: 20px">
+                <strong>Why debounce?</strong>
+                <p>
+                  Writing on every character is unnecessary churn; waiting until
+                  typing pauses keeps the model simple without making durability
+                  feel delayed.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="persistence">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">04 · Persistence</span>
+              <h2>Plain files instead of a database.</h2>
+            </div>
+            <p class="section-summary">
+              Content and metadata have different jobs, so they are stored
+              separately.
+            </p>
+          </div>
+
+          <div class="split">
+            <div
+              class="storage-tree"
+              aria-label="Scratchpad data directory layout"
+            >
+              <span class="folder">$XDG_DATA_HOME/</span><br />
+              └── <span class="folder">scratchpad/</span>
+              <span class="comment"># mode 0700</span><br />
+              &nbsp;&nbsp;&nbsp;├── <span class="file">session.ini</span><br />
+              &nbsp;&nbsp;&nbsp;└── <span class="folder">tabs/</span><br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├──
+              <span class="file">4b2…</span>
+              <span class="comment"># UTF-8 text</span><br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├──
+              <span class="file">906…</span><br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──
+              <span class="file">c11…</span>
+            </div>
+            <div>
+              <h3>Draft files hold only text</h3>
+              <p>
+                UUID-based names make titles safe to change and prevent two
+                similarly named notes from colliding.
+              </p>
+              <h3>One key file describes the session</h3>
+              <p>
+                <code>GKeyFile</code> records ordered tab IDs, display titles,
+                optional export paths, and the active tab index.
+              </p>
+              <h3>Restore rebuilds normal tabs</h3>
+              <p>
+                Startup reads the key file, loads each draft, then calls the
+                same <code>new_tab</code> path used by a fresh note. There is no
+                separate “restored tab” implementation.
+              </p>
+            </div>
+          </div>
+
+          <pre>
+[session]
+count=2
+active=1
+
+[tab-0]
+id=4b2c30ab-…
+title=Note 1
+
+[tab-1]
+id=906f4e42-…
+title=ideas.txt
+export-path=/home/user/Documents/ideas.txt</pre>
+        </section>
+
+        <section id="development">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">05 · Development path</span>
+              <h2>The app improved in layers.</h2>
+            </div>
+            <p class="section-summary">
+              Each iteration addressed a concrete behavior while preserving the
+              small single-process design.
+            </p>
+          </div>
+          <div class="timeline">
+            <article class="milestone">
+              <span class="phase">Phase 01</span>
+              <h3>Foundation</h3>
+              <p>
+                A GTK application window, notebook, text views, header controls,
+                Makefile, and desktop entry established the product shell.
+              </p>
+            </article>
+            <article class="milestone">
+              <span class="phase">Phase 02</span>
+              <h3>Durability</h3>
+              <p>
+                Per-tab UUID drafts, a 450 ms debounce, session metadata,
+                restoration, and shutdown flushing formed the persistence layer.
+              </p>
+            </article>
+            <article class="milestone">
+              <span class="phase">Phase 03</span>
+              <h3>Export &amp; removal</h3>
+              <p>
+                Manual file export was kept separate from drafts. Tab removal
+                gained an explicit destructive confirmation.
+              </p>
+            </article>
+            <article class="milestone">
+              <span class="phase">Phase 04</span>
+              <h3>Tooling</h3>
+              <p>
+                <code>pkg-config</code> supplies GTK flags; a compilation
+                database aligns Clangd and the real compiler.
+              </p>
+            </article>
+            <article class="milestone">
+              <span class="phase">Phase 05</span>
+              <h3>Modern GTK</h3>
+              <p>
+                Deprecated chooser and message APIs were replaced by
+                asynchronous <code>GtkFileDialog</code> and
+                <code>GtkAlertDialog</code>.
+              </p>
+            </article>
+            <article class="milestone">
+              <span class="phase">Phase 06</span>
+              <h3>Native polish</h3>
+              <p>
+                Hardcoded light colors were removed for system-theme
+                inheritance, then wraparound keyboard tab navigation was added.
+              </p>
+            </article>
+            <article class="milestone">
+              <span class="phase">Phase 07</span>
+              <h3>Windows release</h3>
+              <p>
+                A GUI-subsystem build, executable resources, DPI manifest,
+                portable GTK bundle, embedded editor font, licenses, and CI
+                artifact workflow completed the cross-platform release path.
+              </p>
+            </article>
+            <article class="milestone">
+              <span class="phase">Phase 08</span>
+              <h3>Crisp shell icons</h3>
+              <p>
+                Size-specific 16–256 pixel artwork now feeds both GTK resources
+                and the Windows ICO, avoiding runtime downscaling in taskbars
+                and window switchers.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section id="decisions">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">06 · Engineering decisions</span>
+              <h2>Small choices carry the product.</h2>
+            </div>
+            <p class="section-summary">
+              The implementation favors directness, recoverability, and
+              GTK-native behavior over abstraction.
+            </p>
+          </div>
+          <div class="decision-grid">
+            <article class="card decision">
+              <span class="choice">Files over SQLite</span>
+              <h3>Inspectability wins</h3>
+              <p>
+                Drafts remain ordinary UTF-8 data. No schema, migration, query
+                layer, or database recovery path is needed.
+              </p>
+            </article>
+            <article class="card decision">
+              <span class="choice">IDs over pointers</span>
+              <h3>Async callbacks stay safe</h3>
+              <p>
+                Dialog requests store a tab ID, then look the tab up when the
+                callback fires. A tab may disappear while a dialog is open
+                without leaving a stale tab pointer.
+              </p>
+            </article>
+            <article class="card decision">
+              <span class="choice">GTK actions</span>
+              <h3>One command, many entry points</h3>
+              <p>
+                Header buttons, menu items, and keyboard accelerators all target
+                the same <code>GSimpleAction</code> callbacks.
+              </p>
+            </article>
+            <article class="card decision">
+              <span class="choice">Theme inheritance</span>
+              <h3>Native contrast by default</h3>
+              <p>
+                CSS controls only spacing and typography. GTK remains
+                responsible for surfaces, text, selection, and symbolic icon
+                colors.
+              </p>
+            </article>
+            <article class="card decision">
+              <span class="choice">Explicit ownership</span>
+              <h3>C memory stays legible</h3>
+              <p>
+                Tab cleanup removes timers and frees owned strings, while
+                <code>g_autofree</code> and <code>g_autoptr</code> handle
+                short-lived values and GObjects.
+              </p>
+            </article>
+            <article class="card decision">
+              <span class="choice">Modulo navigation</span>
+              <h3>Tab switching wraps</h3>
+              <p>
+                The next index is
+                <code>(current + offset + count) % count</code>, supporting
+                forward and backward movement with one helper.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section id="code-map">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">07 · Code map</span>
+              <h2>The complete project surface.</h2>
+            </div>
+            <p class="section-summary">
+              The application stays intentionally flat: one implementation file
+              and a few integration artifacts.
+            </p>
+          </div>
+          <table class="file-map">
+            <thead>
+              <tr>
+                <th>File</th>
+                <th>Development role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>main.c</td>
+                <td>
+                  State structures, GTK widget construction, actions,
+                  persistence, dialogs, auto-save, and lifecycle.
+                </td>
+              </tr>
+              <tr>
+                <td>Makefile</td>
+                <td>
+                  Queries GTK through <code>pkg-config</code>, compiles C11, and
+                  defines run/install targets.
+                </td>
+              </tr>
+              <tr>
+                <td>scratchpad.desktop</td>
+                <td>
+                  Integrates the binary with Linux application launchers and
+                  editor categories.
+                </td>
+              </tr>
+              <tr>
+                <td>compile_commands.json</td>
+                <td>
+                  Gives Clangd the same GTK include paths used by the real
+                  build.
+                </td>
+              </tr>
+              <tr>
+                <td>README.md</td>
+                <td>
+                  Records build requirements, storage location, features, and
+                  shortcuts.
+                </td>
+              </tr>
+              <tr>
+                <td>assets/</td>
+                <td>
+                  Contains application artwork plus the embedded JetBrains Mono
+                  font, its OFL license, and the GResource manifest.
+                </td>
+              </tr>
+              <tr>
+                <td>windows/</td>
+                <td>
+                  Defines Windows version resources, executable manifest, and
+                  release verification guide.
+                </td>
+              </tr>
+              <tr>
+                <td>scripts/generate-icons.py</td>
+                <td>
+                  Produces sharpened size-specific PNG layers and the matching
+                  multi-resolution Windows ICO.
+                </td>
+              </tr>
+              <tr>
+                <td>scripts/package-windows.sh</td>
+                <td>
+                  Assembles a relocatable GTK runtime bundle and portable
+                  release ZIP.
+                </td>
+              </tr>
+              <tr>
+                <td>.github/workflows/</td>
+                <td>
+                  Builds the Windows artifact automatically for tags and manual
+                  runs.
+                </td>
+              </tr>
+              <tr>
+                <td>index.html</td>
+                <td>This implementation-focused development report.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <footer>
+          <span>Scratchpad development report</span>
+          <span>Built from the current source · 22 August 2026</span>
+        </footer>
+      </main>
+    </div>
+
+    <script>
+      const root = document.documentElement;
+      const toggle = document.querySelector(".theme-toggle");
+      const storedTheme = localStorage.getItem("scratchpad-report-theme");
+      if (storedTheme) root.dataset.theme = storedTheme;
+
+      toggle.addEventListener("click", () => {
+        const systemDark = matchMedia("(prefers-color-scheme: dark)").matches;
+        const currentlyDark = root.dataset.theme
+          ? root.dataset.theme === "dark"
+          : systemDark;
+        root.dataset.theme = currentlyDark ? "light" : "dark";
+        localStorage.setItem("scratchpad-report-theme", root.dataset.theme);
+      });
+
+      const links = [...document.querySelectorAll("nav a")];
+      const sections = links
+        .map((link) => document.querySelector(link.getAttribute("href")))
+        .filter(Boolean);
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (!visible) return;
+          links.forEach((link) => {
+            const active =
+              link.getAttribute("href") === `#${visible.target.id}`;
+            link.classList.toggle("active", active);
+            if (active) link.setAttribute("aria-current", "location");
+            else link.removeAttribute("aria-current");
+          });
+        },
+        { rootMargin: "-20% 0px -65% 0px", threshold: [0, 0.2, 0.6] },
+      );
+
+      sections.forEach((section) => observer.observe(section));
+    </script>
+  </body>
+</html>

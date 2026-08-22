@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Scratchpad
+Comment=An endless, auto-saved place for notes
+Exec=scratchpad
+Icon=com.example.Scratchpad
+Terminal=false
+Type=Application
+Categories=Utility;TextEditor;
+Keywords=notes;text;editor;scratchpad;
+StartupNotify=true

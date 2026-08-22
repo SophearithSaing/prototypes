@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/example/Scratchpad">
+    <file alias="fonts/JetBrainsMono-Regular.ttf">fonts/JetBrainsMono-Regular.ttf</file>
+    <file alias="icons/16x16/apps/com.example.Scratchpad.png">scratchpad-16.png</file>
+    <file alias="icons/24x24/apps/com.example.Scratchpad.png">scratchpad-24.png</file>
+    <file alias="icons/32x32/apps/com.example.Scratchpad.png">scratchpad-32.png</file>
+    <file alias="icons/48x48/apps/com.example.Scratchpad.png">scratchpad-48.png</file>
+    <file alias="icons/64x64/apps/com.example.Scratchpad.png">scratchpad-64.png</file>
+    <file alias="icons/128x128/apps/com.example.Scratchpad.png">scratchpad-128.png</file>
+    <file alias="icons/256x256/apps/com.example.Scratchpad.png">scratchpad-256.png</file>
+  </gresource>
+</gresources>
