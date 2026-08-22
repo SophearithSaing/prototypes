@@ -1,0 +1,31 @@
+# Wails build output
+/build/bin/
+/Packet
+/packet
+
+# Frontend dependencies and generated output
+/frontend/node_modules/
+/frontend/dist/
+/frontend/wailsjs/
+
+# Local environment and secret files
+.env
+.env.*
+!.env.example
+
+# Go test/build artifacts
+*.test
+*.out
+coverage.*
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*~
+
+# IDE and operating-system metadata
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
