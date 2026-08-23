@@ -150,6 +150,14 @@ export const projects = [
   { name: 'Signal Console', href: '#project-signal' },
 ] as const
 
+export const githubPulse = {
+  profileUrl: 'https://github.com/alexrivera?tab=overview',
+  handle: '@alexrivera',
+  totalContributions: 842,
+  currentStreak: 18,
+  activity: [0, 2, 4, 1, 0, 3, 6, 2, 1, 5, 3, 0, 4, 7, 2, 5, 1, 3, 6, 4, 0, 2, 7, 5, 3, 1, 4, 6],
+} as const
+
 export function validateResumeData() {
   const milestoneIds = new Set(milestones.map(({ id }) => id))
   const itemIds = [...milestones, ...skills].map(({ id }) => id)
