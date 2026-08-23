@@ -765,8 +765,9 @@
             <span class="fact">C11</span>
             <span class="fact">GTK 4.12+</span>
             <span class="fact">GLib / GIO</span>
-            <span class="fact">729 lines of authored C</span>
+            <span class="fact">844 lines of authored C</span>
             <span class="fact">0 database dependencies</span>
+            <span class="fact">8–32 pt adjustable type</span>
           </div>
         </header>
 
@@ -832,8 +833,8 @@
               <div class="node">
                 <code>ScratchpadApp</code><strong>Shared state</strong
                 ><span
-                  >Tracks the notebook, tabs array, status label, and
-                  persistence paths.</span
+                  >Tracks the notebook, tabs array, status label, editor text
+                  size, CSS provider, and persistence paths.</span
                 >
               </div>
               <div class="arrow" aria-hidden="true">→</div>
@@ -887,15 +888,18 @@ typedef struct {
               <p>
                 The app struct supplies the context shared by all tabs: the GTK
                 application and window, notebook, status surface, ordered
-                pointer array, and session paths.
+                pointer array, session paths, and shared editor typography.
               </p>
               <pre>
 struct _ScratchpadApp {
   GtkApplication *application;
   GtkWidget *notebook;
+  GtkCssProvider *css_provider;
   GPtrArray *tabs;
   char *data_dir;
   char *session_path;
+  int font_size_pt;
+  double zoom_scroll_accumulator;
 };</pre>
             </article>
           </div>
@@ -1017,7 +1021,8 @@ static void buffer_changed_cb(
               <h3>One key file describes the session</h3>
               <p>
                 <code>GKeyFile</code> records ordered tab IDs, display titles,
-                optional export paths, and the active tab index.
+                optional export paths, the active tab index, and the preferred
+                editor text size.
               </p>
               <h3>Restore rebuilds normal tabs</h3>
               <p>
@@ -1032,6 +1037,7 @@ static void buffer_changed_cb(
 [session]
 count=2
 active=1
+font-size=14
 
 [tab-0]
 id=4b2c30ab-…
@@ -1122,6 +1128,15 @@ export-path=/home/user/Documents/ideas.txt</pre>
                 and window switchers.
               </p>
             </article>
+            <article class="milestone">
+              <span class="phase">Phase 09</span>
+              <h3>Adjustable text</h3>
+              <p>
+                <code>Ctrl+wheel</code>, <code>Ctrl++</code>,
+                <code>Ctrl+-</code>, and <code>Ctrl+0</code> update a shared CSS
+                provider from 8–32 pt. The selected size is restored on launch.
+              </p>
+            </article>
           </div>
         </section>
 
@@ -1166,9 +1181,9 @@ export-path=/home/user/Documents/ideas.txt</pre>
               <span class="choice">Theme inheritance</span>
               <h3>Native contrast by default</h3>
               <p>
-                CSS controls only spacing and typography. GTK remains
-                responsible for surfaces, text, selection, and symbolic icon
-                colors.
+                A small dynamic CSS provider controls spacing, font family, and
+                the current editor size. GTK remains responsible for surfaces,
+                text, selection, and symbolic icon colors.
               </p>
             </article>
             <article class="card decision">
@@ -1214,8 +1229,9 @@ export-path=/home/user/Documents/ideas.txt</pre>
               <tr>
                 <td>main.c</td>
                 <td>
-                  State structures, GTK widget construction, actions,
-                  persistence, dialogs, auto-save, and lifecycle.
+                  State structures, GTK widget construction, actions, input
+                  controllers, dynamic typography, persistence, dialogs,
+                  auto-save, and lifecycle.
                 </td>
               </tr>
               <tr>
@@ -1291,7 +1307,7 @@ export-path=/home/user/Documents/ideas.txt</pre>
 
         <footer>
           <span>Scratchpad development report</span>
-          <span>Built from the current source · 22 August 2026</span>
+          <span>Built from the current source · 23 August 2026</span>
         </footer>
       </main>
     </div>

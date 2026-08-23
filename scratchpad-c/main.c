@@ -11,6 +11,9 @@
 
 #define APP_ID "com.example.Scratchpad"
 #define AUTOSAVE_DELAY_MS 450
+#define DEFAULT_FONT_SIZE_PT 12
+#define MIN_FONT_SIZE_PT 8
+#define MAX_FONT_SIZE_PT 32
 #define FONT_RESOURCE_PATH                                                    \
   "/com/example/Scratchpad/fonts/JetBrainsMono-Regular.ttf"
 #define FONT_FILENAME "JetBrainsMono-Regular.ttf"
@@ -35,10 +38,13 @@ struct _ScratchpadApp {
   GtkWidget *window;
   GtkWidget *notebook;
   GtkWidget *status_label;
+  GtkCssProvider *css_provider;
   GPtrArray *tabs;
   char *data_dir;
   char *session_path;
   guint next_note_number;
+  int font_size_pt;
+  double zoom_scroll_accumulator;
 };
 
 typedef struct {
@@ -50,6 +56,17 @@ static void save_session(ScratchpadApp *app);
 static ScratchpadTab *new_tab(ScratchpadApp *app, const char *title,
                               const char *id, const char *export_path,
                               const char *initial_text);
+
+static void update_css(ScratchpadApp *app) {
+  g_autofree char *css = g_strdup_printf(
+      "notebook > header tab { padding: 7px 10px; }"
+      "textview, textview text { font-family: \"JetBrains Mono\", monospace; "
+      "font-size: %dpt; }"
+      ".status { opacity: .62; font-size: 9pt; padding: 5px 10px; }",
+      app->font_size_pt);
+
+  gtk_css_provider_load_from_string(app->css_provider, css);
+}
 
 static void set_status(ScratchpadApp *app, const char *text) {
   gtk_label_set_text(GTK_LABEL(app->status_label), text);
@@ -135,6 +152,8 @@ static void save_session(ScratchpadApp *app) {
   g_key_file_set_integer(
       key_file, "session", "active",
       gtk_notebook_get_current_page(GTK_NOTEBOOK(app->notebook)));
+  g_key_file_set_integer(key_file, "session", "font-size",
+                         app->font_size_pt);
 
   for (guint i = 0; i < app->tabs->len; i++) {
     ScratchpadTab *tab = g_ptr_array_index(app->tabs, i);
@@ -362,6 +381,66 @@ static void previous_tab_action_cb(GSimpleAction *action, GVariant *parameter,
   select_relative_tab(user_data, -1);
 }
 
+static void set_font_size(ScratchpadApp *app, int font_size_pt) {
+  int clamped_size = CLAMP(font_size_pt, MIN_FONT_SIZE_PT, MAX_FONT_SIZE_PT);
+
+  if (clamped_size == app->font_size_pt)
+    return;
+
+  app->font_size_pt = clamped_size;
+  update_css(app);
+  save_session(app);
+
+  g_autofree char *message =
+      g_strdup_printf("Text size: %d pt", app->font_size_pt);
+  set_status(app, message);
+}
+
+static void zoom_in_action_cb(GSimpleAction *action, GVariant *parameter,
+                              gpointer user_data) {
+  ScratchpadApp *app = user_data;
+  (void)action;
+  (void)parameter;
+  set_font_size(app, app->font_size_pt + 1);
+}
+
+static void zoom_out_action_cb(GSimpleAction *action, GVariant *parameter,
+                               gpointer user_data) {
+  ScratchpadApp *app = user_data;
+  (void)action;
+  (void)parameter;
+  set_font_size(app, app->font_size_pt - 1);
+}
+
+static void zoom_reset_action_cb(GSimpleAction *action, GVariant *parameter,
+                                 gpointer user_data) {
+  (void)action;
+  (void)parameter;
+  set_font_size(user_data, DEFAULT_FONT_SIZE_PT);
+}
+
+static gboolean text_view_scroll_cb(GtkEventControllerScroll *controller,
+                                    double dx, double dy,
+                                    gpointer user_data) {
+  ScratchpadApp *app = user_data;
+  GdkModifierType modifiers = gtk_event_controller_get_current_event_state(
+      GTK_EVENT_CONTROLLER(controller));
+  (void)dx;
+
+  if ((modifiers & GDK_CONTROL_MASK) == 0) {
+    app->zoom_scroll_accumulator = 0.0;
+    return FALSE;
+  }
+
+  app->zoom_scroll_accumulator += dy;
+  int steps = (int)app->zoom_scroll_accumulator;
+  if (steps != 0) {
+    app->zoom_scroll_accumulator -= steps;
+    set_font_size(app, app->font_size_pt - steps);
+  }
+  return TRUE;
+}
+
 static ScratchpadTab *new_tab(ScratchpadApp *app, const char *title,
                               const char *id, const char *export_path,
                               const char *initial_text) {
@@ -371,6 +450,8 @@ static ScratchpadTab *new_tab(ScratchpadApp *app, const char *title,
   GtkWidget *tab_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
   GtkWidget *close_button =
       gtk_button_new_from_icon_name("window-close-symbolic");
+  GtkEventController *scroll_controller = gtk_event_controller_scroll_new(
+      GTK_EVENT_CONTROLLER_SCROLL_VERTICAL);
   g_autofree char *generated_title = NULL;
   int page;
 
@@ -395,6 +476,11 @@ static ScratchpadTab *new_tab(ScratchpadApp *app, const char *title,
   gtk_text_view_set_right_margin(GTK_TEXT_VIEW(view), 20);
   gtk_text_view_set_top_margin(GTK_TEXT_VIEW(view), 18);
   gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW(view), 18);
+  gtk_event_controller_set_propagation_phase(scroll_controller,
+                                             GTK_PHASE_CAPTURE);
+  g_signal_connect(scroll_controller, "scroll",
+                   G_CALLBACK(text_view_scroll_cb), app);
+  gtk_widget_add_controller(view, scroll_controller);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scroller), view);
 
   gtk_widget_set_tooltip_text(close_button, "Remove tab");
@@ -481,6 +567,14 @@ static void load_session(ScratchpadApp *app) {
 
   count = g_key_file_get_integer(key_file, "session", "count", NULL);
   active = g_key_file_get_integer(key_file, "session", "active", NULL);
+  if (g_key_file_has_key(key_file, "session", "font-size", NULL)) {
+    int font_size =
+        g_key_file_get_integer(key_file, "session", "font-size", NULL);
+    if (font_size >= MIN_FONT_SIZE_PT && font_size <= MAX_FONT_SIZE_PT) {
+      app->font_size_pt = font_size;
+      update_css(app);
+    }
+  }
   for (int i = 0; i < count; i++) {
     g_autofree char *group = g_strdup_printf("tab-%d", i);
     g_autofree char *id = g_key_file_get_string(key_file, group, "id", NULL);
@@ -576,19 +670,12 @@ static gboolean install_bundled_font(void) {
   return TRUE;
 }
 
-static void install_css(void) {
-  static const char css[] =
-      "notebook > header tab { padding: 7px 10px; }"
-      "textview, textview text { font-family: \"JetBrains Mono\", monospace; "
-      "font-size: 12pt; }"
-      ".status { opacity: .62; font-size: 9pt; padding: 5px 10px; }";
-  GtkCssProvider *provider = gtk_css_provider_new();
-
-  gtk_css_provider_load_from_string(provider, css);
+static void install_css(ScratchpadApp *app) {
+  app->css_provider = gtk_css_provider_new();
+  update_css(app);
   gtk_style_context_add_provider_for_display(
-      gdk_display_get_default(), GTK_STYLE_PROVIDER(provider),
+      gdk_display_get_default(), GTK_STYLE_PROVIDER(app->css_provider),
       GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-  g_object_unref(provider);
 }
 
 static void install_app_icon(GtkWindow *window) {
@@ -657,6 +744,9 @@ static void activate_cb(GtkApplication *application, gpointer user_data) {
   g_menu_append(menu, "Save As…", "app.save-as");
   g_menu_append(menu, "Next Tab", "app.next-tab");
   g_menu_append(menu, "Previous Tab", "app.previous-tab");
+  g_menu_append(menu, "Increase Text Size", "app.zoom-in");
+  g_menu_append(menu, "Decrease Text Size", "app.zoom-out");
+  g_menu_append(menu, "Reset Text Size", "app.zoom-reset");
   g_menu_append(menu, "Remove Tab…", "app.close-tab");
   menu_button = gtk_menu_button_new();
   gtk_menu_button_set_icon_name(GTK_MENU_BUTTON(menu_button),
@@ -686,12 +776,17 @@ static void activate_cb(GtkApplication *application, gpointer user_data) {
 
   g_signal_connect(app->window, "close-request",
                    G_CALLBACK(window_close_request_cb), app);
-  install_css();
+  install_css(app);
   load_session(app);
   gtk_window_present(GTK_WINDOW(app->window));
 }
 
 static ScratchpadApp *scratchpad_app_new(void) {
+  static const char *zoom_in_accelerators[] = {
+      "<Control>plus", "<Control><Shift>plus", "<Control>equal",
+      "<Control>KP_Add", NULL};
+  static const char *zoom_out_accelerators[] = {
+      "<Control>minus", "<Control>KP_Subtract", NULL};
   ScratchpadApp *app = g_new0(ScratchpadApp, 1);
   g_autofree char *tabs_dir = NULL;
 
@@ -704,6 +799,7 @@ static ScratchpadApp *scratchpad_app_new(void) {
   app->data_dir = g_build_filename(g_get_user_data_dir(), "scratchpad", NULL);
   app->session_path = g_build_filename(app->data_dir, "session.ini", NULL);
   app->next_note_number = 1;
+  app->font_size_pt = DEFAULT_FONT_SIZE_PT;
   tabs_dir = g_build_filename(app->data_dir, "tabs", NULL);
   if (g_mkdir_with_parents(tabs_dir, 0700) != 0)
     g_warning("Could not create data directory %s", tabs_dir);
@@ -716,6 +812,14 @@ static ScratchpadApp *scratchpad_app_new(void) {
   add_action(app, "previous-tab", G_CALLBACK(previous_tab_action_cb),
              "<Control><Shift>Tab");
   add_action(app, "close-tab", G_CALLBACK(close_tab_action_cb), "<Control>w");
+  add_action(app, "zoom-in", G_CALLBACK(zoom_in_action_cb), NULL);
+  gtk_application_set_accels_for_action(app->application, "app.zoom-in",
+                                        zoom_in_accelerators);
+  add_action(app, "zoom-out", G_CALLBACK(zoom_out_action_cb), NULL);
+  gtk_application_set_accels_for_action(app->application, "app.zoom-out",
+                                        zoom_out_accelerators);
+  add_action(app, "zoom-reset", G_CALLBACK(zoom_reset_action_cb),
+             "<Control>0");
   g_signal_connect(app->application, "activate", G_CALLBACK(activate_cb), app);
   return app;
 }
@@ -724,6 +828,7 @@ static void scratchpad_app_free(ScratchpadApp *app) {
   for (guint i = 0; i < app->tabs->len; i++)
     tab_free(g_ptr_array_index(app->tabs, i));
   g_ptr_array_free(app->tabs, TRUE);
+  g_clear_object(&app->css_provider);
   g_clear_object(&app->application);
   g_free(app->data_dir);
   g_free(app->session_path);

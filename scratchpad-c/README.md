@@ -12,6 +12,7 @@ also be exported to ordinary text files whenever you want.
 - Save and Save As to any local file
 - Confirmation before an auto-saved tab is permanently removed
 - Embedded JetBrains Mono editor font with no system-wide installation
+- Adjustable editor text size, remembered between launches
 
 Drafts live in `$XDG_DATA_HOME/scratchpad` (normally
 `~/.local/share/scratchpad`). This private app-data folder is created with mode
@@ -66,14 +67,18 @@ restart the language server or reload the IDE window once.
 
 ## Shortcuts
 
-| Shortcut         | Action                                     |
-| ---------------- | ------------------------------------------ |
-| `Ctrl+N`         | New tab                                    |
-| `Ctrl+S`         | Save to the current file, or choose one    |
-| `Ctrl+Shift+S`   | Save As                                    |
-| `Ctrl+Tab`       | Switch to the next tab                     |
-| `Ctrl+Shift+Tab` | Switch to the previous tab                 |
-| `Ctrl+W`         | Remove the current tab (with confirmation) |
+| Shortcut           | Action                                     |
+| ------------------ | ------------------------------------------ |
+| `Ctrl+N`           | New tab                                    |
+| `Ctrl+S`           | Save to the current file, or choose one    |
+| `Ctrl+Shift+S`     | Save As                                    |
+| `Ctrl+Tab`         | Switch to the next tab                     |
+| `Ctrl+Shift+Tab`   | Switch to the previous tab                 |
+| `Ctrl+W`           | Remove the current tab (with confirmation) |
+| `Ctrl+mouse wheel` | Increase or decrease the editor text size  |
+| `Ctrl++`           | Increase the editor text size              |
+| `Ctrl+-`           | Decrease the editor text size              |
+| `Ctrl+0`           | Reset the editor text size                 |
 
 To install it system-wide, run `sudo make install`. Override `PREFIX` for a
 different destination, for example `make install PREFIX="$HOME/.local"`.
