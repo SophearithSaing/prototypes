@@ -1,0 +1,1630 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Alex Rivera's personal engineering notebook: field notes on products, systems, and technical growth."
+    />
+    <meta name="theme-color" content="#f3eddf" />
+    <title>Alex Rivera | Engineering Notebook</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f3eddf;
+        --sheet: #fbf7ed;
+        --ink: #253039;
+        --muted: #687078;
+        --blue: #1f6680;
+        --red: #b24b4b;
+        --green: #4d765c;
+        --yellow: #f0d97d;
+        --rule: rgba(31, 102, 128, 0.14);
+        --border: rgba(37, 48, 57, 0.28);
+        --serif: Georgia, 'Times New Roman', Times, serif;
+        --sans: 'Arial Narrow', 'Aptos Narrow', 'Helvetica Neue', Arial, sans-serif;
+        --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+        --hand: 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-width: 320px;
+        scroll-behavior: smooth;
+        scroll-padding-top: 82px;
+      }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(
+            90deg,
+            transparent 0 7.5vw,
+            rgba(178, 75, 75, 0.2) 7.5vw 7.6vw,
+            transparent 7.6vw
+          ),
+          repeating-linear-gradient(to bottom, var(--paper) 0, var(--paper) 31px, var(--rule) 32px);
+        font-family: var(--serif);
+        font-size: 16px;
+        line-height: 1.65;
+      }
+
+      body::after {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        content: '';
+        opacity: 0.13;
+        background-image: radial-gradient(rgba(37, 48, 57, 0.5) 0.4px, transparent 0.6px);
+        background-size: 6px 6px;
+        pointer-events: none;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      button,
+      a {
+        font: inherit;
+      }
+
+      a:focus-visible,
+      button:focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 4px;
+      }
+
+      .skip-link {
+        position: fixed;
+        top: 0.75rem;
+        left: 0.75rem;
+        z-index: 100;
+        padding: 0.65rem 0.9rem;
+        color: white;
+        background: var(--blue);
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        text-decoration: none;
+        transform: translateY(-160%);
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        display: grid;
+        grid-template-columns: minmax(250px, 1fr) auto minmax(150px, 1fr);
+        align-items: center;
+        min-height: 68px;
+        padding: 0 3.5vw;
+        border-bottom: 1px solid var(--border);
+        background: rgba(243, 237, 223, 0.94);
+        backdrop-filter: blur(14px);
+      }
+
+      .identity {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        width: fit-content;
+        text-decoration: none;
+      }
+
+      .identity-mark {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border: 1px solid var(--ink);
+        color: var(--blue);
+        background: var(--sheet);
+        font-family: var(--hand);
+        font-size: 0.75rem;
+        box-shadow: 3px 3px 0 rgba(37, 48, 57, 0.12);
+        transform: rotate(-2deg);
+      }
+
+      .identity-copy {
+        display: grid;
+        line-height: 1.15;
+      }
+
+      .identity-copy strong {
+        font-size: 0.86rem;
+      }
+
+      .identity-copy small {
+        margin-top: 0.2rem;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.54rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .site-nav {
+        display: flex;
+        gap: clamp(1rem, 2.3vw, 2.3rem);
+      }
+
+      .site-nav a {
+        position: relative;
+        color: var(--muted);
+        font-family: var(--sans);
+        font-size: 0.66rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .site-nav a::after {
+        position: absolute;
+        right: 0;
+        bottom: -0.45rem;
+        left: 0;
+        height: 5px;
+        content: '';
+        background: rgba(240, 217, 125, 0.85);
+        transform: scaleX(0) rotate(-1deg);
+        transform-origin: left;
+        transition: transform 160ms ease;
+      }
+
+      .site-nav a:hover,
+      .site-nav a.is-active {
+        color: var(--ink);
+      }
+
+      .site-nav a:hover::after,
+      .site-nav a.is-active::after {
+        transform: scaleX(1) rotate(-1deg);
+      }
+
+      .header-status {
+        justify-self: end;
+        color: var(--green);
+        font-family: var(--hand);
+        font-size: 0.7rem;
+        text-decoration: none;
+        transform: rotate(-1deg);
+      }
+
+      .header-status::before {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        margin-right: 0.45rem;
+        border-radius: 50%;
+        content: '';
+        background: currentColor;
+      }
+
+      .menu-button {
+        display: none;
+      }
+
+      main {
+        overflow: hidden;
+      }
+
+      .page {
+        width: min(1140px, calc(100% - 9vw));
+        margin: 0 auto;
+      }
+
+      .eyebrow,
+      .note-number,
+      .label,
+      .entry-label {
+        color: var(--red);
+        font-family: var(--mono);
+        font-size: 0.61rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .hero {
+        position: relative;
+        display: grid;
+        grid-template-columns: 120px minmax(0, 1fr) 270px;
+        gap: clamp(2rem, 5vw, 5.5rem);
+        align-items: center;
+        min-height: calc(100svh - 68px);
+        padding: clamp(5rem, 9vw, 8rem) 0;
+      }
+
+      .page-index {
+        align-self: start;
+        padding-top: 0.75rem;
+      }
+
+      .page-index p {
+        margin: 0 0 1.6rem;
+        padding-top: 0.55rem;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.56rem;
+        line-height: 1.55;
+        text-transform: uppercase;
+      }
+
+      .page-index strong {
+        display: block;
+        margin-bottom: 0.25rem;
+        color: var(--blue);
+      }
+
+      .opening-note {
+        position: relative;
+      }
+
+      .opening-note::before {
+        position: absolute;
+        top: -1.5rem;
+        left: -2.2rem;
+        color: rgba(178, 75, 75, 0.48);
+        font-family: var(--hand);
+        font-size: 1.8rem;
+        content: '01';
+        transform: rotate(-8deg);
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: var(--blue);
+      }
+
+      h1 {
+        max-width: 760px;
+        margin: 1.2rem 0 1.7rem;
+        font-size: clamp(4rem, 7.4vw, 7.5rem);
+        font-weight: 400;
+        letter-spacing: -0.06em;
+        line-height: 0.86;
+      }
+
+      h1 em {
+        position: relative;
+        color: var(--blue);
+        font-style: italic;
+        white-space: nowrap;
+      }
+
+      h1 em::after {
+        position: absolute;
+        right: -0.05em;
+        bottom: 0.04em;
+        left: 0;
+        z-index: -1;
+        height: 0.19em;
+        content: '';
+        background: rgba(240, 217, 125, 0.78);
+        transform: rotate(-1deg);
+      }
+
+      .lede {
+        max-width: 650px;
+        margin: 0;
+        color: #4f575c;
+        font-size: clamp(1rem, 1.3vw, 1.1rem);
+        line-height: 1.8;
+      }
+
+      .hero-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.4rem;
+        margin-top: 2.2rem;
+      }
+
+      .ink-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding-bottom: 0.15rem;
+        border-bottom: 1px solid currentColor;
+        color: var(--blue);
+        font-family: var(--mono);
+        font-size: 0.63rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .ink-link:hover {
+        color: var(--red);
+      }
+
+      .sticky-note {
+        position: relative;
+        align-self: center;
+        padding: 2.2rem 1.5rem 1.5rem;
+        background: #f5e69c;
+        box-shadow: 8px 10px 0 rgba(37, 48, 57, 0.12);
+        transform: rotate(1.5deg);
+      }
+
+      .sticky-note::before {
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        width: 72px;
+        height: 24px;
+        content: '';
+        background: rgba(213, 201, 166, 0.72);
+        transform: translateX(-50%) rotate(-2deg);
+      }
+
+      .sticky-note h2 {
+        margin: 0.75rem 0 0;
+        font-family: var(--hand);
+        font-size: 1.65rem;
+        font-weight: 400;
+        line-height: 1.25;
+      }
+
+      .sticky-note p {
+        margin: 0.8rem 0 0;
+        color: #55594e;
+        font-size: 0.82rem;
+      }
+
+      .sticky-note .available {
+        display: block;
+        margin-top: 1.2rem;
+        color: var(--green);
+        font-family: var(--hand);
+        font-size: 0.68rem;
+      }
+
+      .section {
+        padding: clamp(5rem, 10vw, 9rem) 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: 120px minmax(0, 0.75fr) minmax(250px, 0.4fr);
+        gap: clamp(2rem, 5vw, 5.5rem);
+        align-items: end;
+        margin-bottom: clamp(3rem, 6vw, 5rem);
+      }
+
+      .note-number {
+        align-self: start;
+        color: var(--blue);
+      }
+
+      .section-heading h2 {
+        margin: 0;
+        font-size: clamp(2.8rem, 5vw, 5.2rem);
+        font-weight: 400;
+        letter-spacing: -0.05em;
+        line-height: 0.94;
+      }
+
+      .section-heading h2 em {
+        color: var(--red);
+        font-family: var(--hand);
+        font-size: 0.64em;
+        font-style: normal;
+        white-space: nowrap;
+      }
+
+      .section-heading > p:last-child {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .principle-board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.3rem;
+      }
+
+      .principle {
+        position: relative;
+        min-height: 270px;
+        padding: 2rem 1.6rem 1.5rem;
+        border: 1px solid var(--border);
+        background: rgba(251, 247, 237, 0.82);
+        box-shadow: 5px 6px 0 rgba(37, 48, 57, 0.08);
+      }
+
+      .principle:nth-child(2) {
+        transform: translateY(1.25rem) rotate(-0.5deg);
+      }
+
+      .principle::before {
+        position: absolute;
+        top: -9px;
+        left: 1.5rem;
+        width: 56px;
+        height: 18px;
+        content: '';
+        background: rgba(218, 208, 181, 0.75);
+        transform: rotate(-3deg);
+      }
+
+      .principle-index {
+        color: var(--red);
+        font-family: var(--hand);
+        font-size: 0.8rem;
+      }
+
+      .principle h3 {
+        margin: 2.8rem 0 0.8rem;
+        font-size: 1.65rem;
+        font-weight: 400;
+        line-height: 1.1;
+      }
+
+      .principle p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.84rem;
+      }
+
+      .field-timeline {
+        position: relative;
+      }
+
+      .field-timeline::before {
+        position: absolute;
+        top: 2rem;
+        bottom: 2rem;
+        left: calc(88px + 1.1rem);
+        width: 2px;
+        content: '';
+        background: linear-gradient(var(--blue), var(--red));
+      }
+
+      .field-entry {
+        display: grid;
+        grid-template-columns: 88px 2.2rem minmax(210px, 0.5fr) 1fr;
+        gap: 1.1rem;
+        padding: 2.2rem 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .field-entry:last-child {
+        border-bottom: 1px solid var(--border);
+      }
+
+      .field-year {
+        color: var(--blue);
+        font-family: var(--hand);
+        font-size: 1.55rem;
+        text-align: right;
+      }
+
+      .field-entry.current .field-year {
+        color: var(--red);
+      }
+
+      .field-marker {
+        position: relative;
+        z-index: 1;
+        width: 14px;
+        height: 14px;
+        margin: 0.45rem auto 0;
+        border: 3px solid var(--paper);
+        border-radius: 50%;
+        background: var(--blue);
+        box-shadow: 0 0 0 1px var(--blue);
+      }
+
+      .field-entry.current .field-marker {
+        background: var(--red);
+        box-shadow: 0 0 0 1px var(--red);
+      }
+
+      .role-note {
+        padding: 1.25rem;
+        border: 1px solid var(--border);
+        background: rgba(251, 247, 237, 0.76);
+      }
+
+      .role-note h3 {
+        margin: 0.55rem 0 0;
+        font-size: clamp(1.45rem, 2.1vw, 2rem);
+        font-weight: 400;
+        line-height: 1.05;
+      }
+
+      .role-note p:last-child {
+        margin: 0.85rem 0 0;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .skill-margin {
+        position: relative;
+        padding: 0.6rem 0 0 2.6rem;
+      }
+
+      .skill-margin::before {
+        position: absolute;
+        top: 1.15rem;
+        left: 0;
+        width: 1.9rem;
+        height: 1.2rem;
+        border-top: 1px dashed var(--red);
+        border-left: 1px dashed var(--red);
+        content: '';
+      }
+
+      .skill-margin .entry-label {
+        display: block;
+        margin-bottom: 0.7rem;
+        color: var(--red);
+        font-family: var(--hand);
+        text-transform: none;
+        transform: rotate(-1deg);
+      }
+
+      .skill-notes {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.65rem;
+      }
+
+      .skill-note {
+        display: grid;
+        grid-template-columns: 34px 1fr;
+        align-items: center;
+        gap: 0.65rem;
+        min-height: 58px;
+        padding: 0.55rem 0.65rem;
+        border: 1px solid var(--border);
+        background: #f8f2df;
+        box-shadow: 3px 3px 0 rgba(37, 48, 57, 0.06);
+      }
+
+      .skill-note:nth-child(even) {
+        transform: rotate(0.5deg);
+      }
+
+      .skill-code {
+        display: grid;
+        width: 32px;
+        height: 32px;
+        place-items: center;
+        border: 1px solid var(--blue);
+        color: var(--blue);
+        font-family: var(--mono);
+        font-size: 0.54rem;
+      }
+
+      .skill-note.platform .skill-code {
+        border-color: var(--red);
+        color: var(--red);
+      }
+
+      .skill-note strong,
+      .skill-note small {
+        display: block;
+      }
+
+      .skill-note strong {
+        font-family: var(--sans);
+        font-size: 0.76rem;
+      }
+
+      .skill-note small {
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.45rem;
+        text-transform: uppercase;
+      }
+
+      .topic-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+
+      .topic-card {
+        position: relative;
+        min-height: 350px;
+        padding: 1.6rem;
+        border: 1px solid var(--border);
+        background:
+          linear-gradient(
+            90deg,
+            transparent 2.4rem,
+            rgba(178, 75, 75, 0.14) 2.45rem,
+            transparent 2.5rem
+          ),
+          repeating-linear-gradient(to bottom, var(--sheet) 0, var(--sheet) 27px, var(--rule) 28px);
+        box-shadow: 5px 6px 0 rgba(37, 48, 57, 0.08);
+      }
+
+      .topic-card:nth-child(2) {
+        transform: translateY(1.1rem);
+      }
+
+      .topic-card h3 {
+        margin: 3rem 0 1rem;
+        padding-left: 1.6rem;
+        font-size: clamp(1.8rem, 3vw, 2.8rem);
+        font-weight: 400;
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+
+      .topic-card p {
+        margin: 0;
+        padding-left: 1.6rem;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .topic-keywords {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin: 2rem 0 0 1.6rem;
+        padding: 0;
+        list-style: none;
+      }
+
+      .topic-keywords li {
+        padding: 0.15rem 0.4rem;
+        background: rgba(240, 217, 125, 0.46);
+        font-family: var(--hand);
+        font-size: 0.58rem;
+      }
+
+      .lab-entries {
+        display: grid;
+        gap: 2rem;
+      }
+
+      .lab-entry {
+        position: relative;
+        display: grid;
+        grid-template-columns: 100px minmax(230px, 0.55fr) 1fr;
+        gap: clamp(1.5rem, 4vw, 4rem);
+        padding: clamp(1.7rem, 3.5vw, 3rem);
+        border: 1px solid var(--border);
+        background: rgba(251, 247, 237, 0.78);
+        box-shadow: 7px 8px 0 rgba(37, 48, 57, 0.08);
+      }
+
+      .lab-entry::before {
+        position: absolute;
+        top: -10px;
+        right: 15%;
+        width: 80px;
+        height: 20px;
+        content: '';
+        background: rgba(218, 208, 181, 0.75);
+        transform: rotate(2deg);
+      }
+
+      .entry-ref {
+        color: var(--red);
+        font-family: var(--hand);
+        font-size: 0.72rem;
+        transform: rotate(-2deg);
+      }
+
+      .lab-entry h3 {
+        margin: 0;
+        font-size: clamp(2rem, 3.6vw, 3.6rem);
+        font-weight: 400;
+        letter-spacing: -0.04em;
+        line-height: 0.95;
+      }
+
+      .entry-body > p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .entry-finding {
+        margin-top: 1.3rem;
+        padding: 1rem 1.1rem;
+        border-left: 3px solid var(--yellow);
+        background: rgba(240, 217, 125, 0.18);
+        font-size: 0.78rem;
+      }
+
+      .entry-finding strong {
+        color: var(--blue);
+        font-family: var(--hand);
+        font-weight: 400;
+      }
+
+      .workbench {
+        display: grid;
+        grid-template-columns: 0.55fr 1fr;
+        gap: clamp(2.5rem, 7vw, 7rem);
+        align-items: center;
+        padding: clamp(2rem, 5vw, 4.5rem);
+        border: 1px solid var(--border);
+        background: var(--sheet);
+        box-shadow: 9px 10px 0 rgba(37, 48, 57, 0.1);
+      }
+
+      .workbench-copy h2 {
+        margin: 0.8rem 0 1rem;
+        font-size: clamp(2.7rem, 4.6vw, 4.7rem);
+        font-weight: 400;
+        letter-spacing: -0.05em;
+        line-height: 0.94;
+      }
+
+      .workbench-copy p:not(.label) {
+        margin: 0 0 1.5rem;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .activity-sheet {
+        padding: 1.2rem;
+        border: 1px solid var(--border);
+        background:
+          linear-gradient(rgba(31, 102, 128, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(31, 102, 128, 0.06) 1px, transparent 1px), var(--paper);
+        background-size: 18px 18px;
+      }
+
+      .activity-heading,
+      .activity-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.52rem;
+        text-transform: uppercase;
+      }
+
+      .activity-heading strong,
+      .activity-footer strong {
+        color: var(--blue);
+      }
+
+      .contribution-map {
+        display: grid;
+        grid-template-rows: repeat(7, 1fr);
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        gap: 4px;
+        height: 145px;
+        margin: 1.2rem 0;
+      }
+
+      .day {
+        min-width: 6px;
+        border: 1px solid rgba(37, 48, 57, 0.1);
+        background: rgba(37, 48, 57, 0.035);
+      }
+
+      .day[data-level='1'] {
+        background: rgba(31, 102, 128, 0.2);
+      }
+
+      .day[data-level='2'] {
+        background: rgba(31, 102, 128, 0.46);
+      }
+
+      .day[data-level='3'] {
+        background: rgba(77, 118, 92, 0.65);
+      }
+
+      .day[data-level='4'] {
+        background: var(--green);
+      }
+
+      .contact {
+        display: grid;
+        grid-template-columns: 120px 1fr auto;
+        gap: clamp(2rem, 5vw, 5.5rem);
+        align-items: end;
+      }
+
+      .contact h2 {
+        max-width: 760px;
+        margin: 0;
+        font-size: clamp(3.2rem, 6.2vw, 6.5rem);
+        font-weight: 400;
+        letter-spacing: -0.06em;
+        line-height: 0.88;
+      }
+
+      .contact h2 em {
+        color: var(--red);
+        font-family: var(--hand);
+        font-size: 0.6em;
+        font-style: normal;
+      }
+
+      .contact-note {
+        display: grid;
+        width: 140px;
+        height: 140px;
+        padding: 1rem;
+        place-items: center;
+        color: var(--ink);
+        background: #f5e69c;
+        font-family: var(--hand);
+        font-size: 0.75rem;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: 6px 7px 0 rgba(37, 48, 57, 0.1);
+        transform: rotate(2deg);
+        transition: transform 160ms ease;
+      }
+
+      .contact-note:hover {
+        transform: rotate(-2deg) translateY(-3px);
+      }
+
+      .site-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+        min-height: 86px;
+        padding: 1.5rem 4.5vw;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.52rem;
+        text-transform: uppercase;
+      }
+
+      .site-footer nav {
+        display: flex;
+        gap: 1.25rem;
+      }
+
+      .site-footer a {
+        text-decoration: none;
+      }
+
+      .site-footer a:hover {
+        color: var(--blue);
+      }
+
+      @media (max-width: 980px) {
+        .site-header {
+          grid-template-columns: 1fr auto;
+        }
+
+        .site-nav {
+          position: absolute;
+          top: 68px;
+          right: 0;
+          left: 0;
+          display: grid;
+          gap: 0;
+          padding: 0.75rem 4vw 1.2rem;
+          visibility: hidden;
+          opacity: 0;
+          border-bottom: 1px solid var(--border);
+          background: rgba(243, 237, 223, 0.98);
+          transform: translateY(-8px);
+          transition:
+            opacity 160ms ease,
+            visibility 160ms ease,
+            transform 160ms ease;
+        }
+
+        .site-nav.is-open {
+          visibility: visible;
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        .site-nav a {
+          padding: 0.75rem 0;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .site-nav a::after,
+        .header-status {
+          display: none;
+        }
+
+        .menu-button {
+          display: grid;
+          width: 40px;
+          height: 40px;
+          padding: 9px;
+          place-items: center;
+          border: 1px solid var(--ink);
+          color: var(--ink);
+          background: var(--sheet);
+          cursor: pointer;
+        }
+
+        .menu-button span:not(.visually-hidden) {
+          display: block;
+          width: 100%;
+          height: 1px;
+          background: currentColor;
+        }
+
+        .visually-hidden {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+
+        .hero {
+          grid-template-columns: 90px 1fr;
+        }
+
+        .sticky-note {
+          grid-column: 2;
+          width: min(360px, 100%);
+        }
+
+        .section-heading {
+          grid-template-columns: 90px 1fr;
+        }
+
+        .section-heading > p:last-child {
+          grid-column: 2;
+        }
+
+        .field-entry {
+          grid-template-columns: 72px 2rem minmax(180px, 0.45fr) 1fr;
+          gap: 0.8rem;
+        }
+
+        .field-timeline::before {
+          left: calc(72px + 0.8rem);
+        }
+
+        .skill-notes {
+          grid-template-columns: 1fr;
+        }
+
+        .lab-entry {
+          grid-template-columns: 75px minmax(190px, 0.5fr) 1fr;
+        }
+
+        .workbench {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        body {
+          background:
+            linear-gradient(
+              90deg,
+              transparent 0 14px,
+              rgba(178, 75, 75, 0.18) 14px 15px,
+              transparent 15px
+            ),
+            repeating-linear-gradient(
+              to bottom,
+              var(--paper) 0,
+              var(--paper) 31px,
+              var(--rule) 32px
+            );
+        }
+
+        .page {
+          width: min(100% - 2.5rem, 1140px);
+        }
+
+        .identity-copy small {
+          display: none;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
+          gap: 2.8rem;
+          min-height: auto;
+          padding: 5rem 0 6rem;
+        }
+
+        .opening-note {
+          order: 1;
+        }
+
+        .opening-note::before {
+          top: -2.4rem;
+          right: 0;
+          left: auto;
+        }
+
+        .page-index {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.8rem;
+          order: 2;
+        }
+
+        .sticky-note {
+          grid-column: auto;
+          width: min(330px, 94%);
+          order: 3;
+        }
+
+        h1 {
+          font-size: clamp(3.65rem, 19vw, 5.8rem);
+        }
+
+        h1 em {
+          white-space: normal;
+        }
+
+        .section-heading {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        .section-heading > p:last-child {
+          grid-column: auto;
+        }
+
+        .principle-board,
+        .topic-cards {
+          grid-template-columns: 1fr;
+        }
+
+        .principle:nth-child(2),
+        .topic-card:nth-child(2) {
+          transform: none;
+        }
+
+        .field-timeline::before {
+          left: 6px;
+        }
+
+        .field-entry {
+          grid-template-columns: 14px 1fr;
+          gap: 0.8rem 1rem;
+        }
+
+        .field-year {
+          grid-column: 2;
+          text-align: left;
+        }
+
+        .field-marker {
+          grid-row: 1 / span 3;
+          grid-column: 1;
+          margin-top: 0.45rem;
+        }
+
+        .role-note,
+        .skill-margin {
+          grid-column: 2;
+        }
+
+        .skill-margin {
+          padding-top: 1.5rem;
+          padding-left: 1.4rem;
+        }
+
+        .skill-margin::before {
+          top: 0;
+          width: 1rem;
+        }
+
+        .lab-entry {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        .workbench {
+          padding: 1.5rem;
+        }
+
+        .contribution-map {
+          gap: 3px;
+          height: 115px;
+        }
+
+        .contact {
+          grid-template-columns: 1fr;
+          align-items: start;
+        }
+
+        .contact-note {
+          width: 120px;
+          height: 120px;
+        }
+
+        .site-footer {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 430px) {
+        .page-index {
+          grid-template-columns: 1fr;
+        }
+
+        .page-index p {
+          display: grid;
+          grid-template-columns: 90px 1fr;
+          gap: 1rem;
+        }
+
+        .hero-links,
+        .activity-heading,
+        .activity-footer {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .contribution-map {
+          height: 92px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to notes</a>
+
+    <header class="site-header">
+      <a class="identity" href="#home" aria-label="Alex Rivera, notebook home">
+        <span class="identity-mark">AR</span>
+        <span class="identity-copy">
+          <strong>Alex Rivera</strong>
+          <small>Personal engineering notebook</small>
+        </span>
+      </a>
+
+      <nav id="site-navigation" class="site-nav" aria-label="Notebook sections">
+        <a class="is-active" href="#home">Opening</a>
+        <a href="#principles">Principles</a>
+        <a href="#field-notes">Field notes</a>
+        <a href="#topics">Topics</a>
+        <a href="#experiments">Experiments</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <a class="header-status" href="mailto:hello@alexrivera.dev">open to useful problems</a>
+
+      <button
+        class="menu-button"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-navigation"
+      >
+        <span></span><span></span><span></span>
+        <span class="visually-hidden">Toggle navigation</span>
+      </button>
+    </header>
+
+    <main id="main-content">
+      <section id="home" class="hero page" aria-labelledby="hero-title">
+        <aside class="page-index" aria-label="Notebook metadata">
+          <p><strong>Notebook</strong>AR / 04</p>
+          <p><strong>Started</strong>2019</p>
+          <p><strong>Updated</strong>Aug 2026</p>
+        </aside>
+
+        <div class="opening-note">
+          <p class="eyebrow">Entry 001 / Why I build</p>
+          <h1 id="hero-title">Notes on building software that <em>lasts.</em></h1>
+          <p class="lede">
+            I use this notebook to track the ideas, methods, and lessons behind my work across
+            product interfaces, service architecture, and delivery systems.
+          </p>
+          <div class="hero-links">
+            <a class="ink-link" href="#experiments">Browse experiments <span>-></span></a>
+            <a class="ink-link" href="#field-notes">Follow the timeline <span>-></span></a>
+          </div>
+        </div>
+
+        <aside class="sticky-note" aria-label="Current focus">
+          <span class="label">Currently investigating</span>
+          <h2>How teams keep clarity while products grow.</h2>
+          <p>Lead Engineer at Signal Works, guiding resilient products and technical systems.</p>
+          <span class="available">Available for select collaborations.</span>
+        </aside>
+      </section>
+
+      <section id="principles" class="section">
+        <div class="page">
+          <div class="section-heading">
+            <p class="note-number">Note 01</p>
+            <h2>A few ideas I keep <em>testing.</em></h2>
+            <p>
+              These are working principles rather than doctrine. Each has survived contact with real
+              products, deadlines, and teams.
+            </p>
+          </div>
+
+          <div class="principle-board">
+            <article class="principle">
+              <span class="principle-index">thought no. 1</span>
+              <h3>Clarity compounds.</h3>
+              <p>
+                Legible code, visible system behavior, and explicit decisions make every later
+                change less expensive.
+              </p>
+            </article>
+            <article class="principle">
+              <span class="principle-index">thought no. 2</span>
+              <h3>Quality is a method.</h3>
+              <p>
+                Accessibility, observability, and maintenance belong in the daily process, not in a
+                final cleanup phase.
+              </p>
+            </article>
+            <article class="principle">
+              <span class="principle-index">thought no. 3</span>
+              <h3>Small steps can be ambitious.</h3>
+              <p>
+                A narrow release can still move toward a large idea when the underlying direction is
+                understood.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="field-notes" class="section">
+        <div class="page">
+          <div class="section-heading">
+            <p class="note-number">Note 02</p>
+            <h2>Roles on the line. Skills in the <em>margins.</em></h2>
+            <p>
+              The main line follows responsibility. The attached notes show where each technical
+              method became part of the practice.
+            </p>
+          </div>
+
+          <div class="field-timeline">
+            <article class="field-entry">
+              <time class="field-year" datetime="2019">2019</time>
+              <span class="field-marker" aria-hidden="true"></span>
+              <div class="role-note">
+                <span class="entry-label">Northstar Studio</span>
+                <h3>Junior Developer</h3>
+                <p>Built accessible interfaces and learned to ship dependable product work.</p>
+              </div>
+              <div class="skill-margin">
+                <span class="entry-label">Added to the toolkit</span>
+                <div class="skill-notes">
+                  <div class="skill-note">
+                    <span class="skill-code">RE</span>
+                    <span><strong>React</strong><small>Interfaces / Advanced</small></span>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="field-entry">
+              <time class="field-year" datetime="2020">2020</time>
+              <span class="field-marker" aria-hidden="true"></span>
+              <div class="role-note">
+                <span class="entry-label">Fieldwork Labs</span>
+                <h3>Software Engineer</h3>
+                <p>Owned full-stack features and introduced a typed frontend platform.</p>
+              </div>
+              <div class="skill-margin">
+                <span class="entry-label">Added to the toolkit</span>
+                <div class="skill-notes">
+                  <div class="skill-note">
+                    <span class="skill-code">TS</span>
+                    <span><strong>TypeScript</strong><small>Domain models / Advanced</small></span>
+                  </div>
+                  <div class="skill-note platform">
+                    <span class="skill-code">SD</span>
+                    <span
+                      ><strong>System Design</strong><small>Architecture / Advanced</small></span
+                    >
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="field-entry">
+              <time class="field-year" datetime="2022">2022</time>
+              <span class="field-marker" aria-hidden="true"></span>
+              <div class="role-note">
+                <span class="entry-label">Orbit Systems</span>
+                <h3>Senior Engineer</h3>
+                <p>Led platform architecture and mentored engineers across product teams.</p>
+              </div>
+              <div class="skill-margin">
+                <span class="entry-label">Added to the toolkit</span>
+                <div class="skill-notes">
+                  <div class="skill-note">
+                    <span class="skill-code">JS</span>
+                    <span><strong>Node.js</strong><small>Services / Advanced</small></span>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="field-entry current">
+              <time class="field-year" datetime="2024">2024</time>
+              <span class="field-marker" aria-hidden="true"></span>
+              <div class="role-note">
+                <span class="entry-label">Signal Works / Current</span>
+                <h3>Lead Engineer</h3>
+                <p>
+                  Guide technical direction for resilient products, teams, and delivery systems.
+                </p>
+              </div>
+              <div class="skill-margin">
+                <span class="entry-label">Added to the toolkit</span>
+                <div class="skill-notes">
+                  <div class="skill-note">
+                    <span class="skill-code">3D</span>
+                    <span
+                      ><strong>Three.js</strong><small>Creative systems / Proficient</small></span
+                    >
+                  </div>
+                  <div class="skill-note platform">
+                    <span class="skill-code">CI</span>
+                    <span><strong>CI/CD</strong><small>Delivery / Advanced</small></span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="topics" class="section">
+        <div class="page">
+          <div class="section-heading">
+            <p class="note-number">Note 03</p>
+            <h2>Topics I keep returning <em>to.</em></h2>
+            <p>
+              Most interesting product problems cross boundaries. These are the three pages I reopen
+              most often.
+            </p>
+          </div>
+
+          <div class="topic-cards">
+            <article class="topic-card">
+              <span class="entry-label">Page A / Product</span>
+              <h3>Interfaces people can understand.</h3>
+              <p>Composable, accessible systems that communicate state and intent clearly.</p>
+              <ul class="topic-keywords">
+                <li>React</li>
+                <li>TypeScript</li>
+                <li>Accessibility</li>
+                <li>Design systems</li>
+              </ul>
+            </article>
+            <article class="topic-card">
+              <span class="entry-label">Page B / Services</span>
+              <h3>Boundaries teams can reason about.</h3>
+              <p>
+                Pragmatic APIs, durable data models, and production behavior that stays visible.
+              </p>
+              <ul class="topic-keywords">
+                <li>Node.js</li>
+                <li>API design</li>
+                <li>Data flows</li>
+                <li>Async work</li>
+              </ul>
+            </article>
+            <article class="topic-card">
+              <span class="entry-label">Page C / Delivery</span>
+              <h3>Practices teams can repeat.</h3>
+              <p>Delivery and leadership systems that make reliable work easier to sustain.</p>
+              <ul class="topic-keywords">
+                <li>System design</li>
+                <li>CI/CD</li>
+                <li>Observability</li>
+                <li>Leadership</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="experiments" class="section">
+        <div class="page">
+          <div class="section-heading">
+            <p class="note-number">Note 04</p>
+            <h2>Two problems worth <em>documenting.</em></h2>
+            <p>
+              Selected work recorded as problem, approach, and learning rather than a gallery of
+              finished screens.
+            </p>
+          </div>
+
+          <div class="lab-entries">
+            <article class="lab-entry">
+              <span class="entry-ref">Entry 04.A<br />Atlas Platform</span>
+              <h3>A shared path to production.</h3>
+              <div class="entry-body">
+                <p>
+                  Built a common application platform that reduced duplicate work without removing
+                  product-team autonomy.
+                </p>
+                <div class="entry-finding">
+                  <strong>Margin finding:</strong> adoption improved when the platform offered a
+                  paved road rather than a mandatory abstraction.
+                </div>
+              </div>
+            </article>
+
+            <article class="lab-entry">
+              <span class="entry-ref">Entry 04.B<br />Signal Console</span>
+              <h3>Making operations legible.</h3>
+              <div class="entry-body">
+                <p>
+                  Turned fragmented telemetry into clear workflows for the support and engineering
+                  teams making time-sensitive decisions.
+                </p>
+                <div class="entry-finding">
+                  <strong>Margin finding:</strong> the best dashboard did not expose more data; it
+                  clarified the next useful action.
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="workbench-title">
+        <div class="page workbench">
+          <div class="workbench-copy">
+            <p class="label">Loose page / The workbench</p>
+            <h2 id="workbench-title">The practice stays active.</h2>
+            <p>
+              Experiments, maintenance, and steady study. This sample is ready to be connected to
+              live GitHub contribution data.
+            </p>
+            <a
+              class="ink-link"
+              href="https://github.com/alexrivera?tab=overview"
+              target="_blank"
+              rel="noreferrer"
+              >Open GitHub notebook <span>-></span></a
+            >
+          </div>
+
+          <div class="activity-sheet" aria-label="Mock GitHub contribution activity">
+            <div class="activity-heading">
+              <strong>@alexrivera / activity notes</strong><span>Mock observations</span>
+            </div>
+            <div class="contribution-map" aria-hidden="true">
+              <span class="day"></span><span class="day" data-level="1"></span
+              ><span class="day"></span><span class="day" data-level="2"></span
+              ><span class="day" data-level="1"></span><span class="day"></span
+              ><span class="day"></span><span class="day" data-level="2"></span
+              ><span class="day" data-level="3"></span><span class="day"></span
+              ><span class="day" data-level="1"></span><span class="day" data-level="2"></span
+              ><span class="day"></span><span class="day"></span
+              ><span class="day" data-level="3"></span><span class="day" data-level="4"></span
+              ><span class="day" data-level="2"></span><span class="day"></span
+              ><span class="day" data-level="1"></span><span class="day"></span
+              ><span class="day" data-level="2"></span><span class="day"></span
+              ><span class="day" data-level="2"></span><span class="day" data-level="3"></span
+              ><span class="day" data-level="4"></span><span class="day" data-level="2"></span
+              ><span class="day"></span><span class="day" data-level="1"></span
+              ><span class="day"></span><span class="day"></span
+              ><span class="day" data-level="1"></span><span class="day" data-level="2"></span
+              ><span class="day" data-level="3"></span><span class="day" data-level="3"></span
+              ><span class="day" data-level="1"></span><span class="day"></span
+              ><span class="day" data-level="2"></span><span class="day" data-level="4"></span
+              ><span class="day" data-level="3"></span><span class="day"></span
+              ><span class="day" data-level="1"></span><span class="day" data-level="2"></span
+              ><span class="day"></span><span class="day"></span
+              ><span class="day" data-level="3"></span><span class="day" data-level="2"></span
+              ><span class="day" data-level="1"></span><span class="day" data-level="4"></span
+              ><span class="day" data-level="2"></span><span class="day"></span
+              ><span class="day" data-level="1"></span><span class="day" data-level="2"></span
+              ><span class="day" data-level="3"></span><span class="day"></span
+              ><span class="day" data-level="2"></span><span class="day" data-level="4"></span
+              ><span class="day" data-level="3"></span><span class="day" data-level="1"></span
+              ><span class="day"></span><span class="day" data-level="2"></span
+              ><span class="day" data-level="3"></span><span class="day" data-level="2"></span
+              ><span class="day"></span><span class="day" data-level="1"></span
+              ><span class="day" data-level="4"></span><span class="day" data-level="3"></span
+              ><span class="day" data-level="1"></span><span class="day"></span>
+            </div>
+            <div class="activity-footer">
+              <span><strong>842</strong> contributions</span>
+              <span><strong>18</strong> day streak</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="section">
+        <div class="page contact">
+          <p class="note-number">Last page</p>
+          <h2>Have a question or a difficult problem? <em>Leave a note.</em></h2>
+          <a class="contact-note" href="mailto:hello@alexrivera.dev"
+            >hello@<br />alexrivera.dev<br />-></a
+          >
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Alex Rivera / Personal engineering notebook / 2026</span>
+      <nav aria-label="External links">
+        <a href="https://github.com/alexrivera" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="#contact">LinkedIn</a>
+        <a href="#home">Back to first page</a>
+      </nav>
+    </footer>
+
+    <script>
+      const menuButton = document.querySelector('.menu-button')
+      const navigation = document.querySelector('.site-nav')
+      const navigationLinks = [...document.querySelectorAll('.site-nav a')]
+
+      menuButton.addEventListener('click', () => {
+        const open = menuButton.getAttribute('aria-expanded') === 'true'
+        menuButton.setAttribute('aria-expanded', String(!open))
+        navigation.classList.toggle('is-open', !open)
+      })
+
+      navigationLinks.forEach((link) => {
+        link.addEventListener('click', () => {
+          menuButton.setAttribute('aria-expanded', 'false')
+          navigation.classList.remove('is-open')
+        })
+      })
+
+      const sections = [...document.querySelectorAll('main section[id]')]
+      const updateActiveLink = () => {
+        const current = sections.reduce((active, section) => {
+          return section.getBoundingClientRect().top <= 130 ? section : active
+        }, sections[0])
+
+        navigationLinks.forEach((link) => {
+          const active = link.getAttribute('href') === `#${current.id}`
+          link.classList.toggle('is-active', active)
+          if (active) link.setAttribute('aria-current', 'page')
+          else link.removeAttribute('aria-current')
+        })
+      }
+
+      updateActiveLink()
+      window.addEventListener('scroll', updateActiveLink, { passive: true })
+    </script>
+  </body>
+</html>
