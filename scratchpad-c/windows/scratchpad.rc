@@ -30,12 +30,12 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "Scratchpad contributors\0"
       VALUE "FileDescription", "Scratchpad - auto-saving tabbed text editor\0"
-      VALUE "FileVersion", APP_VERSION_STRING "\0"
+      VALUE "FileVersion", APP_VERSION_STRING
       VALUE "InternalName", "scratchpad\0"
       VALUE "LegalCopyright", "Copyright (c) 2026 Scratchpad contributors\0"
       VALUE "OriginalFilename", "scratchpad.exe\0"
       VALUE "ProductName", "Scratchpad\0"
-      VALUE "ProductVersion", APP_VERSION_STRING "\0"
+      VALUE "ProductVersion", APP_VERSION_STRING
     END
   END
   BLOCK "VarFileInfo"
