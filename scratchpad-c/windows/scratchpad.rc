@@ -4,9 +4,12 @@
 #define APP_VERSION_NUMBER 0,1,0,0
 #endif
 
-#ifndef APP_VERSION_STRING
-#define APP_VERSION_STRING "0.1.0"
+#ifndef APP_VERSION
+#define APP_VERSION 0.1.0
 #endif
+
+#define APP_STRINGIFY_INNER(value) #value
+#define APP_STRINGIFY(value) APP_STRINGIFY_INNER(value)
 
 1 ICON "assets/scratchpad.ico"
 1 RT_MANIFEST "windows/scratchpad.manifest"
@@ -30,12 +33,12 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "Scratchpad contributors\0"
       VALUE "FileDescription", "Scratchpad - auto-saving tabbed text editor\0"
-      VALUE "FileVersion", APP_VERSION_STRING
+      VALUE "FileVersion", APP_STRINGIFY(APP_VERSION)
       VALUE "InternalName", "scratchpad\0"
       VALUE "LegalCopyright", "Copyright (c) 2026 Scratchpad contributors\0"
       VALUE "OriginalFilename", "scratchpad.exe\0"
       VALUE "ProductName", "Scratchpad\0"
-      VALUE "ProductVersion", APP_VERSION_STRING
+      VALUE "ProductVersion", APP_STRINGIFY(APP_VERSION)
     END
   END
   BLOCK "VarFileInfo"

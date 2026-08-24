@@ -45,7 +45,7 @@ $(RESOURCE_SOURCE): assets/scratchpad.gresource.xml assets/fonts/JetBrainsMono-R
 
 build/windows/scratchpad-resource.o: windows/scratchpad.rc windows/scratchpad.manifest assets/scratchpad.ico
 	@mkdir -p $(@D)
-	$(WINDRES) -I. -DAPP_VERSION_NUMBER=$(subst .,$(comma),$(VERSION)),0 -DAPP_VERSION_STRING='"$(VERSION)"' $< -O coff -o $@
+	$(WINDRES) -I. -DAPP_VERSION_NUMBER=$(subst .,$(comma),$(VERSION)),0 -DAPP_VERSION=$(VERSION) $< -O coff -o $@
 
 run: $(TARGET)
 	./$(TARGET)
