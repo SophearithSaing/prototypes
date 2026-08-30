@@ -1,0 +1,464 @@
+{
+  "bundle": "AI Foundations and Applications by Manning",
+  "ranking_method": {
+    "current_relevance_weight": 0.35,
+    "durability_weight": 0.3,
+    "practicality_weight": 0.35,
+    "note": "Publication date is used as evidence when judging current relevance, not as a separate score."
+  },
+  "books": [
+    {
+      "ranking": 1,
+      "title": "AI-Powered Search",
+      "authors": [
+        "Trey Grainger",
+        "Doug Turnbull",
+        "Max Irwin"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617296970/ai-powered-search-9781617296970_lg.jpg",
+      "url": "https://www.manning.com/books/ai-powered-search",
+      "scores": {
+        "overall": 9.4,
+        "current": 9.3,
+        "durability": 9.4,
+        "practicality": 9.5
+      },
+      "description": "It teaches lexical and semantic search, embeddings, learning-to-rank, personalization, click signals, knowledge graphs, vector search, hybrid retrieval, multimodal search, and RAG. It is especially valuable for backend, platform, and data engineers building search or retrieval systems rather than simple chatbot wrappers."
+    },
+    {
+      "ranking": 2,
+      "title": "Deep Learning with PyTorch, Second Edition",
+      "authors": [
+        "Howard Huang",
+        "Eli Stevens",
+        "Luca Antiga",
+        "Thomas Viehmann"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633438859/deep-learning-with-pytorch-second-edition-9781633438859_lg.jpg",
+      "url": "https://www.manning.com/books/deep-learning-with-pytorch-second-edition",
+      "scores": {
+        "overall": 9.34,
+        "current": 9.8,
+        "durability": 9.1,
+        "practicality": 9.1
+      },
+      "description": "It covers PyTorch fundamentals, computer vision, transformers, LLMs, diffusion models, distributed training, and production deployment. It is for Python programmers who already understand basic machine learning and want a comprehensive, current PyTorch reference."
+    },
+    {
+      "ranking": 3,
+      "title": "Deep Learning with Python, Third Edition",
+      "authors": [
+        "François Chollet",
+        "Matthew Watson"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436589/deep-learning-with-python-third-edition-9781633436589_lg.jpg",
+      "url": "https://www.manning.com/books/deep-learning-with-python-third-edition",
+      "scores": {
+        "overall": 9.3,
+        "current": 9.6,
+        "durability": 9.3,
+        "practicality": 9.0
+      },
+      "description": "It teaches modern deep learning through Keras 3, while also covering PyTorch, JAX, TensorFlow, computer vision, time series, transformers, LLMs, and diffusion models. It is a strong broad foundation for Python developers entering machine learning, with concepts that should remain valuable long after individual APIs change."
+    },
+    {
+      "ranking": 4,
+      "title": "Build a Large Language Model (From Scratch)",
+      "authors": [
+        "Sebastian Raschka"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437166/build-a-large-language-model-from-scratch-9781633437166_lg.jpg",
+      "url": "https://www.manning.com/books/build-a-large-language-model-from-scratch",
+      "scores": {
+        "overall": 9.28,
+        "current": 9.3,
+        "durability": 9.8,
+        "practicality": 8.8
+      },
+      "description": "It walks through tokenization, attention, GPT architecture, pretraining, classification fine-tuning, and instruction tuning by implementing an LLM directly in PyTorch. It is for engineers who want to understand what happens beneath hosted LLM APIs and build the core machinery themselves."
+    },
+    {
+      "ranking": 5,
+      "title": "Grokking AI Algorithms, Second Edition",
+      "authors": [
+        "Rishal Hurbans"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633434813/grokking-ai-algorithms-second-edition-9781633434813_lg.jpg",
+      "url": "https://www.manning.com/books/grokking-ai-algorithms-second-edition",
+      "scores": {
+        "overall": 9.07,
+        "current": 9.5,
+        "durability": 9.6,
+        "practicality": 8.2
+      },
+      "description": "It visually explains classical search, evolutionary and swarm algorithms, machine learning, neural networks, reinforcement learning, and LLM-related concepts. It is for software developers who want a broad and intuitive map of AI algorithms before specializing."
+    },
+    {
+      "ranking": 6,
+      "title": "Effective Conversational AI",
+      "authors": [
+        "Andrew Freed",
+        "Cari Jacobs",
+        "Eniko Rozsa"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436404/effective-conversational-ai-9781633436404_lg.jpg",
+      "url": "https://www.manning.com/books/effective-conversational-ai",
+      "scores": {
+        "overall": 9.04,
+        "current": 9.1,
+        "durability": 8.8,
+        "practicality": 9.2
+      },
+      "description": "It covers production conversational systems, including question answering, process automation, routing, RAG, evaluation, continuous improvement, and the combination of traditional NLP with LLMs. It is for engineers, product managers, and technical leads building enterprise assistants that need to work reliably in real workflows."
+    },
+    {
+      "ranking": 7,
+      "title": "How Large Language Models Work",
+      "authors": [
+        "Edward Raff",
+        "Drew Farris",
+        "Stella Biderman"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437081/how-large-language-models-work-9781633437081_lg.jpg",
+      "url": "https://www.manning.com/books/how-large-language-models-work",
+      "scores": {
+        "overall": 9.02,
+        "current": 9.4,
+        "durability": 9.3,
+        "practicality": 8.4
+      },
+      "description": "It gives an accessible explanation of tokenization, training, evaluation, retrieval-augmented generation, fine-tuning, reliability, and the limitations of LLMs. It is for developers, product people, and technical leaders who need real conceptual understanding without first completing a mathematics degree."
+    },
+    {
+      "ranking": 8,
+      "title": "Causal AI",
+      "authors": [
+        "Robert Osazuwa Ness"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633439917/causal-ai-9781633439917_lg.jpg",
+      "url": "https://www.manning.com/books/causal-ai",
+      "scores": {
+        "overall": 8.96,
+        "current": 9.4,
+        "durability": 9.8,
+        "practicality": 7.8
+      },
+      "description": "It teaches causal graphs, interventions, counterfactual reasoning, causal inference, causal reinforcement learning, and implementations using tools such as DoWhy, PyTorch, and Pyro. It is aimed at data scientists and machine learning engineers working on decisions where correlation alone is not good enough."
+    },
+    {
+      "ranking": 9,
+      "title": "Learn Generative AI with PyTorch",
+      "authors": [
+        "Mark Liu"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436466/learn-generative-ai-with-pytorch-9781633436466_lg.jpg",
+      "url": "https://www.manning.com/books/learn-generative-ai-with-pytorch",
+      "scores": {
+        "overall": 8.93,
+        "current": 9.0,
+        "durability": 9.0,
+        "practicality": 8.8
+      },
+      "description": "It teaches generative modeling by building GANs, transformers, a small GPT-style model, diffusion systems, and image and music generators in PyTorch. It is for Python developers who want hands-on model-building experience without requiring previous deep-learning expertise."
+    },
+    {
+      "ranking": 10,
+      "title": "Build AI-Enhanced Web Apps",
+      "authors": [
+        "Theo Despoudis"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436084/build-ai-enhanced-web-apps-9781633436084_lg.jpg",
+      "url": "https://www.manning.com/books/build-ai-enhanced-web-apps",
+      "scores": {
+        "overall": 8.87,
+        "current": 9.7,
+        "durability": 6.8,
+        "practicality": 9.8
+      },
+      "description": "It teaches React and Next.js developers to build streaming chat interfaces, RAG applications, voice features, tool use, guardrails, deployment, and AI integrations using the Vercel AI SDK and LangChain.js. It is for web developers who want to ship tangible AI features in a JavaScript stack, although its framework-specific sections will age faster than its architecture lessons."
+    },
+    {
+      "ranking": 11,
+      "title": "Math and Architectures of Deep Learning",
+      "authors": [
+        "Krishnendu Chaudhury",
+        "Ananya H. Ashok",
+        "Sujay Narumanchi",
+        "Devashish Shankar"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617296482/math-and-architectures-of-deep-learning-9781617296482_lg.jpg",
+      "url": "https://www.manning.com/books/math-and-architectures-of-deep-learning",
+      "scores": {
+        "overall": 8.68,
+        "current": 9.2,
+        "durability": 9.8,
+        "practicality": 7.2
+      },
+      "description": "It explains the linear algebra, calculus, probability, optimization, and architectural ideas behind modern neural networks, supported by Python and PyTorch examples. It is for developers who want a rigorous understanding of deep learning rather than merely memorizing framework calls."
+    },
+    {
+      "ranking": 12,
+      "title": "Deep Learning with R, Third Edition",
+      "authors": [
+        "François Chollet",
+        "Tomasz Kalinowski"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633435186/deep-learning-with-r-third-edition-9781633435186_lg.jpg",
+      "url": "https://www.manning.com/books/deep-learning-with-r-third-edition",
+      "scores": {
+        "overall": 8.64,
+        "current": 9.7,
+        "durability": 9.1,
+        "practicality": 7.2
+      },
+      "description": "It covers deep-learning fundamentals, vision, forecasting, transformers, LLMs, and diffusion models using Keras 3 from R. It is for intermediate R users who want a modern deep-learning path without moving their workflow to Python."
+    },
+    {
+      "ranking": 13,
+      "title": "AI Agents and Applications",
+      "authors": [
+        "Roberto Infante"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436541/ai-agents-and-applications-9781633436541_lg.jpg",
+      "url": "https://www.manning.com/books/ai-agents-and-applications",
+      "scores": {
+        "overall": 8.6,
+        "current": 9.6,
+        "durability": 6.4,
+        "practicality": 9.5
+      },
+      "description": "It teaches agent construction using prompt chains, RAG, memory, tools, multi-agent workflows, MCP, LangChain, LangGraph, LangSmith, evaluation, and monitoring. It is for Python developers building current agent applications, but framework-heavy agent material has a particularly aggressive expiration date."
+    },
+    {
+      "ranking": 14,
+      "title": "Data Storytelling with Altair and AI",
+      "authors": [
+        "Angelica Lo Duca"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437920/data-storytelling-with-altair-and-ai-9781633437920_lg.jpg",
+      "url": "https://www.manning.com/books/data-storytelling-with-altair-and-ai",
+      "scores": {
+        "overall": 8.43,
+        "current": 8.4,
+        "durability": 8.6,
+        "practicality": 8.3
+      },
+      "description": "It teaches data storytelling and visualization with Python and Altair, using generative-AI tools to assist with analysis, narrative, and presentation. It is for analysts, data scientists, and developers who need to communicate findings, with storytelling principles that should outlast the AI-tool instructions."
+    },
+    {
+      "ranking": 15,
+      "title": "Coding with AI",
+      "authors": [
+        "Jeremy Morgan"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437272/coding-with-ai-9781633437272_lg.jpg",
+      "url": "https://www.manning.com/books/coding-with-ai",
+      "scores": {
+        "overall": 8.38,
+        "current": 9.1,
+        "durability": 6.8,
+        "practicality": 9.0
+      },
+      "description": "It teaches professional AI-assisted development workflows spanning requirements, prompting, architecture, code generation, testing, debugging, refactoring, and documentation. It is for working developers, though its tool-specific advice will age faster than its broader workflow principles."
+    },
+    {
+      "ranking": 16,
+      "title": "Deep Learning with JAX",
+      "authors": [
+        "Grigory Sapunov"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633438880/deep-learning-with-jax-9781633438880_lg.jpg",
+      "url": "https://www.manning.com/books/deep-learning-with-jax",
+      "scores": {
+        "overall": 8.36,
+        "current": 8.9,
+        "durability": 8.5,
+        "practicality": 7.7
+      },
+      "description": "It teaches JAX's functional programming model, automatic differentiation, JIT compilation, XLA, Flax, vectorization, and distributed computation. It is for intermediate Python developers or researchers who need high-performance model training and are prepared for JAX's different mental model."
+    },
+    {
+      "ranking": 17,
+      "title": "Grokking Deep Learning",
+      "authors": [
+        "Andrew W. Trask"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617293702/grokking-deep-learning-9781617293702_lg.jpg",
+      "url": "https://www.manning.com/books/grokking-deep-learning",
+      "scores": {
+        "overall": 8.3,
+        "current": 7.8,
+        "durability": 9.7,
+        "practicality": 7.6
+      },
+      "description": "It builds neural-network concepts from scratch using NumPy, introducing forward propagation, gradient descent, regularization, convolution, recurrence, and related fundamentals intuitively. It is for programmers with basic mathematics who want to understand neural networks manually, and the core ideas remain useful despite the book's age."
+    },
+    {
+      "ranking": 18,
+      "title": "Generative AI in Action",
+      "authors": [
+        "Amit Bahree"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436947/generative-ai-in-action-9781633436947_lg.jpg",
+      "url": "https://www.manning.com/books/generative-ai-in-action",
+      "scores": {
+        "overall": 8.29,
+        "current": 8.5,
+        "durability": 7.7,
+        "practicality": 8.6
+      },
+      "description": "It surveys enterprise generative-AI applications across text, images, music, and code, along with deployment, performance, safety, governance, and ethical considerations. It is for enterprise developers, architects, and technical leads, with durable system-design material but faster-aging examples and APIs."
+    },
+    {
+      "ranking": 19,
+      "title": "AI for Everyday IT",
+      "authors": [
+        "Chrissy LeMaire",
+        "Brandon Abshire"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436428/ai-for-everyday-it-9781633436428_lg.jpg",
+      "url": "https://www.manning.com/books/ai-for-everyday-it",
+      "scores": {
+        "overall": 8.23,
+        "current": 8.9,
+        "durability": 6.8,
+        "practicality": 8.8
+      },
+      "description": "It demonstrates how AI assistants can help with support, root-cause analysis, disaster recovery, documentation, databases, development, DevOps, and IT management. It is for IT professionals and managers seeking immediate productivity improvements, but much of the provider-specific guidance will date quickly."
+    },
+    {
+      "ranking": 20,
+      "title": "Deep Learning Patterns and Practices",
+      "authors": [
+        "Andrew Ferlitsch"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617298264/deep-learning-patterns-and-practices-9781617298264_lg.jpg",
+      "url": "https://www.manning.com/books/deep-learning-patterns-and-practices",
+      "scores": {
+        "overall": 8.23,
+        "current": 8.0,
+        "durability": 9.0,
+        "practicality": 7.8
+      },
+      "description": "It presents reusable design patterns for neural-network architecture, training, testing, deployment, maintenance, large-scale pipelines, and constrained environments such as mobile or IoT. It is for practicing machine-learning engineers, and its production principles remain useful even though its model coverage predates the current transformer-heavy era."
+    },
+    {
+      "ranking": 21,
+      "title": "Introduction to Generative AI, Second Edition",
+      "authors": [
+        "Numa Dhamani",
+        "Maggie Engler"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633434882/introduction-to-generative-ai-second-edition-9781633434882_lg.jpg",
+      "url": "https://www.manning.com/books/introduction-to-generative-ai-second-edition",
+      "scores": {
+        "overall": 8.07,
+        "current": 9.4,
+        "durability": 8.0,
+        "practicality": 6.8
+      },
+      "description": "It provides a broad introduction to generative models, practical applications, business implications, risks, responsible use, and the major categories of generative-AI tools. It is best for managers, analysts, newcomers, and decision-makers rather than engineers seeking implementation depth."
+    },
+    {
+      "ranking": 22,
+      "title": "Evolutionary Deep Learning",
+      "authors": [
+        "Micheal Lanham"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617299520/evolutionary-deep-learning-9781617299520_lg.jpg",
+      "url": "https://www.manning.com/books/evolutionary-deep-learning",
+      "scores": {
+        "overall": 8.05,
+        "current": 8.3,
+        "durability": 9.0,
+        "practicality": 7.0
+      },
+      "description": "It explores genetic algorithms, evolutionary computation, particle-swarm optimization, AutoML, hyperparameter optimization, network topology search, autoencoders, and reinforcement learning. It is for Python-capable data scientists interested in optimization beyond gradient descent, although the topic is fairly specialized."
+    },
+    {
+      "ranking": 23,
+      "title": "Probabilistic Deep Learning",
+      "authors": [
+        "Oliver Dürr",
+        "Beate Sick",
+        "Elvis Murina"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617296079/probabilistic-deep-learning-9781617296079_lg.jpg",
+      "url": "https://www.manning.com/books/probabilistic-deep-learning",
+      "scores": {
+        "overall": 7.98,
+        "current": 7.7,
+        "durability": 9.7,
+        "practicality": 6.8
+      },
+      "description": "It explains uncertainty, maximum likelihood, Bayesian neural networks, normalizing flows, and probabilistic modeling using TensorFlow Probability. It is for experienced machine-learning developers, and while its mathematical ideas remain highly valuable, its particular software stack is noticeably older."
+    },
+    {
+      "ranking": 24,
+      "title": "Inside AI",
+      "authors": [
+        "Akli Adjaoute"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437722/inside-ai-9781633437722_lg.jpg",
+      "url": "https://www.manning.com/books/inside-ai",
+      "scores": {
+        "overall": 7.4,
+        "current": 8.6,
+        "durability": 8.8,
+        "practicality": 5.0
+      },
+      "description": "It examines AI's history, core techniques, limitations, business successes and failures, organizational adoption, and the difference between actual capability and marketing hype. It is for executives and decision-makers rather than hands-on engineers, making it useful context but not a technical priority."
+    },
+    {
+      "ranking": 25,
+      "title": "Deep Learning with Structured Data",
+      "authors": [
+        "Mark Ryan"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617296727/deep-learning-with-structured-data-9781617296727_lg.jpg",
+      "url": "https://www.manning.com/books/deep-learning-with-structured-data",
+      "scores": {
+        "overall": 7.34,
+        "current": 6.8,
+        "durability": 7.8,
+        "practicality": 7.5
+      },
+      "description": "It teaches how to apply neural networks to tabular and relational datasets using Keras and pandas, including training, deployment, and monitoring. It is for intermediate Python and machine-learning practitioners working with structured data, but both the examples and the field's preferred approaches have moved on."
+    },
+    {
+      "ranking": 26,
+      "title": "AI Agents in Action",
+      "authors": [
+        "Micheal Lanham"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436343/ai-agents-in-action-9781633436343_lg.jpg",
+      "url": "https://www.manning.com/books/ai-agents-in-action",
+      "scores": {
+        "overall": 6.68,
+        "current": 6.8,
+        "durability": 5.0,
+        "practicality": 8.0
+      },
+      "description": "It teaches assistants and multi-agent systems using RAG, memory, planning, OpenAI Assistants, LangChain, AutoGen, CrewAI, Prompt Flow, and related tools. It is useful for developers wanting agent concepts, but the first edition is already substantially undermined by its newer second edition and fast-moving tooling."
+    },
+    {
+      "ranking": 27,
+      "title": "Learn AI-Assisted Python Programming, Second Edition",
+      "authors": [
+        "Leo Porter",
+        "Daniel Zingaro"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633435995/learn-ai-assisted-python-programming-second-edition-9781633435995_lg.jpg",
+      "url": "https://www.manning.com/books/learn-ai-assisted-python-programming-second-edition",
+      "scores": {
+        "overall": 6.25,
+        "current": 8.4,
+        "durability": 5.8,
+        "practicality": 4.5
+      },
+      "description": "It teaches Python beginners to prompt coding assistants, interpret generated code, test it, fix errors, and gradually understand basic programming. It is appropriate for complete beginners, but an experienced engineer will extract relatively little beyond seeing how newcomers can learn programming with AI assistance."
+    }
+  ],
+  "cover_source": "Official Manning cover assets distributed by Simon & Schuster",
+  "publisher_url_source": "Manning Publications canonical book pages"
+}
