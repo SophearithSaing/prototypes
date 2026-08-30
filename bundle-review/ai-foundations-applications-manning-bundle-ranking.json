@@ -10,11 +10,7 @@
     {
       "ranking": 1,
       "title": "AI-Powered Search",
-      "authors": [
-        "Trey Grainger",
-        "Doug Turnbull",
-        "Max Irwin"
-      ],
+      "authors": ["Trey Grainger", "Doug Turnbull", "Max Irwin"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617296970/ai-powered-search-9781617296970_lg.jpg",
       "url": "https://www.manning.com/books/ai-powered-search",
       "scores": {
@@ -47,10 +43,7 @@
     {
       "ranking": 3,
       "title": "Deep Learning with Python, Third Edition",
-      "authors": [
-        "François Chollet",
-        "Matthew Watson"
-      ],
+      "authors": ["François Chollet", "Matthew Watson"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436589/deep-learning-with-python-third-edition-9781633436589_lg.jpg",
       "url": "https://www.manning.com/books/deep-learning-with-python-third-edition",
       "scores": {
@@ -64,9 +57,7 @@
     {
       "ranking": 4,
       "title": "Build a Large Language Model (From Scratch)",
-      "authors": [
-        "Sebastian Raschka"
-      ],
+      "authors": ["Sebastian Raschka"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437166/build-a-large-language-model-from-scratch-9781633437166_lg.jpg",
       "url": "https://www.manning.com/books/build-a-large-language-model-from-scratch",
       "scores": {
@@ -80,9 +71,7 @@
     {
       "ranking": 5,
       "title": "Grokking AI Algorithms, Second Edition",
-      "authors": [
-        "Rishal Hurbans"
-      ],
+      "authors": ["Rishal Hurbans"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633434813/grokking-ai-algorithms-second-edition-9781633434813_lg.jpg",
       "url": "https://www.manning.com/books/grokking-ai-algorithms-second-edition",
       "scores": {
@@ -96,11 +85,7 @@
     {
       "ranking": 6,
       "title": "Effective Conversational AI",
-      "authors": [
-        "Andrew Freed",
-        "Cari Jacobs",
-        "Eniko Rozsa"
-      ],
+      "authors": ["Andrew Freed", "Cari Jacobs", "Eniko Rozsa"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436404/effective-conversational-ai-9781633436404_lg.jpg",
       "url": "https://www.manning.com/books/effective-conversational-ai",
       "scores": {
@@ -114,11 +99,7 @@
     {
       "ranking": 7,
       "title": "How Large Language Models Work",
-      "authors": [
-        "Edward Raff",
-        "Drew Farris",
-        "Stella Biderman"
-      ],
+      "authors": ["Edward Raff", "Drew Farris", "Stella Biderman"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437081/how-large-language-models-work-9781633437081_lg.jpg",
       "url": "https://www.manning.com/books/how-large-language-models-work",
       "scores": {
@@ -132,9 +113,7 @@
     {
       "ranking": 8,
       "title": "Causal AI",
-      "authors": [
-        "Robert Osazuwa Ness"
-      ],
+      "authors": ["Robert Osazuwa Ness"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633439917/causal-ai-9781633439917_lg.jpg",
       "url": "https://www.manning.com/books/causal-ai",
       "scores": {
@@ -148,9 +127,7 @@
     {
       "ranking": 9,
       "title": "Learn Generative AI with PyTorch",
-      "authors": [
-        "Mark Liu"
-      ],
+      "authors": ["Mark Liu"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436466/learn-generative-ai-with-pytorch-9781633436466_lg.jpg",
       "url": "https://www.manning.com/books/learn-generative-ai-with-pytorch",
       "scores": {
@@ -164,9 +141,7 @@
     {
       "ranking": 10,
       "title": "Build AI-Enhanced Web Apps",
-      "authors": [
-        "Theo Despoudis"
-      ],
+      "authors": ["Theo Despoudis"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436084/build-ai-enhanced-web-apps-9781633436084_lg.jpg",
       "url": "https://www.manning.com/books/build-ai-enhanced-web-apps",
       "scores": {
@@ -199,10 +174,7 @@
     {
       "ranking": 12,
       "title": "Deep Learning with R, Third Edition",
-      "authors": [
-        "François Chollet",
-        "Tomasz Kalinowski"
-      ],
+      "authors": ["François Chollet", "Tomasz Kalinowski"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633435186/deep-learning-with-r-third-edition-9781633435186_lg.jpg",
       "url": "https://www.manning.com/books/deep-learning-with-r-third-edition",
       "scores": {
@@ -216,9 +188,7 @@
     {
       "ranking": 13,
       "title": "AI Agents and Applications",
-      "authors": [
-        "Roberto Infante"
-      ],
+      "authors": ["Roberto Infante"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436541/ai-agents-and-applications-9781633436541_lg.jpg",
       "url": "https://www.manning.com/books/ai-agents-and-applications",
       "scores": {
@@ -232,9 +202,7 @@
     {
       "ranking": 14,
       "title": "Data Storytelling with Altair and AI",
-      "authors": [
-        "Angelica Lo Duca"
-      ],
+      "authors": ["Angelica Lo Duca"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437920/data-storytelling-with-altair-and-ai-9781633437920_lg.jpg",
       "url": "https://www.manning.com/books/data-storytelling-with-altair-and-ai",
       "scores": {
@@ -248,9 +216,7 @@
     {
       "ranking": 15,
       "title": "Coding with AI",
-      "authors": [
-        "Jeremy Morgan"
-      ],
+      "authors": ["Jeremy Morgan"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437272/coding-with-ai-9781633437272_lg.jpg",
       "url": "https://www.manning.com/books/coding-with-ai",
       "scores": {
@@ -264,9 +230,7 @@
     {
       "ranking": 16,
       "title": "Deep Learning with JAX",
-      "authors": [
-        "Grigory Sapunov"
-      ],
+      "authors": ["Grigory Sapunov"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633438880/deep-learning-with-jax-9781633438880_lg.jpg",
       "url": "https://www.manning.com/books/deep-learning-with-jax",
       "scores": {
@@ -280,9 +244,7 @@
     {
       "ranking": 17,
       "title": "Grokking Deep Learning",
-      "authors": [
-        "Andrew W. Trask"
-      ],
+      "authors": ["Andrew W. Trask"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617293702/grokking-deep-learning-9781617293702_lg.jpg",
       "url": "https://www.manning.com/books/grokking-deep-learning",
       "scores": {
@@ -296,9 +258,7 @@
     {
       "ranking": 18,
       "title": "Generative AI in Action",
-      "authors": [
-        "Amit Bahree"
-      ],
+      "authors": ["Amit Bahree"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436947/generative-ai-in-action-9781633436947_lg.jpg",
       "url": "https://www.manning.com/books/generative-ai-in-action",
       "scores": {
@@ -312,10 +272,7 @@
     {
       "ranking": 19,
       "title": "AI for Everyday IT",
-      "authors": [
-        "Chrissy LeMaire",
-        "Brandon Abshire"
-      ],
+      "authors": ["Chrissy LeMaire", "Brandon Abshire"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436428/ai-for-everyday-it-9781633436428_lg.jpg",
       "url": "https://www.manning.com/books/ai-for-everyday-it",
       "scores": {
@@ -329,9 +286,7 @@
     {
       "ranking": 20,
       "title": "Deep Learning Patterns and Practices",
-      "authors": [
-        "Andrew Ferlitsch"
-      ],
+      "authors": ["Andrew Ferlitsch"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617298264/deep-learning-patterns-and-practices-9781617298264_lg.jpg",
       "url": "https://www.manning.com/books/deep-learning-patterns-and-practices",
       "scores": {
@@ -345,10 +300,7 @@
     {
       "ranking": 21,
       "title": "Introduction to Generative AI, Second Edition",
-      "authors": [
-        "Numa Dhamani",
-        "Maggie Engler"
-      ],
+      "authors": ["Numa Dhamani", "Maggie Engler"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633434882/introduction-to-generative-ai-second-edition-9781633434882_lg.jpg",
       "url": "https://www.manning.com/books/introduction-to-generative-ai-second-edition",
       "scores": {
@@ -362,9 +314,7 @@
     {
       "ranking": 22,
       "title": "Evolutionary Deep Learning",
-      "authors": [
-        "Micheal Lanham"
-      ],
+      "authors": ["Micheal Lanham"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617299520/evolutionary-deep-learning-9781617299520_lg.jpg",
       "url": "https://www.manning.com/books/evolutionary-deep-learning",
       "scores": {
@@ -378,11 +328,7 @@
     {
       "ranking": 23,
       "title": "Probabilistic Deep Learning",
-      "authors": [
-        "Oliver Dürr",
-        "Beate Sick",
-        "Elvis Murina"
-      ],
+      "authors": ["Oliver Dürr", "Beate Sick", "Elvis Murina"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617296079/probabilistic-deep-learning-9781617296079_lg.jpg",
       "url": "https://www.manning.com/books/probabilistic-deep-learning",
       "scores": {
@@ -396,9 +342,7 @@
     {
       "ranking": 24,
       "title": "Inside AI",
-      "authors": [
-        "Akli Adjaoute"
-      ],
+      "authors": ["Akli Adjaoute"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437722/inside-ai-9781633437722_lg.jpg",
       "url": "https://www.manning.com/books/inside-ai",
       "scores": {
@@ -412,9 +356,7 @@
     {
       "ranking": 25,
       "title": "Deep Learning with Structured Data",
-      "authors": [
-        "Mark Ryan"
-      ],
+      "authors": ["Mark Ryan"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617296727/deep-learning-with-structured-data-9781617296727_lg.jpg",
       "url": "https://www.manning.com/books/deep-learning-with-structured-data",
       "scores": {
@@ -428,9 +370,7 @@
     {
       "ranking": 26,
       "title": "AI Agents in Action",
-      "authors": [
-        "Micheal Lanham"
-      ],
+      "authors": ["Micheal Lanham"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436343/ai-agents-in-action-9781633436343_lg.jpg",
       "url": "https://www.manning.com/books/ai-agents-in-action",
       "scores": {
@@ -444,10 +384,7 @@
     {
       "ranking": 27,
       "title": "Learn AI-Assisted Python Programming, Second Edition",
-      "authors": [
-        "Leo Porter",
-        "Daniel Zingaro"
-      ],
+      "authors": ["Leo Porter", "Daniel Zingaro"],
       "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633435995/learn-ai-assisted-python-programming-second-edition-9781633435995_lg.jpg",
       "url": "https://www.manning.com/books/learn-ai-assisted-python-programming-second-edition",
       "scores": {
