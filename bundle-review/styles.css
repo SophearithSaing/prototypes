@@ -539,6 +539,26 @@ main,
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+.publisher-link {
+  align-items: center;
+  align-self: flex-start;
+  color: var(--rust);
+  display: inline-flex;
+  font-family: var(--mono);
+  font-size: 0.57rem;
+  gap: 7px;
+  letter-spacing: 0.055em;
+  margin-top: 14px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.publisher-link span:last-child {
+  font-size: 0.82rem;
+  transition: transform 0.2s var(--ease);
+}
+.publisher-link:hover span:last-child {
+  transform: translate(2px, -2px);
+}
 
 .catalog-section {
   padding-bottom: 100px;
@@ -971,6 +991,12 @@ main,
 .viewer-scores .score-track i {
   background: var(--gold);
   transform: scaleX(1);
+}
+.viewer-content .publisher-link {
+  border-bottom: 1px solid rgba(211, 155, 70, 0.5);
+  color: var(--gold);
+  margin-top: 25px;
+  padding-bottom: 5px;
 }
 .viewer-nav {
   align-items: center;

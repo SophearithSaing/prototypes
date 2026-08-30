@@ -512,6 +512,27 @@ a:focus-visible,
 .book-stage.is-ready .metric-track i {
   transform: scaleX(1);
 }
+.book-link {
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 95, 61, 0.55);
+  color: var(--signal);
+  display: inline-flex;
+  font-family: var(--mono);
+  font-size: 0.54rem;
+  gap: 8px;
+  letter-spacing: 0.08em;
+  margin-top: clamp(17px, 2.4vh, 25px);
+  padding-bottom: 5px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.book-link span:last-child {
+  font-size: 0.85rem;
+  transition: transform 0.2s var(--ease);
+}
+.book-link:hover span:last-child {
+  transform: translate(2px, -2px);
+}
 
 .controls {
   align-items: end;
@@ -878,6 +899,10 @@ kbd {
   }
   .scoreboard .metrics {
     display: none;
+  }
+  .book-link {
+    font-size: 0.48rem;
+    margin-top: 13px;
   }
   .controls {
     gap: 14px;

@@ -49,6 +49,13 @@ function scoreMarkup(book) {
     .join("")}</div>`;
 }
 
+function publisherLinkMarkup(book) {
+  return `
+    <a class="publisher-link" href="${escapeHtml(book.url)}" target="_blank" rel="noopener noreferrer" aria-label="View ${escapeHtml(book.title)} on Manning (opens in a new tab)">
+      <span>View on Manning</span><span aria-hidden="true">&#8599;</span>
+    </a>`;
+}
+
 function swipeCard(book, index) {
   return `
     <article class="swipe-card" data-book-index="${index}" tabindex="0">
@@ -61,6 +68,7 @@ function swipeCard(book, index) {
           <div>
             <h2>${escapeHtml(book.title)}</h2>
             <p class="authors">${book.authors.map(escapeHtml).join(", ")}</p>
+            ${publisherLinkMarkup(book)}
           </div>
           <div class="overall-score" aria-label="Overall score ${book.scores.overall.toFixed(2)} out of 10">
             <strong>${book.scores.overall.toFixed(1)}</strong><span>overall</span>
@@ -83,7 +91,10 @@ function feedCard(book, index) {
         <p class="authors">${book.authors.map(escapeHtml).join(", ")}</p>
       </div>
       <p class="description">${escapeHtml(book.description)}</p>
-      <button class="detail-button" type="button" data-open-sheet>See score breakdown</button>
+      <div class="feed-actions">
+        <button class="detail-button" type="button" data-open-sheet>See score breakdown</button>
+        ${publisherLinkMarkup(book)}
+      </div>
     </article>`;
 }
 
@@ -168,6 +179,7 @@ function openSheet(index) {
       </div>
       <p class="description">${escapeHtml(book.description)}</p>
       ${scoreMarkup(book)}
+      ${publisherLinkMarkup(book)}
     </article>`;
   elements.sheet.showModal();
 }

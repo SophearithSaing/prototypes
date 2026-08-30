@@ -21,6 +21,7 @@ const elements = {
   description: document.querySelector("#book-description"),
   overall: document.querySelector("#overall-score"),
   metrics: document.querySelector("#metrics"),
+  bookLink: document.querySelector("#book-link"),
   previous: document.querySelector("#previous"),
   next: document.querySelector("#next"),
   shuffle: document.querySelector("#shuffle"),
@@ -136,6 +137,11 @@ function renderBook() {
   elements.description.textContent = book.description;
   elements.overall.textContent = book.scores.overall.toFixed(1);
   elements.metrics.innerHTML = metricMarkup(book);
+  elements.bookLink.href = book.url;
+  elements.bookLink.setAttribute(
+    "aria-label",
+    `View ${book.title} on Manning (opens in a new tab)`,
+  );
   updateSlider(books.length);
 
   elements.cover.onerror = () => {
@@ -251,7 +257,7 @@ function attachEvents() {
   document.addEventListener("keydown", (event) => {
     if (
       elements.collectionPicker.contains(event.target) ||
-      event.target.matches("input")
+      event.target.matches("input, a")
     )
       return;
     if (event.key === "ArrowLeft") moveBook(-1);

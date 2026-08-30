@@ -106,6 +106,13 @@ function scoreMarkup(book) {
     .join("");
 }
 
+function publisherLinkMarkup(book) {
+  return `
+    <a class="publisher-link" href="${book.url}" target="_blank" rel="noopener noreferrer" aria-label="View ${book.title} on Manning (opens in a new tab)">
+      <span>View on Manning</span><span aria-hidden="true">&#8599;</span>
+    </a>`;
+}
+
 function featuredCard(book, index) {
   return `
     <article class="feature-card fade-in" data-book-index="${index}" tabindex="0" aria-label="Open ${book.title} in the full screen carousel" style="animation-delay:${index * 90}ms">
@@ -115,6 +122,7 @@ function featuredCard(book, index) {
         <h3>${book.title}</h3>
         <p class="authors">${book.authors.join(", ")}</p>
         <div class="score-tag"><strong>${book.scores.overall.toFixed(2)}</strong><span>overall score</span></div>
+        ${publisherLinkMarkup(book)}
       </div>
     </article>`;
 }
@@ -137,6 +145,7 @@ function bookCard(book, index) {
           <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1v10M1 6h10" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
         </button>
         <div class="score-details" id="${scoreId}">${scoreMarkup(book)}</div>
+        ${publisherLinkMarkup(book)}
       </div>
     </article>`;
 }
@@ -205,6 +214,7 @@ function viewerMarkup(book) {
       <p class="viewer-summary">${book.description}</p>
       <div class="viewer-score"><strong>${book.scores.overall.toFixed(2)}</strong><span>Overall score</span></div>
       <div class="viewer-scores">${scoreMarkup(book)}</div>
+      ${publisherLinkMarkup(book)}
     </div>`;
 }
 
@@ -283,6 +293,8 @@ function attachEvents() {
   });
 
   elements.bookGrid.addEventListener("click", (event) => {
+    if (event.target.closest("a")) return;
+
     const descriptionToggle = event.target.closest(".description-toggle");
     if (descriptionToggle) {
       const card = descriptionToggle.closest(".book-card");
@@ -308,6 +320,7 @@ function attachEvents() {
   });
 
   elements.featuredGrid.addEventListener("click", (event) => {
+    if (event.target.closest("a")) return;
     const card = event.target.closest("[data-book-index]");
     if (card) openViewer(Number(card.dataset.bookIndex), card);
   });
@@ -315,7 +328,7 @@ function attachEvents() {
   [elements.bookGrid, elements.featuredGrid].forEach((grid) =>
     grid.addEventListener("keydown", (event) => {
       if (event.key !== "Enter" && event.key !== " ") return;
-      if (event.target.closest("button")) return;
+      if (event.target.closest("button, a")) return;
       const card = event.target.closest("[data-book-index]");
       if (!card) return;
       event.preventDefault();
