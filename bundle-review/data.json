@@ -1,6 +1,6 @@
 [
   {
-    "bundle": "Software Engineering by Manning",
+    "bundle": "Software Engineering",
     "ranking_method": {
       "current_relevance_weight": 0.35,
       "durability_weight": 0.3,
@@ -377,7 +377,7 @@
     "publisher_url_source": "Manning Publications canonical book pages"
   },
   {
-    "bundle": "AI Foundations and Applications by Manning",
+    "bundle": "AI Foundations and Applications",
     "ranking_method": {
       "current_relevance_weight": 0.35,
       "durability_weight": 0.3,
@@ -778,7 +778,7 @@
     "publisher_url_source": "Manning Publications canonical book pages"
   },
   {
-    "bundle": "Software Architecture 2026 by O'Reilly",
+    "bundle": "Software Architecture",
     "ranking_method": {
       "current_relevance_weight": 0.35,
       "durability_weight": 0.3,
