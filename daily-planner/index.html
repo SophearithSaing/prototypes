@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#18211b" />
+    <title>Daymark &mdash; Today</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=DM+Serif+Display&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body data-page="today">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="index.html" aria-label="Daymark home">
+          <span class="brand-mark"
+            ><span></span><span></span><span></span
+          ></span>
+          <span>daymark</span>
+        </a>
+
+        <nav class="primary-nav" aria-label="Primary navigation">
+          <a class="nav-link active" href="index.html">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="16" rx="3" />
+              <path d="M7 3v4M17 3v4M3 10h18" />
+            </svg>
+            Today
+            <span class="nav-count">4</span>
+          </a>
+          <a class="nav-link" href="projects.html">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="4" width="7" height="16" rx="2" />
+              <rect x="14" y="4" width="7" height="10" rx="2" />
+            </svg>
+            Projects
+          </a>
+          <a class="nav-link" href="insights.html">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
+            </svg>
+            Insights
+          </a>
+        </nav>
+
+        <div class="sidebar-section">
+          <p class="sidebar-label">Your projects</p>
+          <a class="project-link" href="projects.html"
+            ><span class="project-dot coral"></span>Website launch
+            <span>6</span></a
+          >
+          <a class="project-link" href="projects.html"
+            ><span class="project-dot blue"></span>Mobile app <span>4</span></a
+          >
+          <a class="project-link" href="projects.html"
+            ><span class="project-dot yellow"></span>Personal <span>3</span></a
+          >
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="capacity-mini">
+            <div class="capacity-heading">
+              <span>Weekly capacity</span><strong>26 / 32h</strong>
+            </div>
+            <div class="progress-track"><span style="width: 81%"></span></div>
+            <p>6 hours left to schedule</p>
+          </div>
+          <button class="profile-button" type="button">
+            <span class="avatar">AK</span>
+            <span
+              ><strong>Alex Kim</strong><small>Personal workspace</small></span
+            >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="5" cy="12" r="1" />
+              <circle cx="12" cy="12" r="1" />
+              <circle cx="19" cy="12" r="1" />
+            </svg>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Wednesday, September 2</p>
+            <h1>Good morning, Alex.</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" type="button" aria-label="Search">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-4-4" />
+              </svg>
+            </button>
+            <button
+              class="button button-dark"
+              type="button"
+              data-open-modal="task-modal"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Add task
+            </button>
+          </div>
+        </header>
+
+        <section class="date-rail" aria-label="Week dates">
+          <button class="date-arrow" type="button" aria-label="Previous week">
+            <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></svg>
+          </button>
+          <div class="date-list">
+            <button class="date-cell" type="button">
+              <span>Mon</span><strong>31</strong><i class="date-dot done"></i>
+            </button>
+            <button class="date-cell" type="button">
+              <span>Tue</span><strong>1</strong><i class="date-dot done"></i>
+            </button>
+            <button class="date-cell active" type="button">
+              <span>Wed</span><strong>2</strong><i class="date-dot current"></i>
+            </button>
+            <button class="date-cell" type="button">
+              <span>Thu</span><strong>3</strong><i class="date-dot"></i>
+            </button>
+            <button class="date-cell" type="button">
+              <span>Fri</span><strong>4</strong><i class="date-dot"></i>
+            </button>
+            <button class="date-cell weekend" type="button">
+              <span>Sat</span><strong>5</strong><i class="date-dot"></i>
+            </button>
+            <button class="date-cell weekend" type="button">
+              <span>Sun</span><strong>6</strong><i class="date-dot"></i>
+            </button>
+          </div>
+          <button class="date-arrow" type="button" aria-label="Next week">
+            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></svg>
+          </button>
+        </section>
+
+        <section class="brief-card">
+          <div class="brief-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="m12 3 1.5 4.4L18 9l-4.5 1.6L12 15l-1.5-4.4L6 9l4.5-1.6L12 3Z"
+              />
+              <path
+                d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"
+              />
+            </svg>
+          </div>
+          <div class="brief-copy">
+            <div class="section-kicker">
+              <span class="live-dot"></span> Your daily brief
+            </div>
+            <h2>A focused day with room to think.</h2>
+            <p>
+              You have <strong>4h 15m of focused work</strong> around three
+              meetings. I found a strong window for the launch proposal while
+              your energy is usually highest.
+            </p>
+          </div>
+          <div class="brief-metrics">
+            <div><strong>7</strong><span>tasks today</span></div>
+            <div><strong>82%</strong><span>planned</span></div>
+            <div><strong>Med</strong><span>workload</span></div>
+          </div>
+        </section>
+
+        <div class="today-layout">
+          <section class="panel schedule-panel">
+            <div class="panel-header">
+              <div>
+                <p class="section-kicker">Your schedule</p>
+                <h2>Today&rsquo;s plan</h2>
+              </div>
+              <div class="schedule-tools">
+                <span class="timezone">GMT&minus;7</span>
+                <button class="quiet-button" type="button" data-focus-toggle>
+                  <span class="toggle-dot"></span> Focus view
+                </button>
+              </div>
+            </div>
+
+            <div class="timeline" data-timeline>
+              <div class="time-row" data-time="8 AM">
+                <span class="time-label">8 AM</span>
+                <article class="event event-routine">
+                  <div class="event-time">8:00 &ndash; 8:30</div>
+                  <div class="event-main">
+                    <h3>Plan the day &amp; inbox</h3>
+                    <p>Daily routine</p>
+                  </div>
+                  <span class="event-status">Done</span>
+                </article>
+              </div>
+              <div class="time-row" data-time="9 AM">
+                <span class="time-label">9 AM</span>
+                <article class="event event-meeting">
+                  <div class="event-time">9:00 &ndash; 9:45</div>
+                  <div class="event-main">
+                    <h3>Product team stand-up</h3>
+                    <p>
+                      <span class="tiny-avatars"
+                        ><i>JM</i><i>SL</i><i>+4</i></span
+                      >
+                      Google Meet
+                    </p>
+                  </div>
+                  <button
+                    class="event-menu"
+                    type="button"
+                    aria-label="Event options"
+                  >
+                    &bull;&bull;&bull;
+                  </button>
+                </article>
+              </div>
+              <div class="time-row recommendation-row" data-time="10 AM">
+                <span class="time-label">10 AM</span>
+                <article class="event event-suggested" data-suggestion>
+                  <div class="agent-badge">
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="m12 3 1.5 4.4L18 9l-4.5 1.6L12 15l-1.5-4.4L6 9l4.5-1.6L12 3Z"
+                      /></svg
+                    >Agent pick
+                  </div>
+                  <div class="event-time">10:00 &ndash; 11:30</div>
+                  <div class="event-main">
+                    <h3>Finish launch proposal</h3>
+                    <p>
+                      <span class="project-pill coral">Website launch</span
+                      ><span class="priority-label">High priority</span>
+                    </p>
+                    <div class="why-line">
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M9 18h6M10 22h4M8.5 14.5A6 6 0 1 1 15.5 14.5c-.9.7-1.5 1.4-1.5 2.5h-4c0-1.1-.6-1.8-1.5-2.5Z"
+                        /></svg
+                      ><span
+                        ><strong>Why now:</strong> Due tomorrow, needs 90 min,
+                        and this is your best uninterrupted window.</span
+                      >
+                    </div>
+                  </div>
+                  <div class="suggestion-actions">
+                    <button
+                      class="button button-coral"
+                      type="button"
+                      data-accept
+                    >
+                      Accept plan
+                    </button>
+                    <button
+                      class="button button-ghost"
+                      type="button"
+                      data-open-modal="swap-modal"
+                    >
+                      Change
+                    </button>
+                  </div>
+                </article>
+              </div>
+              <div class="time-row" data-time="11 AM">
+                <span class="time-label">11 AM</span>
+              </div>
+              <div class="time-row" data-time="12 PM">
+                <span class="time-label">12 PM</span>
+                <article class="event event-personal compact-event">
+                  <div class="event-time">12:00 &ndash; 1:00</div>
+                  <div class="event-main">
+                    <h3>Lunch &amp; walk</h3>
+                    <p>Personal time</p>
+                  </div>
+                  <svg class="event-icon" viewBox="0 0 24 24">
+                    <path d="M6 3v7a3 3 0 0 0 6 0V3M9 3v18M18 3v18M15 8h6" />
+                  </svg>
+                </article>
+              </div>
+              <div class="time-row" data-time="1 PM">
+                <span class="time-label">1 PM</span>
+                <article class="event event-meeting compact-event">
+                  <div class="event-time">1:00 &ndash; 1:30</div>
+                  <div class="event-main">
+                    <h3>Design review</h3>
+                    <p>Mobile app &middot; Figma</p>
+                  </div>
+                  <button
+                    class="event-menu"
+                    type="button"
+                    aria-label="Event options"
+                  >
+                    &bull;&bull;&bull;
+                  </button>
+                </article>
+              </div>
+              <div class="time-row current-time" data-time="2 PM">
+                <span class="time-label">2 PM</span>
+                <span class="now-line"><i></i><em>2:18</em></span>
+                <article class="event event-task compact-event">
+                  <div class="event-time">2:00 &ndash; 3:00</div>
+                  <div class="event-main">
+                    <h3>QA onboarding flow</h3>
+                    <p><span class="project-pill blue">Mobile app</span></p>
+                  </div>
+                  <span class="event-status active">In progress</span>
+                </article>
+              </div>
+              <div class="time-row" data-time="3 PM">
+                <span class="time-label">3 PM</span>
+              </div>
+              <div class="time-row" data-time="4 PM">
+                <span class="time-label">4 PM</span>
+                <article class="event event-task compact-event">
+                  <div class="event-time">4:00 &ndash; 4:45</div>
+                  <div class="event-main">
+                    <h3>Reply to partner feedback</h3>
+                    <p>
+                      <span class="project-pill coral">Website launch</span>
+                    </p>
+                  </div>
+                  <button
+                    class="event-menu"
+                    type="button"
+                    aria-label="Event options"
+                  >
+                    &bull;&bull;&bull;
+                  </button>
+                </article>
+              </div>
+              <div class="time-row" data-time="5 PM">
+                <span class="time-label">5 PM</span>
+              </div>
+            </div>
+          </section>
+
+          <aside class="right-column">
+            <section class="panel pending-panel">
+              <div class="panel-header compact">
+                <div>
+                  <p class="section-kicker">Still to do</p>
+                  <h2>Pending tasks</h2>
+                </div>
+                <button
+                  class="text-button"
+                  type="button"
+                  data-open-modal="task-modal"
+                >
+                  Add
+                </button>
+              </div>
+              <div class="task-stack" data-task-list>
+                <label class="task-item">
+                  <input type="checkbox" />
+                  <span class="custom-check"
+                    ><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg
+                  ></span>
+                  <span class="task-copy"
+                    ><strong>Review pricing page copy</strong
+                    ><small
+                      ><i class="project-dot coral"></i> Website launch &middot;
+                      30m</small
+                    ></span
+                  >
+                  <span class="priority-mark high" title="High priority"></span>
+                </label>
+                <label class="task-item">
+                  <input type="checkbox" />
+                  <span class="custom-check"
+                    ><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg
+                  ></span>
+                  <span class="task-copy"
+                    ><strong>Book dentist appointment</strong
+                    ><small
+                      ><i class="project-dot yellow"></i> Personal &middot;
+                      10m</small
+                    ></span
+                  >
+                  <span
+                    class="priority-mark medium"
+                    title="Medium priority"
+                  ></span>
+                </label>
+                <label class="task-item">
+                  <input type="checkbox" />
+                  <span class="custom-check"
+                    ><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg
+                  ></span>
+                  <span class="task-copy"
+                    ><strong>Write empty state notes</strong
+                    ><small
+                      ><i class="project-dot blue"></i> Mobile app &middot;
+                      25m</small
+                    ></span
+                  >
+                  <span class="priority-mark low" title="Low priority"></span>
+                </label>
+              </div>
+              <button
+                class="full-link"
+                type="button"
+                onclick="location.href = 'projects.html'"
+              >
+                View all 13 tasks <span>&rarr;</span>
+              </button>
+            </section>
+
+            <section class="panel yesterday-card">
+              <div class="yesterday-top">
+                <div>
+                  <p class="section-kicker">Yesterday&rsquo;s recap</p>
+                  <h2>You kept your word.</h2>
+                </div>
+                <div class="score-ring" style="--score: 84">
+                  <span>84<small>%</small></span>
+                </div>
+              </div>
+              <p class="recap-summary">
+                You completed 6 of 7 planned tasks and protected both focus
+                blocks.
+              </p>
+              <div class="recap-grid">
+                <div>
+                  <span class="recap-icon green">&#10003;</span
+                  ><strong>6</strong><small>Completed</small>
+                </div>
+                <div>
+                  <span class="recap-icon amber">&#8599;</span><strong>1</strong
+                  ><small>Rescheduled</small>
+                </div>
+                <div>
+                  <span class="recap-icon gray">&times;</span><strong>0</strong
+                  ><small>Cancelled</small>
+                </div>
+              </div>
+              <div class="agent-note">
+                <span class="agent-mini"
+                  ><svg viewBox="0 0 24 24">
+                    <path
+                      d="m12 3 1.5 4.4L18 9l-4.5 1.6L12 15l-1.5-4.4L6 9l4.5-1.6L12 3Z"
+                    /></svg
+                ></span>
+                <p>
+                  <strong>A pattern I noticed</strong>You finish 23% more deep
+                  work before noon. I&rsquo;ll keep protecting those hours.
+                </p>
+              </div>
+              <a class="full-link" href="insights.html"
+                >Open full recap <span>&rarr;</span></a
+              >
+            </section>
+
+            <blockquote class="daily-quote">
+              <p>
+                &ldquo;A good plan leaves enough room for a better one.&rdquo;
+              </p>
+              <cite>Today&rsquo;s reminder</cite>
+            </blockquote>
+          </aside>
+        </div>
+      </main>
+    </div>
+
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a class="active" href="index.html"
+        ><svg viewBox="0 0 24 24">
+          <rect x="3" y="5" width="18" height="16" rx="3" />
+          <path d="M7 3v4M17 3v4M3 10h18" /></svg
+        ><span>Today</span></a
+      >
+      <a href="projects.html"
+        ><svg viewBox="0 0 24 24">
+          <rect x="3" y="4" width="7" height="16" rx="2" />
+          <rect x="14" y="4" width="7" height="10" rx="2" /></svg
+        ><span>Projects</span></a
+      >
+      <button
+        type="button"
+        data-open-modal="task-modal"
+        class="mobile-add"
+        aria-label="Add task"
+      >
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+      </button>
+      <a href="insights.html"
+        ><svg viewBox="0 0 24 24">
+          <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg
+        ><span>Insights</span></a
+      >
+      <button type="button">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21a8 8 0 0 1 16 0" /></svg
+        ><span>Profile</span>
+      </button>
+    </nav>
+
+    <dialog class="modal" id="task-modal">
+      <form method="dialog" class="modal-card" data-task-form>
+        <div class="modal-header">
+          <div>
+            <p class="section-kicker">Capture it now</p>
+            <h2>Add a new task</h2>
+          </div>
+          <button class="icon-button" value="cancel" aria-label="Close">
+            <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+        <label class="field"
+          ><span>Task name</span
+          ><input
+            name="title"
+            type="text"
+            placeholder="What needs to get done?"
+            required
+            autofocus
+        /></label>
+        <div class="form-row">
+          <label class="field"
+            ><span>Project</span
+            ><select name="project">
+              <option>Website launch</option>
+              <option>Mobile app</option>
+              <option>Personal</option>
+            </select></label
+          >
+          <label class="field"
+            ><span>Estimate</span
+            ><select name="estimate">
+              <option>15m</option>
+              <option selected>30m</option>
+              <option>45m</option>
+              <option>1h</option>
+              <option>1h 30m</option>
+            </select></label
+          >
+        </div>
+        <label class="field"
+          ><span>Priority</span>
+          <div class="priority-options">
+            <input id="low" name="priority" type="radio" value="low" /><label
+              for="low"
+              >Low</label
+            ><input
+              id="medium"
+              name="priority"
+              type="radio"
+              value="medium"
+              checked
+            /><label for="medium">Medium</label
+            ><input id="high" name="priority" type="radio" value="high" /><label
+              for="high"
+              >High</label
+            >
+          </div></label
+        >
+        <div class="modal-actions">
+          <button class="button button-ghost" value="cancel">Cancel</button
+          ><button class="button button-dark" value="default" data-submit-task>
+            Add task
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="swap-modal">
+      <form method="dialog" class="modal-card swap-card">
+        <div class="modal-header">
+          <div>
+            <p class="section-kicker">Adjust the plan</p>
+            <h2>What would work better?</h2>
+          </div>
+          <button class="icon-button" value="cancel" aria-label="Close">
+            <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+        <button class="swap-option" value="default" data-swap="later">
+          <span class="swap-icon">&#8600;</span
+          ><span
+            ><strong>Move it to the afternoon</strong
+            ><small>Best opening is 3:00 &ndash; 4:30 PM</small></span
+          ><span>&rarr;</span>
+        </button>
+        <button class="swap-option" value="default" data-swap="shorter">
+          <span class="swap-icon">&frac12;</span
+          ><span
+            ><strong>Split into two sessions</strong
+            ><small>45 min today, 45 min tomorrow</small></span
+          ><span>&rarr;</span>
+        </button>
+        <button class="swap-option" value="default" data-swap="different">
+          <span class="swap-icon">&#8644;</span
+          ><span
+            ><strong>Suggest a different task</strong
+            ><small>Pick another priority from my backlog</small></span
+          ><span>&rarr;</span>
+        </button>
+      </form>
+    </dialog>
+
+    <div class="toast" role="status" aria-live="polite">
+      <span>&#10003;</span>
+      <p>Plan updated</p>
+    </div>
+  </body>
+</html>

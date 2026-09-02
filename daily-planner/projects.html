@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#18211b" />
+    <title>Daymark &mdash; Projects</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=DM+Serif+Display&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body data-page="projects">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="index.html" aria-label="Daymark home"
+          ><span class="brand-mark"
+            ><span></span><span></span><span></span></span
+          ><span>daymark</span></a
+        >
+        <nav class="primary-nav" aria-label="Primary navigation">
+          <a class="nav-link" href="index.html"
+            ><svg viewBox="0 0 24 24">
+              <rect x="3" y="5" width="18" height="16" rx="3" />
+              <path d="M7 3v4M17 3v4M3 10h18" /></svg
+            >Today<span class="nav-count">4</span></a
+          >
+          <a class="nav-link active" href="projects.html"
+            ><svg viewBox="0 0 24 24">
+              <rect x="3" y="4" width="7" height="16" rx="2" />
+              <rect x="14" y="4" width="7" height="10" rx="2" /></svg
+            >Projects</a
+          >
+          <a class="nav-link" href="insights.html"
+            ><svg viewBox="0 0 24 24">
+              <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg
+            >Insights</a
+          >
+        </nav>
+        <div class="sidebar-section">
+          <p class="sidebar-label">Your projects</p>
+          <a class="project-link selected" href="#"
+            ><span class="project-dot coral"></span>Website launch
+            <span>6</span></a
+          ><a class="project-link" href="#"
+            ><span class="project-dot blue"></span>Mobile app <span>4</span></a
+          ><a class="project-link" href="#"
+            ><span class="project-dot yellow"></span>Personal <span>3</span></a
+          >
+        </div>
+        <div class="sidebar-footer">
+          <div class="capacity-mini">
+            <div class="capacity-heading">
+              <span>Weekly capacity</span><strong>26 / 32h</strong>
+            </div>
+            <div class="progress-track"><span style="width: 81%"></span></div>
+            <p>6 hours left to schedule</p>
+          </div>
+          <button class="profile-button" type="button">
+            <span class="avatar">AK</span
+            ><span
+              ><strong>Alex Kim</strong><small>Personal workspace</small></span
+            ><svg viewBox="0 0 24 24">
+              <circle cx="5" cy="12" r="1" />
+              <circle cx="12" cy="12" r="1" />
+              <circle cx="19" cy="12" r="1" />
+            </svg>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main-content projects-main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Projects / Website launch</p>
+            <h1>Move the work forward.</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" type="button" aria-label="Search">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-4-4" />
+              </svg></button
+            ><button
+              class="button button-dark"
+              type="button"
+              data-open-modal="task-modal"
+            >
+              <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>Add
+              task
+            </button>
+          </div>
+        </header>
+
+        <section class="project-hero">
+          <div class="project-identity">
+            <span class="project-icon coral-bg">W</span>
+            <div>
+              <div class="section-kicker">
+                <span class="status-dot"></span> On track
+              </div>
+              <h2>Website launch</h2>
+              <p>
+                Everything needed to ship the new marketing site by September
+                11.
+              </p>
+            </div>
+          </div>
+          <div class="project-stats">
+            <div><strong>67%</strong><span>complete</span></div>
+            <div><strong>9 days</strong><span>until launch</span></div>
+            <div><strong>14.5h</strong><span>remaining</span></div>
+          </div>
+          <div class="project-progress"><span style="width: 67%"></span></div>
+        </section>
+
+        <section class="board-toolbar">
+          <div class="view-tabs">
+            <button class="active" type="button">Board</button
+            ><button type="button">List</button
+            ><button type="button">Timeline</button>
+          </div>
+          <div class="toolbar-actions">
+            <button class="quiet-button" type="button">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 6h16M7 12h10M10 18h4" />
+              </svg>
+              Filter</button
+            ><button class="quiet-button" type="button">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 6h12M4 6h.01M8 12h12M4 12h.01M8 18h12M4 18h.01" />
+              </svg>
+              Sort
+            </button>
+            <div class="board-avatars">
+              <span>AK</span><span>JM</span><span>SL</span
+              ><button type="button">+</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="kanban" aria-label="Project board">
+          <div class="board-column">
+            <header>
+              <div>
+                <span class="column-dot todo"></span>
+                <h3>To do</h3>
+                <span class="column-count">4</span>
+              </div>
+              <button type="button" aria-label="Add to todo">+</button>
+            </header>
+            <div class="board-cards">
+              <article class="task-card urgent">
+                <div class="card-top">
+                  <span class="tag strategy">Strategy</span
+                  ><button type="button">&bull;&bull;&bull;</button>
+                </div>
+                <h4>Finish launch proposal</h4>
+                <p>
+                  Finalize scope, timeline, and success metrics for stakeholder
+                  sign-off.
+                </p>
+                <div class="checklist-progress">
+                  <span><i style="width: 66%"></i></span><small>4/6</small>
+                </div>
+                <footer>
+                  <span class="due-date overdue"
+                    ><svg viewBox="0 0 24 24">
+                      <rect x="3" y="5" width="18" height="16" rx="3" />
+                      <path d="M7 3v4M17 3v4M3 10h18" /></svg
+                    >Tomorrow</span
+                  ><span class="effort">1.5h</span
+                  ><span class="avatar small">AK</span>
+                </footer>
+              </article>
+              <article class="task-card">
+                <div class="card-top">
+                  <span class="tag content">Content</span
+                  ><button type="button">&bull;&bull;&bull;</button>
+                </div>
+                <h4>Review pricing page copy</h4>
+                <p>Check the final messaging against positioning notes.</p>
+                <footer>
+                  <span class="due-date"
+                    ><svg viewBox="0 0 24 24">
+                      <rect x="3" y="5" width="18" height="16" rx="3" />
+                      <path d="M7 3v4M17 3v4M3 10h18" /></svg
+                    >Sep 4</span
+                  ><span class="effort">30m</span
+                  ><span class="avatar small pink">SL</span>
+                </footer>
+              </article>
+              <article class="task-card">
+                <div class="card-top">
+                  <span class="tag design">Design</span
+                  ><button type="button">&bull;&bull;&bull;</button>
+                </div>
+                <h4>Create social launch assets</h4>
+                <p>Prepare square, portrait, and story variants.</p>
+                <footer>
+                  <span class="due-date"
+                    ><svg viewBox="0 0 24 24">
+                      <rect x="3" y="5" width="18" height="16" rx="3" />
+                      <path d="M7 3v4M17 3v4M3 10h18" /></svg
+                    >Sep 7</span
+                  ><span class="effort">3h</span
+                  ><span class="avatar small blue-avatar">JM</span>
+                </footer>
+              </article>
+            </div>
+            <button
+              class="add-card-button"
+              type="button"
+              data-open-modal="task-modal"
+            >
+              + Add task
+            </button>
+          </div>
+
+          <div class="board-column">
+            <header>
+              <div>
+                <span class="column-dot progress"></span>
+                <h3>In progress</h3>
+                <span class="column-count">2</span>
+              </div>
+              <button type="button" aria-label="Add in progress">+</button>
+            </header>
+            <div class="board-cards">
+              <article class="task-card">
+                <div class="card-top">
+                  <span class="tag dev">Development</span
+                  ><button type="button">&bull;&bull;&bull;</button>
+                </div>
+                <h4>Build responsive hero</h4>
+                <p>Implement approved desktop and mobile states.</p>
+                <div class="checklist-progress">
+                  <span><i style="width: 40%"></i></span><small>2/5</small>
+                </div>
+                <footer>
+                  <span class="due-date"
+                    ><svg viewBox="0 0 24 24">
+                      <rect x="3" y="5" width="18" height="16" rx="3" />
+                      <path d="M7 3v4M17 3v4M3 10h18" /></svg
+                    >Today</span
+                  ><span class="effort">4h</span
+                  ><span class="avatar small green-avatar">MR</span>
+                </footer>
+              </article>
+              <article class="task-card">
+                <div class="card-top">
+                  <span class="tag content">Content</span
+                  ><button type="button">&bull;&bull;&bull;</button>
+                </div>
+                <h4>Partner feedback round</h4>
+                <p>Consolidate notes and resolve open questions.</p>
+                <div class="comment-line">
+                  <span>&ldquo;Legal approved the revised&hellip;&rdquo;</span
+                  ><strong>3</strong>
+                </div>
+                <footer>
+                  <span class="due-date"
+                    ><svg viewBox="0 0 24 24">
+                      <rect x="3" y="5" width="18" height="16" rx="3" />
+                      <path d="M7 3v4M17 3v4M3 10h18" /></svg
+                    >Today</span
+                  ><span class="effort">45m</span
+                  ><span class="avatar small">AK</span>
+                </footer>
+              </article>
+            </div>
+            <button
+              class="add-card-button"
+              type="button"
+              data-open-modal="task-modal"
+            >
+              + Add task
+            </button>
+          </div>
+
+          <div class="board-column">
+            <header>
+              <div>
+                <span class="column-dot review"></span>
+                <h3>In review</h3>
+                <span class="column-count">1</span>
+              </div>
+              <button type="button" aria-label="Add in review">+</button>
+            </header>
+            <div class="board-cards">
+              <article class="task-card">
+                <div class="card-top">
+                  <span class="tag design">Design</span
+                  ><button type="button">&bull;&bull;&bull;</button>
+                </div>
+                <h4>Final mobile screens</h4>
+                <p>
+                  Homepage, pricing, and product screens ready for approval.
+                </p>
+                <div class="attachment-preview">
+                  <span class="preview-block one"></span
+                  ><span class="preview-block two"></span
+                  ><span class="preview-more">+4</span>
+                </div>
+                <footer>
+                  <span class="due-date"
+                    ><svg viewBox="0 0 24 24">
+                      <rect x="3" y="5" width="18" height="16" rx="3" />
+                      <path d="M7 3v4M17 3v4M3 10h18" /></svg
+                    >Today</span
+                  ><span class="effort">1h</span
+                  ><span class="avatar small pink">SL</span>
+                </footer>
+              </article>
+            </div>
+            <button
+              class="add-card-button"
+              type="button"
+              data-open-modal="task-modal"
+            >
+              + Add task
+            </button>
+          </div>
+
+          <div class="board-column done-column">
+            <header>
+              <div>
+                <span class="column-dot complete"></span>
+                <h3>Done</h3>
+                <span class="column-count">6</span>
+              </div>
+              <button type="button" aria-label="Done menu">
+                &bull;&bull;&bull;
+              </button>
+            </header>
+            <div class="board-cards">
+              <article class="task-card done-card">
+                <div class="card-top">
+                  <span class="tag strategy">Strategy</span
+                  ><button type="button">&bull;&bull;&bull;</button>
+                </div>
+                <h4>Define launch metrics</h4>
+                <p>Activation and conversion targets agreed.</p>
+                <footer>
+                  <span class="completed-date"
+                    >&#10003; Completed yesterday</span
+                  ><span class="avatar small">AK</span>
+                </footer>
+              </article>
+              <article class="task-card done-card">
+                <div class="card-top">
+                  <span class="tag design">Design</span
+                  ><button type="button">&bull;&bull;&bull;</button>
+                </div>
+                <h4>Approve visual direction</h4>
+                <p>Final direction signed off by stakeholders.</p>
+                <footer>
+                  <span class="completed-date">&#10003; Completed Mon</span
+                  ><span class="avatar small pink">SL</span>
+                </footer>
+              </article>
+            </div>
+            <button class="show-completed" type="button">
+              Show 4 more completed
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a href="index.html"
+        ><svg viewBox="0 0 24 24">
+          <rect x="3" y="5" width="18" height="16" rx="3" />
+          <path d="M7 3v4M17 3v4M3 10h18" /></svg
+        ><span>Today</span></a
+      ><a class="active" href="projects.html"
+        ><svg viewBox="0 0 24 24">
+          <rect x="3" y="4" width="7" height="16" rx="2" />
+          <rect x="14" y="4" width="7" height="10" rx="2" /></svg
+        ><span>Projects</span></a
+      ><button
+        type="button"
+        data-open-modal="task-modal"
+        class="mobile-add"
+        aria-label="Add task"
+      >
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></button
+      ><a href="insights.html"
+        ><svg viewBox="0 0 24 24">
+          <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg
+        ><span>Insights</span></a
+      ><button type="button">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21a8 8 0 0 1 16 0" /></svg
+        ><span>Profile</span>
+      </button>
+    </nav>
+
+    <dialog class="modal" id="task-modal">
+      <form method="dialog" class="modal-card" data-project-task-form>
+        <div class="modal-header">
+          <div>
+            <p class="section-kicker">Website launch</p>
+            <h2>Add a new task</h2>
+          </div>
+          <button class="icon-button" value="cancel" aria-label="Close">
+            <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+        <label class="field"
+          ><span>Task name</span
+          ><input
+            name="title"
+            type="text"
+            placeholder="What needs to get done?"
+            required
+            autofocus
+        /></label>
+        <div class="form-row">
+          <label class="field"
+            ><span>Status</span
+            ><select name="status">
+              <option>To do</option>
+              <option>In progress</option>
+              <option>In review</option>
+            </select></label
+          ><label class="field"
+            ><span>Estimate</span
+            ><select name="estimate">
+              <option>15m</option>
+              <option selected>30m</option>
+              <option>1h</option>
+              <option>2h</option>
+            </select></label
+          >
+        </div>
+        <div class="modal-actions">
+          <button class="button button-ghost" value="cancel">Cancel</button
+          ><button
+            class="button button-dark"
+            value="default"
+            data-submit-project-task
+          >
+            Add task
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <div class="toast" role="status" aria-live="polite">
+      <span>&#10003;</span>
+      <p>Task added</p>
+    </div>
+  </body>
+</html>
