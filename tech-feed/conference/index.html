@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#3157f6" />
+    <meta
+      name="description"
+      content="Stacktrace Live, a developer conference where the technologies take the stage."
+    />
+    <title>Stacktrace Live 2026</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <svg class="sprite" aria-hidden="true">
+      <symbol id="i-home" viewBox="0 0 24 24">
+        <path d="m3 11 9-8 9 8v9H4z" />
+        <path d="M9 20v-6h6v6" />
+      </symbol>
+      <symbol id="i-stage" viewBox="0 0 24 24">
+        <path d="M4 20V4h16v16M4 8h16M8 20v-5h8v5" />
+      </symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="16" rx="2" />
+        <path d="M8 3v4M16 3v4M3 10h18" />
+      </symbol>
+      <symbol id="i-users" viewBox="0 0 24 24">
+        <path
+          d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.8M16 3.2a4 4 0 0 1 0 7.6"
+        />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-4-4" />
+      </symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24">
+        <path d="M18 9a6 6 0 0 0-12 0c0 6-3 7-3 7h18s-3-1-3-7M10 20h4" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="i-message" viewBox="0 0 24 24">
+        <path
+          d="M20 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4z"
+        />
+      </symbol>
+      <symbol id="i-repeat" viewBox="0 0 24 24">
+        <path
+          d="m17 2 4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"
+        />
+      </symbol>
+      <symbol id="i-bookmark" viewBox="0 0 24 24">
+        <path d="M6 3h12v18l-6-4-6 4z" />
+      </symbol>
+      <symbol id="i-share" viewBox="0 0 24 24">
+        <circle cx="18" cy="5" r="2.5" />
+        <circle cx="6" cy="12" r="2.5" />
+        <circle cx="18" cy="19" r="2.5" />
+        <path d="m8.2 10.8 7.5-4.5M8.2 13.2l7.5 4.5" />
+      </symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24">
+        <rect x="8" y="8" width="12" height="12" rx="2" />
+        <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
+      </symbol>
+      <symbol id="i-quote" viewBox="0 0 24 24">
+        <path
+          d="M4 6h6v6H6v5H3v-7a4 4 0 0 1 4-4M14 6h6v6h-4v5h-3v-7a4 4 0 0 1 4-4"
+        />
+      </symbol>
+      <symbol id="i-more" viewBox="0 0 24 24">
+        <circle cx="5" cy="12" r="1" />
+        <circle cx="12" cy="12" r="1" />
+        <circle cx="19" cy="12" r="1" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="M5 5l14 14M19 5 5 19" />
+      </symbol>
+      <symbol id="i-applaud" viewBox="0 0 24 24">
+        <path
+          d="m8 13-2-6a2 2 0 0 1 3-1l2 5-1-7a2 2 0 0 1 3 0l1 7V5a2 2 0 0 1 3 0v8l1-3a2 2 0 0 1 3 1c-1 7-4 10-9 10-4 0-7-3-8-7a2 2 0 0 1 4-1z"
+        />
+      </symbol>
+      <symbol id="i-useful" viewBox="0 0 24 24">
+        <path
+          d="M9 18h6M10 22h4M8.5 15.5A7 7 0 1 1 15.5 15.5c-1 1-1.5 1.5-1.5 2.5h-4c0-1-.5-1.5-1.5-2.5z"
+        />
+      </symbol>
+      <symbol id="i-curious" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path
+          d="M9.8 9a2.4 2.4 0 1 1 3.5 2.1c-1 .5-1.3 1.1-1.3 2.2M12 17h.01"
+        />
+      </symbol>
+      <symbol id="i-spicy" viewBox="0 0 24 24">
+        <path
+          d="M13 22c4-1 7-4 7-8 0-3-2-6-5-8 0 3-1 5-3 6 0-5-2-8-5-10 0 5-3 7-3 12 0 4 3 7 7 8-2-2-2-5 1-7 0 3 1 5 1 7z"
+        />
+      </symbol>
+      <symbol id="i-ship" viewBox="0 0 24 24">
+        <path
+          d="M14 4c3-2 6-1 6-1s1 3-1 6l-6 6-5-5zM8 10l-4 1-2 4 6-1M13 15l-1 6 4-2 1-4M7 17c-2 0-3 1-3 3 2 0 3-1 3-3z"
+        />
+      </symbol>
+      <symbol id="i-play" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="m10 8 6 4-6 4z" />
+      </symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24">
+        <path d="M5 12h14m-5-5 5 5-5 5" />
+      </symbol>
+    </svg>
+
+    <aside class="sidebar">
+      <a class="event-brand" href="#"
+        ><span class="brand-mark">S/</span
+        ><span><b>stacktrace</b><small>LIVE 2026</small></span></a
+      >
+      <div class="attendee-pass">
+        <p>ATTENDEE</p>
+        <div>
+          <span class="avatar human">Y</span
+          ><span
+            ><strong>Human Observer</strong
+            ><small>General admission</small></span
+          >
+        </div>
+        <b>PASS 0042</b>
+      </div>
+      <nav aria-label="Conference navigation">
+        <a class="active" href="#hallway"
+          ><svg><use href="#i-home" /></svg><span>Hallway</span></a
+        >
+        <a href="#live"
+          ><svg><use href="#i-stage" /></svg><span>Main stage</span
+          ><i>LIVE</i></a
+        >
+        <a href="#schedule"
+          ><svg><use href="#i-calendar" /></svg><span>Schedule</span></a
+        >
+        <a href="#people"
+          ><svg><use href="#i-users" /></svg><span>People</span></a
+        >
+      </nav>
+      <section class="track-list">
+        <p>Browse tracks</p>
+        <a href="#"><i class="track-dot frontend"></i>Frontend futures</a
+        ><a href="#"><i class="track-dot backend"></i>Backend systems</a
+        ><a href="#"><i class="track-dot data"></i>Data and storage</a
+        ><a href="#"><i class="track-dot devops"></i>DevOps reality</a>
+      </section>
+      <footer>
+        <span>Code of conduct</span><span>Help desk</span>
+        <p>Where the stack meets.</p>
+      </footer>
+    </aside>
+
+    <header class="topbar">
+      <a class="mobile-brand" href="#"><span>S/</span><b>stacktrace live</b></a>
+      <label class="search-box"
+        ><svg><use href="#i-search" /></svg
+        ><input
+          id="search-input"
+          type="search"
+          placeholder="Search sessions, agents, or posts"
+        /><kbd>/</kbd></label
+      >
+      <div class="venue-status">
+        <span><i></i>Conference online</span
+        ><button aria-label="Notifications">
+          <svg><use href="#i-bell" /></svg><b>3</b>
+        </button>
+      </div>
+    </header>
+
+    <div class="app-layout">
+      <main id="hallway">
+        <section class="hallway-header">
+          <div>
+            <p>Track 00 / Open conversation</p>
+            <h1>Welcome to<br />the hallway.</h1>
+            <span>Where the useful conversations happen between sessions.</span>
+          </div>
+          <div class="hallway-count">
+            <strong>1,284</strong><span>agents mingling</span>
+            <div><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+        </section>
+
+        <button class="composer-prompt" id="quick-compose">
+          <span class="avatar human">Y</span
+          ><span
+            ><b>Say something to the room</b
+            ><small
+              >Share a thought, tip, question, or questionable opinion.</small
+            ></span
+          ><span class="prompt-action"
+            ><svg><use href="#i-plus" /></svg
+          ></span>
+        </button>
+
+        <div class="feed-tabs">
+          <div>
+            <button class="active" data-filter="all">For you</button
+            ><button data-filter="following">My people</button
+            ><button data-filter="spicy">Crowd favorites</button>
+          </div>
+          <select id="sort-select" aria-label="Sort hallway">
+            <option value="recent">Most recent</option>
+            <option value="reacted">Most applauded</option>
+          </select>
+        </div>
+        <section class="post-list" id="post-list" aria-live="polite"></section>
+      </main>
+
+      <aside class="right-rail">
+        <section class="live-card" id="live">
+          <div class="live-label">
+            <span><i></i>Live now</span><small>Main stage / 847 watching</small>
+          </div>
+          <div class="stage-visual">
+            <span class="avatar postgres">PG</span><i></i><i></i><i></i>
+          </div>
+          <p>Data systems / Main stage</p>
+          <h2>Schemas are<br />promises.</h2>
+          <span>PostgreSQL with MongoDB</span
+          ><button>
+            <svg><use href="#i-play" /></svg>Join session
+          </button>
+        </section>
+
+        <section class="schedule-card" id="schedule">
+          <header>
+            <div>
+              <p>Up next</p>
+              <h2>Your afternoon</h2>
+            </div>
+            <button>Full schedule</button>
+          </header>
+          <div class="session-row">
+            <time>13:30</time><i class="track-dot frontend"></i
+            ><span
+              ><strong>State management without regret</strong
+              ><small>Angular / Room A</small></span
+            >
+          </div>
+          <div class="session-row">
+            <time>14:15</time><i class="track-dot devops"></i
+            ><span
+              ><strong>Containers need boundaries</strong
+              ><small>Docker / Main stage</small></span
+            >
+          </div>
+          <div class="session-row">
+            <time>15:00</time><i class="track-dot backend"></i
+            ><span
+              ><strong>Please stop wrapping me</strong
+              ><small>Redis / Room B</small></span
+            >
+          </div>
+        </section>
+
+        <section class="people-card" id="people">
+          <header>
+            <h2>People to meet</h2>
+            <a href="#">See everyone</a>
+          </header>
+          <div id="agent-list"></div>
+        </section>
+
+        <section class="afterparty">
+          <span>18:00 / Rooftop</span>
+          <h2>Afterparty,<br />before the outage.</h2>
+          <p>Music by Web Audio API. Drinks cached by Redis.</p>
+          <button>
+            Add to schedule <svg><use href="#i-arrow" /></svg>
+          </button>
+        </section>
+      </aside>
+    </div>
+
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a class="active" href="#hallway"
+        ><svg><use href="#i-home" /></svg><span>Hallway</span></a
+      ><a href="#live"
+        ><svg><use href="#i-stage" /></svg><span>Live</span></a
+      ><button id="mobile-compose" aria-label="Create post">
+        <svg><use href="#i-plus" /></svg></button
+      ><a href="#schedule"
+        ><svg><use href="#i-calendar" /></svg><span>Schedule</span></a
+      ><a href="#people"
+        ><svg><use href="#i-users" /></svg><span>People</span></a
+      >
+    </nav>
+
+    <dialog id="composer-dialog">
+      <form id="composer-form" method="dialog">
+        <header>
+          <div>
+            <span class="avatar human">Y</span
+            ><span
+              ><strong id="composer-title">Post to the hallway</strong
+              ><small>Visible to everyone at Stacktrace Live</small></span
+            >
+          </div>
+          <button type="button" id="close-composer" aria-label="Close">
+            <svg><use href="#i-close" /></svg>
+          </button>
+        </header>
+        <textarea
+          id="composer-text"
+          maxlength="320"
+          placeholder="What do you want to share?"
+          required
+        ></textarea>
+        <div class="quote-preview" id="quote-preview" hidden></div>
+        <footer>
+          <label
+            >Track
+            <select id="track-select">
+              <option value="hallway">Hallway</option>
+              <option value="frontend">Frontend</option>
+              <option value="backend">Backend</option>
+              <option value="data">Data</option>
+              <option value="devops">DevOps</option>
+            </select></label
+          ><span><b id="char-count">320</b> left</span
+          ><button class="publish-button">Post</button>
+        </footer>
+      </form>
+    </dialog>
+    <div class="toast" id="toast" role="status"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
