@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f3f5ef" />
+    <title>Daymark &mdash; Projects</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="projects.js" defer></script>
+  </head>
+  <body class="projects-page">
+    <div class="page-glow glow-one"></div>
+    <div class="page-glow glow-two"></div>
+
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="Daymark home"
+        ><span class="brand-symbol" aria-hidden="true"><i></i><i></i></span
+        ><span>daymark</span></a
+      >
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="index.html">Today</a
+        ><a class="active" href="projects.html">Projects</a
+        ><a href="progress.html">Progress</a>
+      </nav>
+      <div class="header-actions">
+        <button
+          class="quiet-toggle"
+          type="button"
+          data-board-calm
+          aria-pressed="false"
+        >
+          <svg viewBox="0 0 24 24"><path d="M4 12h16M7 7h10M9 17h6" /></svg
+          ><span>Calm view</span>
+        </button>
+        <button class="add-button" type="button" data-open-task>
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg
+          ><span>Add task</span>
+        </button>
+        <button class="avatar" type="button" aria-label="Open profile">
+          AK
+        </button>
+      </div>
+    </header>
+
+    <main class="project-main">
+      <section class="page-intro project-intro">
+        <div>
+          <p class="date-label">Three active projects</p>
+          <h1>Projects, without the pile-on.</h1>
+          <p>See what is moving, what needs attention, and what can wait.</p>
+        </div>
+        <div class="project-health">
+          <span class="health-orb"><i></i></span>
+          <p>
+            <strong>Workload feels balanced</strong>6 hours remain unscheduled
+            this week.
+          </p>
+        </div>
+      </section>
+
+      <section class="project-switcher" aria-label="Choose project">
+        <button class="project-tab active" type="button" data-project="website">
+          <span class="project-glyph peach">W</span
+          ><span><strong>Website launch</strong><small>9 days left</small></span
+          ><i>67%</i>
+        </button>
+        <button class="project-tab" type="button" data-project="mobile">
+          <span class="project-glyph blue">M</span
+          ><span><strong>Mobile app</strong><small>Steady progress</small></span
+          ><i>42%</i>
+        </button>
+        <button class="project-tab" type="button" data-project="personal">
+          <span class="project-glyph yellow">P</span
+          ><span><strong>Personal</strong><small>No deadline</small></span
+          ><i>58%</i>
+        </button>
+      </section>
+
+      <section class="project-summary">
+        <div class="summary-title">
+          <span class="project-glyph peach large" data-project-glyph>W</span>
+          <div>
+            <p class="overline"><span></span> On track</p>
+            <h2 data-project-title>Website launch</h2>
+            <p data-project-description>
+              Everything needed to ship the new marketing site by September 11.
+            </p>
+          </div>
+        </div>
+        <div class="summary-numbers">
+          <div>
+            <strong data-project-complete>67%</strong><span>complete</span>
+          </div>
+          <div>
+            <strong data-project-tasks>9</strong><span>open tasks</span>
+          </div>
+          <div>
+            <strong data-project-hours>14.5h</strong><span>work left</span>
+          </div>
+        </div>
+        <div class="summary-progress">
+          <span style="width: 67%" data-project-progress></span>
+        </div>
+      </section>
+
+      <section class="board-controls">
+        <div class="board-view">
+          <button class="active" type="button">Board</button
+          ><button type="button" data-view-message="List">List</button
+          ><button type="button" data-view-message="Milestones">
+            Milestones
+          </button>
+        </div>
+        <div>
+          <button class="filter-button" type="button" data-filter>
+            <svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4" /></svg
+            >Only mine
+          </button>
+          <div class="member-stack">
+            <span>AK</span><span>SL</span><span>JM</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="calm-board" aria-label="Website launch task board">
+        <div class="calm-column now-column">
+          <header>
+            <div>
+              <span class="column-mark now"></span>
+              <h2>Now</h2>
+              <em>2</em>
+            </div>
+            <p>The only work competing for attention.</p>
+          </header>
+          <div class="calm-card-list" data-column="now">
+            <article class="calm-task-card priority" data-owner="me">
+              <div class="task-card-top">
+                <span class="task-kind strategy">Strategy</span
+                ><button type="button" aria-label="Task menu">
+                  &bull;&bull;&bull;
+                </button>
+              </div>
+              <h3>Finish launch proposal</h3>
+              <p>Finalize scope, timeline, and success metrics.</p>
+              <div class="subtask-line">
+                <span><i style="width: 66%"></i></span
+                ><small>4 of 6 steps</small>
+              </div>
+              <footer>
+                <span class="gentle-due soon"
+                  ><svg viewBox="0 0 24 24">
+                    <rect x="3" y="5" width="18" height="16" rx="3" />
+                    <path d="M7 3v4M17 3v4" /></svg
+                  >Tomorrow</span
+                ><span class="workload">90 min</span
+                ><span class="mini-avatar">AK</span>
+              </footer>
+            </article>
+            <article class="calm-task-card" data-owner="other">
+              <div class="task-card-top">
+                <span class="task-kind build">Build</span
+                ><button type="button" aria-label="Task menu">
+                  &bull;&bull;&bull;
+                </button>
+              </div>
+              <h3>Build responsive hero</h3>
+              <p>Implement approved desktop and mobile states.</p>
+              <footer>
+                <span class="gentle-due"
+                  ><svg viewBox="0 0 24 24">
+                    <rect x="3" y="5" width="18" height="16" rx="3" />
+                    <path d="M7 3v4M17 3v4" /></svg
+                  >Today</span
+                ><span class="workload">4 hours</span
+                ><span class="mini-avatar sage">MR</span>
+              </footer>
+            </article>
+          </div>
+          <button class="column-add" type="button" data-open-task>
+            + Add to Now
+          </button>
+        </div>
+
+        <div class="calm-column">
+          <header>
+            <div>
+              <span class="column-mark next"></span>
+              <h2>Next</h2>
+              <em>3</em>
+            </div>
+            <p>Ready when current work is complete.</p>
+          </header>
+          <div class="calm-card-list" data-column="next">
+            <article class="calm-task-card" data-owner="me">
+              <div class="task-card-top">
+                <span class="task-kind content">Content</span
+                ><button type="button" aria-label="Task menu">
+                  &bull;&bull;&bull;
+                </button>
+              </div>
+              <h3>Review pricing page copy</h3>
+              <p>Check final messaging against positioning notes.</p>
+              <footer>
+                <span class="gentle-due">Friday</span
+                ><span class="workload">30 min</span
+                ><span class="mini-avatar">AK</span>
+              </footer>
+            </article>
+            <article class="calm-task-card" data-owner="other">
+              <div class="task-card-top">
+                <span class="task-kind design">Design</span
+                ><button type="button" aria-label="Task menu">
+                  &bull;&bull;&bull;
+                </button>
+              </div>
+              <h3>Create social launch assets</h3>
+              <p>Prepare square, portrait, and story variants.</p>
+              <footer>
+                <span class="gentle-due">Sep 7</span
+                ><span class="workload">3 hours</span
+                ><span class="mini-avatar blue">JM</span>
+              </footer>
+            </article>
+            <article class="calm-task-card" data-owner="other">
+              <div class="task-card-top">
+                <span class="task-kind content">Content</span
+                ><button type="button" aria-label="Task menu">
+                  &bull;&bull;&bull;
+                </button>
+              </div>
+              <h3>Partner feedback round</h3>
+              <p>Resolve the remaining open questions.</p>
+              <footer>
+                <span class="gentle-due">Friday</span
+                ><span class="workload">45 min</span
+                ><span class="mini-avatar pink">SL</span>
+              </footer>
+            </article>
+          </div>
+          <button class="column-add" type="button" data-open-task>
+            + Add to Next
+          </button>
+        </div>
+
+        <div class="calm-column later-column">
+          <header>
+            <div>
+              <span class="column-mark later"></span>
+              <h2>Later</h2>
+              <em>4</em>
+            </div>
+            <p>Important, but not asking for focus yet.</p>
+          </header>
+          <div class="calm-card-list" data-column="later">
+            <article class="calm-task-card quiet-card" data-owner="me">
+              <div class="task-card-top">
+                <span class="task-kind build">Build</span
+                ><button type="button" aria-label="Task menu">
+                  &bull;&bull;&bull;
+                </button>
+              </div>
+              <h3>Connect newsletter form</h3>
+              <p>Wire the form to the email platform.</p>
+              <footer>
+                <span class="gentle-due">Sep 8</span
+                ><span class="workload">2 hours</span
+                ><span class="mini-avatar">AK</span>
+              </footer>
+            </article>
+            <article class="calm-task-card quiet-card" data-owner="other">
+              <div class="task-card-top">
+                <span class="task-kind design">Design</span
+                ><button type="button" aria-label="Task menu">
+                  &bull;&bull;&bull;
+                </button>
+              </div>
+              <h3>Polish tablet layouts</h3>
+              <p>Resolve spacing at two breakpoints.</p>
+              <footer>
+                <span class="gentle-due">Sep 9</span
+                ><span class="workload">90 min</span
+                ><span class="mini-avatar pink">SL</span>
+              </footer>
+            </article>
+          </div>
+          <button class="column-add" type="button" data-open-task>
+            + Add to Later
+          </button>
+        </div>
+
+        <div class="calm-column done-column-calm">
+          <header>
+            <div>
+              <span class="column-mark done"></span>
+              <h2>Done</h2>
+              <em>6</em>
+            </div>
+            <p>Progress worth noticing.</p>
+          </header>
+          <div class="calm-card-list">
+            <article class="calm-task-card completed-card">
+              <span class="completion-check">&#10003;</span>
+              <div>
+                <h3>Define launch metrics</h3>
+                <p>Completed yesterday</p>
+              </div>
+              <span class="mini-avatar">AK</span>
+            </article>
+            <article class="calm-task-card completed-card">
+              <span class="completion-check">&#10003;</span>
+              <div>
+                <h3>Approve visual direction</h3>
+                <p>Completed Monday</p>
+              </div>
+              <span class="mini-avatar pink">SL</span>
+            </article>
+            <article class="calm-task-card completed-card">
+              <span class="completion-check">&#10003;</span>
+              <div>
+                <h3>Confirm launch date</h3>
+                <p>Completed Aug 28</p>
+              </div>
+              <span class="mini-avatar">AK</span>
+            </article>
+          </div>
+          <button class="column-add solid" type="button">Show 3 more</button>
+        </div>
+      </section>
+    </main>
+
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a href="index.html"
+        ><svg viewBox="0 0 24 24">
+          <path d="M5 10.5 12 5l7 5.5V20H5v-9.5Z" /></svg
+        ><span>Today</span></a
+      ><a class="active" href="projects.html"
+        ><svg viewBox="0 0 24 24">
+          <rect x="3" y="4" width="7" height="16" rx="2" />
+          <rect x="14" y="4" width="7" height="10" rx="2" /></svg
+        ><span>Projects</span></a
+      ><button
+        type="button"
+        class="mobile-add"
+        data-open-task
+        aria-label="Add task"
+      >
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></button
+      ><a href="progress.html"
+        ><svg viewBox="0 0 24 24"><path d="M5 19V9M12 19V4M19 19v-6" /></svg
+        ><span>Progress</span></a
+      ><button type="button" data-board-calm>
+        <svg viewBox="0 0 24 24"><path d="M4 12h16M7 7h10M9 17h6" /></svg
+        ><span>Calm</span>
+      </button>
+    </nav>
+
+    <dialog class="calm-dialog" id="task-dialog">
+      <form method="dialog" data-task-form>
+        <header>
+          <div>
+            <p class="overline">Website launch</p>
+            <h2>Add a task</h2>
+          </div>
+          <button value="cancel" aria-label="Close">&times;</button>
+        </header>
+        <label
+          ><span>Task name</span
+          ><input
+            name="title"
+            type="text"
+            placeholder="What needs attention?"
+            required
+            autofocus
+        /></label>
+        <div class="dialog-row">
+          <label
+            ><span>Place it in</span
+            ><select name="column">
+              <option value="now">Now</option>
+              <option value="next" selected>Next</option>
+              <option value="later">Later</option>
+            </select></label
+          ><label
+            ><span>Estimate</span
+            ><select name="estimate">
+              <option>15 min</option>
+              <option selected>30 min</option>
+              <option>1 hour</option>
+              <option>2 hours</option>
+            </select></label
+          >
+        </div>
+        <footer>
+          <button class="dialog-cancel" value="cancel">Cancel</button
+          ><button class="dialog-save" value="default" data-save-task>
+            Add task
+          </button>
+        </footer>
+      </form>
+    </dialog>
+    <div class="toast" role="status" aria-live="polite">
+      <span>&#10003;</span>
+      <p>Updated</p>
+    </div>
+  </body>
+</html>

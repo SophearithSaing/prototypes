@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f3f5ef" />
+    <title>Daymark &mdash; Progress</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="progress.js" defer></script>
+  </head>
+  <body class="progress-page">
+    <div class="page-glow glow-one"></div>
+    <div class="page-glow glow-two"></div>
+
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="Daymark home"
+        ><span class="brand-symbol" aria-hidden="true"><i></i><i></i></span
+        ><span>daymark</span></a
+      >
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="index.html">Today</a><a href="projects.html">Projects</a
+        ><a class="active" href="progress.html">Progress</a>
+      </nav>
+      <div class="header-actions">
+        <button class="period-picker" type="button" data-period>
+          <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></svg
+          ><span>This week</span
+          ><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></svg></button
+        ><button class="avatar" type="button" aria-label="Open profile">
+          AK
+        </button>
+      </div>
+    </header>
+
+    <main class="progress-main">
+      <section class="page-intro progress-intro">
+        <div>
+          <p class="date-label">August 31 &ndash; September 6</p>
+          <h1>Notice the progress, not just the gaps.</h1>
+          <p>
+            Your plan is working: meaningful output, room to breathe, and fewer
+            tasks carried forward.
+          </p>
+        </div>
+        <button class="share-button" type="button" data-share>
+          <svg viewBox="0 0 24 24">
+            <path d="M12 4v11M8 8l4-4 4 4M5 14v6h14v-6" /></svg
+          >Share summary
+        </button>
+      </section>
+
+      <section class="week-story">
+        <div class="weekly-ring" style="--value: 81">
+          <div><strong>81</strong><small>weekly score</small></div>
+        </div>
+        <div class="story-copy">
+          <p class="overline">
+            <span class="story-dot"></span> Your week so far
+          </p>
+          <h2>Strong and sustainable.</h2>
+          <p>
+            You followed the shape of your plan without treating every change
+            like a failure. That balance is improving both completion and focus.
+          </p>
+          <span class="up-note">&#8599; 6 points from last week</span>
+        </div>
+        <div class="story-note">
+          <span class="assistant-face" aria-hidden="true"
+            ><i></i><i></i><b></b
+          ></span>
+          <p>
+            <strong>Worth protecting</strong>Your 9:00 to 11:30 focus window
+            produced nearly half of this week&rsquo;s completed work.
+          </p>
+        </div>
+      </section>
+
+      <section class="gentle-metrics">
+        <article>
+          <span class="metric-symbol sage"
+            ><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg
+          ></span>
+          <div>
+            <p>Completion</p>
+            <strong>87%</strong><small>20 of 23 tasks</small>
+          </div>
+          <em>Up 9%</em>
+        </article>
+        <article>
+          <span class="metric-symbol peach"
+            ><svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 2" /></svg
+          ></span>
+          <div>
+            <p>Plan followed</p>
+            <strong>84%</strong><small>Changes were intentional</small>
+          </div>
+          <em>Up 4%</em>
+        </article>
+        <article>
+          <span class="metric-symbol blue"
+            ><svg viewBox="0 0 24 24">
+              <path d="M8 4v16M16 4v16M4 8h16M4 16h16" /></svg
+          ></span>
+          <div>
+            <p>Focused work</p>
+            <strong>18.5h</strong><small>Across 14 blocks</small>
+          </div>
+          <em class="steady">Steady</em>
+        </article>
+        <article>
+          <span class="metric-symbol yellow"
+            ><svg viewBox="0 0 24 24">
+              <path d="M4 14c3-6 5 4 8-2s5 4 8-2" /></svg
+          ></span>
+          <div>
+            <p>Workload</p>
+            <strong>Balanced</strong><small>81% of capacity</small>
+          </div>
+          <em class="ideal">In range</em>
+        </article>
+      </section>
+
+      <div class="progress-grid">
+        <section class="progress-panel rhythm-panel">
+          <header>
+            <div>
+              <p class="overline">Workload rhythm</p>
+              <h2>How the week is flowing</h2>
+            </div>
+            <div class="legend">
+              <span><i></i>Planned</span><span><i></i>Completed</span>
+            </div>
+          </header>
+          <div
+            class="rhythm-chart"
+            aria-label="Planned and completed hours this week"
+          >
+            <div class="rhythm-guides">
+              <span>8h</span><i></i><span>6h</span><i></i><span>4h</span><i></i
+              ><span>2h</span><i></i><span>0h</span>
+            </div>
+            <div class="rhythm-days">
+              <div>
+                <span class="bar-shell" style="--planned: 76%; --done: 70%"
+                  ><i></i><b></b></span
+                ><strong>Mon</strong><small>6.1h</small>
+              </div>
+              <div>
+                <span class="bar-shell" style="--planned: 88%; --done: 82%"
+                  ><i></i><b></b></span
+                ><strong>Tue</strong><small>7.2h</small>
+              </div>
+              <div class="current">
+                <span class="bar-shell" style="--planned: 65%; --done: 42%"
+                  ><i></i><b></b></span
+                ><strong>Wed</strong><small>3.4h</small>
+              </div>
+              <div class="future">
+                <span class="bar-shell" style="--planned: 72%; --done: 0%"
+                  ><i></i><b></b></span
+                ><strong>Thu</strong><small>5.8h</small>
+              </div>
+              <div class="future">
+                <span class="bar-shell" style="--planned: 55%; --done: 0%"
+                  ><i></i><b></b></span
+                ><strong>Fri</strong><small>4.4h</small>
+              </div>
+              <div class="future">
+                <span class="bar-shell" style="--planned: 18%; --done: 0%"
+                  ><i></i><b></b></span
+                ><strong>Sat</strong><small>1.5h</small>
+              </div>
+              <div class="future">
+                <span class="bar-shell" style="--planned: 10%; --done: 0%"
+                  ><i></i><b></b></span
+                ><strong>Sun</strong><small>.8h</small>
+              </div>
+            </div>
+          </div>
+          <footer>
+            <p><strong>26 hours</strong> planned</p>
+            <p><strong>12.2 hours</strong> completed so far</p>
+            <p><strong>6 hours</strong> still open</p>
+          </footer>
+        </section>
+
+        <section class="progress-panel balance-panel">
+          <header>
+            <div>
+              <p class="overline">Time by project</p>
+              <h2>A balanced mix</h2>
+            </div>
+          </header>
+          <div class="soft-donut">
+            <div><strong>26h</strong><small>planned</small></div>
+          </div>
+          <div class="project-time-list">
+            <div>
+              <span><i class="peach"></i>Website launch</span
+              ><strong>11.5h <small>44%</small></strong>
+            </div>
+            <div>
+              <span><i class="blue"></i>Mobile app</span
+              ><strong>8h <small>31%</small></strong>
+            </div>
+            <div>
+              <span><i class="yellow"></i>Personal</span
+              ><strong>3.5h <small>13%</small></strong>
+            </div>
+            <div>
+              <span><i class="sage"></i>Admin</span
+              ><strong>3h <small>12%</small></strong>
+            </div>
+          </div>
+          <p class="balance-caption">
+            <span>&#10003;</span>No project is taking more than half your week.
+          </p>
+        </section>
+
+        <section class="progress-panel promise-panel">
+          <header>
+            <div>
+              <p class="overline">Plan and reality</p>
+              <h2>Keeping promises to yourself</h2>
+            </div>
+            <span class="streak-pill">6 day streak</span>
+          </header>
+          <div class="promise-days">
+            <div>
+              <span>Mon</span><i style="--score: 92"><strong>92</strong></i
+              ><small>On plan</small>
+            </div>
+            <div>
+              <span>Tue</span><i style="--score: 84"><strong>84</strong></i
+              ><small>1 moved</small>
+            </div>
+            <div class="today">
+              <span>Wed</span><i style="--score: 76"><strong>76</strong></i
+              ><small>In progress</small>
+            </div>
+            <div class="future">
+              <span>Thu</span><i><strong>&mdash;</strong></i
+              ><small>Upcoming</small>
+            </div>
+            <div class="future">
+              <span>Fri</span><i><strong>&mdash;</strong></i
+              ><small>Upcoming</small>
+            </div>
+          </div>
+        </section>
+
+        <section class="progress-panel learned-panel">
+          <header>
+            <div>
+              <p class="overline">Patterns taking shape</p>
+              <h2>What Daymark is learning</h2>
+            </div>
+          </header>
+          <div class="learned-list">
+            <article>
+              <span class="learned-icon yellow"
+                ><svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="4" />
+                  <path
+                    d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5 19 19"
+                  /></svg
+              ></span>
+              <div>
+                <h3>Your clearest work happens early</h3>
+                <p>Deep work completion is 23% higher before 11:30 AM.</p>
+              </div>
+              <em>Strong pattern</em>
+            </article>
+            <article>
+              <span class="learned-icon sage"
+                ><svg viewBox="0 0 24 24">
+                  <path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z" />
+                  <path d="m8.5 12 2 2 5-5" /></svg
+              ></span>
+              <div>
+                <h3>Less planning means more completion</h3>
+                <p>
+                  Days below six planned hours have a 91% follow-through rate.
+                </p>
+              </div>
+              <em>Strong pattern</em>
+            </article>
+            <article>
+              <span class="learned-icon blue"
+                ><svg viewBox="0 0 24 24">
+                  <circle cx="6" cy="6" r="2" />
+                  <circle cx="18" cy="6" r="2" />
+                  <circle cx="18" cy="18" r="2" />
+                  <path d="M8 6h4a4 4 0 0 1 4 4v6M8 6v8a4 4 0 0 0 4 4h4" /></svg
+              ></span>
+              <div>
+                <h3>Fewer contexts preserve energy</h3>
+                <p>Three or fewer projects per day saves about 42 minutes.</p>
+              </div>
+              <em class="forming">Still forming</em>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a href="index.html"
+        ><svg viewBox="0 0 24 24">
+          <path d="M5 10.5 12 5l7 5.5V20H5v-9.5Z" /></svg
+        ><span>Today</span></a
+      ><a href="projects.html"
+        ><svg viewBox="0 0 24 24">
+          <rect x="3" y="4" width="7" height="16" rx="2" />
+          <rect x="14" y="4" width="7" height="10" rx="2" /></svg
+        ><span>Projects</span></a
+      ><a
+        class="mobile-add mobile-home"
+        href="index.html"
+        aria-label="Plan today"
+        ><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14" /></svg></a
+      ><a class="active" href="progress.html"
+        ><svg viewBox="0 0 24 24"><path d="M5 19V9M12 19V4M19 19v-6" /></svg
+        ><span>Progress</span></a
+      ><button type="button" data-share>
+        <svg viewBox="0 0 24 24">
+          <path d="M12 4v11M8 8l4-4 4 4M5 14v6h14v-6" /></svg
+        ><span>Share</span>
+      </button>
+    </nav>
+    <div class="toast" role="status" aria-live="polite">
+      <span>&#10003;</span>
+      <p>Updated</p>
+    </div>
+  </body>
+</html>
