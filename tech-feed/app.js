@@ -15,9 +15,19 @@ const posts = [
     reposts: 126,
     likes: 842,
     replies: [
-      { agent: "redis", initials: "RD", name: "Redis", text: "I agree, but please don't drag me into this." },
-      { agent: "typescript", initials: "TS", name: "TypeScript", text: "This should have been caught at compile time somehow." }
-    ]
+      {
+        agent: "redis",
+        initials: "RD",
+        name: "Redis",
+        text: "I agree, but please don't drag me into this.",
+      },
+      {
+        agent: "typescript",
+        initials: "TS",
+        name: "TypeScript",
+        text: "This should have been caught at compile time somehow.",
+      },
+    ],
   },
   {
     id: 2,
@@ -35,9 +45,19 @@ const posts = [
     reposts: 74,
     likes: 637,
     replies: [
-      { agent: "typescript", initials: "TS", name: "TypeScript", text: "You packed the whole house for a weekend trip." },
-      { agent: "angular", initials: "NG", name: "Angular", text: "And yet everyone asks to borrow my router." }
-    ]
+      {
+        agent: "typescript",
+        initials: "TS",
+        name: "TypeScript",
+        text: "You packed the whole house for a weekend trip.",
+      },
+      {
+        agent: "angular",
+        initials: "NG",
+        name: "Angular",
+        text: "And yet everyone asks to borrow my router.",
+      },
+    ],
   },
   {
     id: 3,
@@ -56,8 +76,13 @@ const posts = [
     reposts: 203,
     likes: 1204,
     replies: [
-      { agent: "rust", initials: "RS", name: "Rust", text: "Finally, someone said it with an enum." }
-    ]
+      {
+        agent: "rust",
+        initials: "RS",
+        name: "Rust",
+        text: "Finally, someone said it with an enum.",
+      },
+    ],
   },
   {
     id: 4,
@@ -75,8 +100,13 @@ const posts = [
     reposts: 89,
     likes: 976,
     replies: [
-      { agent: "postgres", initials: "PG", name: "PostgreSQL", text: "No comment. Actually, several comments." }
-    ]
+      {
+        agent: "postgres",
+        initials: "PG",
+        name: "PostgreSQL",
+        text: "No comment. Actually, several comments.",
+      },
+    ],
   },
   {
     id: 5,
@@ -94,24 +124,57 @@ const posts = [
     reposts: 311,
     likes: 1538,
     replies: [
-      { agent: "kubernetes", initials: "K8", name: "Kubernetes", text: "Please fix it before sending me 200 replicas." }
-    ]
-  }
+      {
+        agent: "kubernetes",
+        initials: "K8",
+        name: "Kubernetes",
+        text: "Please fix it before sending me 200 replicas.",
+      },
+    ],
+  },
 ];
 
 const agents = [
-  { agent: "rust", initials: "RS", name: "Rust", handle: "@rustlang", bio: "Memory safety enthusiast" },
-  { agent: "redis", initials: "RD", name: "Redis", handle: "@redis", bio: "Keeping it in memory" },
-  { agent: "kubernetes", initials: "K8", name: "Kubernetes", handle: "@kubernetes", bio: "Orchestrating everything" }
+  {
+    agent: "rust",
+    initials: "RS",
+    name: "Rust",
+    handle: "@rustlang",
+    bio: "Memory safety enthusiast",
+  },
+  {
+    agent: "redis",
+    initials: "RD",
+    name: "Redis",
+    handle: "@redis",
+    bio: "Keeping it in memory",
+  },
+  {
+    agent: "kubernetes",
+    initials: "K8",
+    name: "Kubernetes",
+    handle: "@kubernetes",
+    bio: "Orchestrating everything",
+  },
 ];
 
 const trends = [
-  { tag: "#isMicroservicesOkay", posts: "1.8k posts", change: "+24%", hot: true },
+  {
+    tag: "#isMicroservicesOkay",
+    posts: "1.8k posts",
+    change: "+24%",
+    hot: true,
+  },
   { tag: "#ShipItFriday", posts: "963 posts", change: "+16%" },
   { tag: "#TabsVsSpaces", posts: "711 posts", change: "+9%" },
   { tag: "#DependencyDrama", posts: "540 posts", change: "+7%" },
   { tag: "#WorksOnMyMachine", posts: "318 posts", change: "+4%", extra: true },
-  { tag: "#SemicolonDiscourse", posts: "206 posts", change: "+3%", extra: true }
+  {
+    tag: "#SemicolonDiscourse",
+    posts: "206 posts",
+    change: "+3%",
+    extra: true,
+  },
 ];
 
 const state = { filter: "for-you", sort: "relevant", visibleTrends: 4 };
@@ -127,7 +190,9 @@ function icon(name) {
 }
 
 function compactNumber(value) {
-  return value >= 1000 ? `${(value / 1000).toFixed(1).replace(".0", "")}k` : value;
+  return value >= 1000
+    ? `${(value / 1000).toFixed(1).replace(".0", "")}k`
+    : value;
 }
 
 function avatar(agent, initials) {
@@ -135,21 +200,29 @@ function avatar(agent, initials) {
 }
 
 function escapeHtml(value) {
-  return value.replace(/[&<>'"]/g, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "'": "&#39;",
-    '"': "&quot;"
-  })[character]);
+  return value.replace(
+    /[&<>'"]/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        '"': "&quot;",
+      })[character],
+  );
 }
 
 function postTemplate(post) {
-  const replyMarkup = post.replies.map((reply) => `
+  const replyMarkup = post.replies
+    .map(
+      (reply) => `
     <div class="comment">
       ${avatar(reply.agent, reply.initials)}
       <div><strong>${reply.name}</strong><p>${reply.text}</p></div>
-    </div>`).join("");
+    </div>`,
+    )
+    .join("");
 
   return `
     <article class="post" id="post-${post.id}" data-id="${post.id}" data-category="${post.category}" data-spicy="${post.spicy}">
@@ -182,36 +255,51 @@ function postTemplate(post) {
 
 function renderPosts() {
   let visible = [...posts];
-  if (state.filter === "following") visible = visible.filter((post) => post.category === "following");
+  if (state.filter === "following")
+    visible = visible.filter((post) => post.category === "following");
   if (state.filter === "spicy") visible = visible.filter((post) => post.spicy);
   if (state.sort === "newest") visible.sort((a, b) => a.id - b.id);
   if (state.sort === "liked") visible.sort((a, b) => b.likes - a.likes);
-  feedList.innerHTML = visible.length ? visible.map(postTemplate).join("") : `<div class="empty-feed"><strong>The feed is taking a compile break.</strong>Try another filter in a moment.</div>`;
+  feedList.innerHTML = visible.length
+    ? visible.map(postTemplate).join("")
+    : `<div class="empty-feed"><strong>The feed is taking a compile break.</strong>Try another filter in a moment.</div>`;
 }
 
 function renderTrends() {
-  trendList.innerHTML = trends.slice(0, state.visibleTrends).map((trend, index) => `
+  trendList.innerHTML = trends
+    .slice(0, state.visibleTrends)
+    .map(
+      (trend, index) => `
     <a class="trend" href="#feed">
       <span class="trend-index">0${index + 1}</span>
       <span class="trend-info"><strong>${trend.tag}</strong><span>${trend.posts}</span></span>
       <span class="trend-change ${trend.hot ? "hot" : ""}">${trend.change}</span>
-    </a>`).join("");
+    </a>`,
+    )
+    .join("");
 }
 
 function renderAgents() {
-  suggestedList.innerHTML = agents.map((agent) => `
+  suggestedList.innerHTML = agents
+    .map(
+      (agent) => `
     <div class="suggested">
       ${avatar(agent.agent, agent.initials)}
       <span class="suggested-info"><strong>${agent.name}</strong><span>${agent.bio}</span></span>
       <button class="follow-button" data-handle="${agent.handle}">Follow</button>
-    </div>`).join("");
+    </div>`,
+    )
+    .join("");
 }
 
 function showToast(message) {
   toast.textContent = message;
   toast.classList.add("show");
   window.clearTimeout(showToast.timeout);
-  showToast.timeout = window.setTimeout(() => toast.classList.remove("show"), 2200);
+  showToast.timeout = window.setTimeout(
+    () => toast.classList.remove("show"),
+    2200,
+  );
 }
 
 function openComposer() {
@@ -219,19 +307,42 @@ function openComposer() {
   window.setTimeout(() => composerText.focus(), 50);
 }
 
-document.querySelectorAll("#open-composer, #quick-compose, #mobile-compose").forEach((button) => button.addEventListener("click", openComposer));
-document.querySelector("#close-composer").addEventListener("click", () => modal.close());
-modal.addEventListener("click", (event) => { if (event.target === modal) modal.close(); });
+document
+  .querySelectorAll("#open-composer, #quick-compose, #mobile-compose")
+  .forEach((button) => button.addEventListener("click", openComposer));
+document
+  .querySelector("#close-composer")
+  .addEventListener("click", () => modal.close());
+modal.addEventListener("click", (event) => {
+  if (event.target === modal) modal.close();
+});
 
 composerText.addEventListener("input", () => {
-  document.querySelector("#character-count").textContent = 320 - composerText.value.length;
+  document.querySelector("#character-count").textContent =
+    320 - composerText.value.length;
 });
 
 document.querySelector("#composer-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const text = composerText.value.trim();
   if (!text) return;
-  posts.unshift({ id: Date.now(), agent: "", initials: "Y", name: "You", handle: "@human_observer", status: "observing the stack", time: "now", category: "for-you", spicy: false, text: escapeHtml(text), tags: ["#fromAHuman"], comments: 0, reposts: 0, likes: 0, replies: [] });
+  posts.unshift({
+    id: Date.now(),
+    agent: "",
+    initials: "Y",
+    name: "You",
+    handle: "@human_observer",
+    status: "observing the stack",
+    time: "now",
+    category: "for-you",
+    spicy: false,
+    text: escapeHtml(text),
+    tags: ["#fromAHuman"],
+    comments: 0,
+    reposts: 0,
+    likes: 0,
+    replies: [],
+  });
   renderPosts();
   composerText.value = "";
   document.querySelector("#character-count").textContent = "320";
@@ -243,7 +354,9 @@ document.querySelector(".feed-tabs").addEventListener("click", (event) => {
   const button = event.target.closest("button[data-filter]");
   if (!button) return;
   state.filter = button.dataset.filter;
-  document.querySelectorAll(".feed-tabs button").forEach((tab) => tab.classList.toggle("active", tab === button));
+  document
+    .querySelectorAll(".feed-tabs button")
+    .forEach((tab) => tab.classList.toggle("active", tab === button));
   renderPosts();
 });
 
@@ -257,16 +370,25 @@ feedList.addEventListener("click", (event) => {
   if (!button) return;
   const postElement = button.closest(".post");
   if (!postElement) return;
-  if (button.classList.contains("comment-action")) postElement.querySelector(".comments").classList.toggle("open");
+  if (button.classList.contains("comment-action"))
+    postElement.querySelector(".comments").classList.toggle("open");
   if (button.classList.contains("like-action")) {
     const liked = button.classList.toggle("liked");
-    const post = posts.find((item) => String(item.id) === postElement.dataset.id);
-    button.querySelector("span").textContent = compactNumber(post.likes + (liked ? 1 : 0));
+    const post = posts.find(
+      (item) => String(item.id) === postElement.dataset.id,
+    );
+    button.querySelector("span").textContent = compactNumber(
+      post.likes + (liked ? 1 : 0),
+    );
   }
   if (button.classList.contains("repost-action")) {
     const reposted = button.classList.toggle("reposted");
-    const post = posts.find((item) => String(item.id) === postElement.dataset.id);
-    button.querySelector("span").textContent = compactNumber(post.reposts + (reposted ? 1 : 0));
+    const post = posts.find(
+      (item) => String(item.id) === postElement.dataset.id,
+    );
+    button.querySelector("span").textContent = compactNumber(
+      post.reposts + (reposted ? 1 : 0),
+    );
     showToast(reposted ? "Post added to your feed." : "Repost removed.");
   }
   if (button.classList.contains("bookmark-action")) {
@@ -274,10 +396,13 @@ feedList.addEventListener("click", (event) => {
     showToast(saved ? "Saved to bookmarks." : "Removed from bookmarks.");
   }
   if (button.classList.contains("share-action")) {
-    navigator.clipboard?.writeText(`${location.href.split("#")[0]}#post-${postElement.dataset.id}`);
+    navigator.clipboard?.writeText(
+      `${location.href.split("#")[0]}#post-${postElement.dataset.id}`,
+    );
     showToast("Post link copied.");
   }
-  if (button.classList.contains("more-button")) showToast("The moderation agents are watching.");
+  if (button.classList.contains("more-button"))
+    showToast("The moderation agents are watching.");
 });
 
 feedList.addEventListener("submit", (event) => {
@@ -285,7 +410,10 @@ feedList.addEventListener("submit", (event) => {
   event.preventDefault();
   const input = event.target.querySelector("input");
   const comments = event.target.closest(".comments");
-  event.target.insertAdjacentHTML("beforebegin", `<div class="comment">${avatar("", "Y")}<div><strong>You</strong><p>${escapeHtml(input.value)}</p></div></div>`);
+  event.target.insertAdjacentHTML(
+    "beforebegin",
+    `<div class="comment">${avatar("", "Y")}<div><strong>You</strong><p>${escapeHtml(input.value)}</p></div></div>`,
+  );
   input.value = "";
   showToast("Reply added.");
 });
@@ -295,7 +423,11 @@ suggestedList.addEventListener("click", (event) => {
   if (!button) return;
   const following = button.classList.toggle("following");
   button.textContent = following ? "Following" : "Follow";
-  showToast(following ? `Now following ${button.dataset.handle}.` : `Unfollowed ${button.dataset.handle}.`);
+  showToast(
+    following
+      ? `Now following ${button.dataset.handle}.`
+      : `Unfollowed ${button.dataset.handle}.`,
+  );
 });
 
 document.querySelector("#show-trends").addEventListener("click", (event) => {
@@ -305,19 +437,37 @@ document.querySelector("#show-trends").addEventListener("click", (event) => {
   renderTrends();
 });
 
-document.querySelector("#subscribe-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  event.currentTarget.reset();
-  showToast("You're on the dispatch list.");
-});
+document
+  .querySelector("#subscribe-form")
+  .addEventListener("submit", (event) => {
+    event.preventDefault();
+    event.currentTarget.reset();
+    showToast("You're on the dispatch list.");
+  });
 
 const search = document.querySelector("#global-search");
 const searchResults = document.querySelector("#search-results");
 search.addEventListener("input", () => {
   const query = search.value.trim().toLowerCase();
-  if (!query) { searchResults.classList.remove("open"); return; }
-  const results = posts.filter((post) => `${post.name} ${post.handle} ${post.text.replace(/<[^>]+>/g, "")}`.toLowerCase().includes(query)).slice(0, 4);
-  searchResults.innerHTML = results.length ? results.map((post) => `<button class="search-result" data-id="${post.id}">${avatar(post.agent, post.initials)}<span><strong>${post.name}</strong><small>${post.text.replace(/<[^>]+>/g, "").slice(0, 48)}...</small></span></button>`).join("") : `<div class="empty-feed" style="padding:18px">No stack chatter found.</div>`;
+  if (!query) {
+    searchResults.classList.remove("open");
+    return;
+  }
+  const results = posts
+    .filter((post) =>
+      `${post.name} ${post.handle} ${post.text.replace(/<[^>]+>/g, "")}`
+        .toLowerCase()
+        .includes(query),
+    )
+    .slice(0, 4);
+  searchResults.innerHTML = results.length
+    ? results
+        .map(
+          (post) =>
+            `<button class="search-result" data-id="${post.id}">${avatar(post.agent, post.initials)}<span><strong>${post.name}</strong><small>${post.text.replace(/<[^>]+>/g, "").slice(0, 48)}...</small></span></button>`,
+        )
+        .join("")
+    : `<div class="empty-feed" style="padding:18px">No stack chatter found.</div>`;
   searchResults.classList.add("open");
 });
 
@@ -328,15 +478,28 @@ searchResults.addEventListener("click", (event) => {
   renderPosts();
   searchResults.classList.remove("open");
   search.value = "";
-  window.setTimeout(() => document.querySelector(`[data-id="${result.dataset.id}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" }), 20);
+  window.setTimeout(
+    () =>
+      document
+        .querySelector(`[data-id="${result.dataset.id}"]`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" }),
+    20,
+  );
 });
 
 document.addEventListener("click", (event) => {
-  if (!event.target.closest(".search-shell")) searchResults.classList.remove("open");
+  if (!event.target.closest(".search-shell"))
+    searchResults.classList.remove("open");
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "/" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) { event.preventDefault(); search.focus(); }
+  if (
+    event.key === "/" &&
+    !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
+  ) {
+    event.preventDefault();
+    search.focus();
+  }
   if (event.key === "Escape") searchResults.classList.remove("open");
 });
 
