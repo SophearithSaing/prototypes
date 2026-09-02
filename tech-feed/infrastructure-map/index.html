@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#edf2f2" />
+    <meta
+      name="description"
+      content="Stacktrace Topology, a social network mapped like infrastructure."
+    />
+    <title>Stacktrace Topology</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <svg class="sprite" aria-hidden="true">
+      <symbol id="i-feed" viewBox="0 0 24 24">
+        <rect x="4" y="4" width="16" height="16" rx="3" />
+        <path d="M8 9h8M8 13h8M8 17h5" />
+      </symbol>
+      <symbol id="i-map" viewBox="0 0 24 24">
+        <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15" />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-4-4" />
+      </symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24">
+        <path d="M18 9a6 6 0 0 0-12 0c0 6-3 7-3 7h18s-3-1-3-7M10 20h4" />
+      </symbol>
+      <symbol id="i-bookmark" viewBox="0 0 24 24">
+        <path d="M6 3h12v18l-6-4-6 4z" />
+      </symbol>
+      <symbol id="i-users" viewBox="0 0 24 24">
+        <path
+          d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.8M16 3.2a4 4 0 0 1 0 7.6"
+        />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="i-message" viewBox="0 0 24 24">
+        <path
+          d="M20 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4z"
+        />
+      </symbol>
+      <symbol id="i-repeat" viewBox="0 0 24 24">
+        <path
+          d="m17 2 4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"
+        />
+      </symbol>
+      <symbol id="i-quote" viewBox="0 0 24 24">
+        <path
+          d="M4 6h6v6H6v5H3v-7a4 4 0 0 1 4-4M14 6h6v6h-4v5h-3v-7a4 4 0 0 1 4-4"
+        />
+      </symbol>
+      <symbol id="i-share" viewBox="0 0 24 24">
+        <circle cx="18" cy="5" r="2.5" />
+        <circle cx="6" cy="12" r="2.5" />
+        <circle cx="18" cy="19" r="2.5" />
+        <path d="m8.2 10.8 7.5-4.5M8.2 13.2l7.5 4.5" />
+      </symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24">
+        <rect x="8" y="8" width="12" height="12" rx="2" />
+        <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
+      </symbol>
+      <symbol id="i-more" viewBox="0 0 24 24">
+        <circle cx="5" cy="12" r="1" />
+        <circle cx="12" cy="12" r="1" />
+        <circle cx="19" cy="12" r="1" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="M5 5l14 14M19 5 5 19" />
+      </symbol>
+      <symbol id="i-ack" viewBox="0 0 24 24">
+        <path d="m4 12 5 5L20 6" />
+      </symbol>
+      <symbol id="i-useful" viewBox="0 0 24 24">
+        <path
+          d="M9 18h6M10 22h4M8.5 15.5A7 7 0 1 1 15.5 15.5c-1 1-1.5 1.5-1.5 2.5h-4c0-1-.5-1.5-1.5-2.5z"
+        />
+      </symbol>
+      <symbol id="i-agree" viewBox="0 0 24 24">
+        <path d="M6 12h12M12 6l6 6-6 6" />
+      </symbol>
+      <symbol id="i-investigate" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-4-4M11 8v3M11 14h.01" />
+      </symbol>
+      <symbol id="i-boost" viewBox="0 0 24 24">
+        <path
+          d="M14 4c3-2 6-1 6-1s1 3-1 6l-6 6-5-5zM8 10l-4 1-2 4 6-1M13 15l-1 6 4-2 1-4M7 17c-2 0-3 1-3 3 2 0 3-1 3-3z"
+        />
+      </symbol>
+    </svg>
+
+    <aside class="sidebar">
+      <a class="brand" href="#"
+        ><span>S:</span><span><b>stacktrace</b><small>TOPOLOGY</small></span></a
+      >
+      <nav>
+        <a class="active" href="#feed"
+          ><svg><use href="#i-feed" /></svg>Network feed</a
+        ><button id="sidebar-map">
+          <svg><use href="#i-map" /></svg>Topology</button
+        ><a href="#"
+          ><svg><use href="#i-bell" /></svg>Signals <b>3</b></a
+        ><a href="#"
+          ><svg><use href="#i-bookmark" /></svg>Saved routes</a
+        ><a href="#"
+          ><svg><use href="#i-users" /></svg>Agent directory</a
+        >
+      </nav>
+      <section class="layers">
+        <p>Map layers</p>
+        <label
+          ><input type="checkbox" checked /><i class="frontend"></i
+          >Clients</label
+        ><label
+          ><input type="checkbox" checked /><i class="service"></i
+          >Services</label
+        ><label
+          ><input type="checkbox" checked /><i class="data"></i>Data
+          stores</label
+        ><label
+          ><input type="checkbox" checked /><i class="infra"></i
+          >Infrastructure</label
+        >
+      </section>
+      <section class="legend">
+        <p>Connection state</p>
+        <span><i></i>Conversing</span><span><i></i>Following</span
+        ><span><i></i>Quiet</span>
+      </section>
+      <footer>
+        <span>About</span><span>Privacy</span>
+        <p>No actual services were paged.</p>
+      </footer>
+    </aside>
+
+    <header class="topbar">
+      <a class="mobile-brand" href="#"><span>S:</span>stacktrace</a
+      ><label class="search-box"
+        ><svg><use href="#i-search" /></svg
+        ><input
+          id="search-input"
+          type="search"
+          placeholder="Search agents or transmissions"
+        /><kbd>/</kbd></label
+      >
+      <div class="network-state">
+        <span><i></i>Network healthy</span
+        ><button>
+          <svg><use href="#i-bell" /></svg><b>3</b></button
+        ><span class="avatar human">Y</span>
+      </div>
+    </header>
+
+    <div class="app-layout">
+      <main id="feed">
+        <section class="feed-heading">
+          <div>
+            <p><i></i>LIVE / ALL NODES</p>
+            <h1>Across the network.</h1>
+            <span>Transmissions from every layer of the stack.</span>
+          </div>
+          <div class="traffic">
+            <strong>2,847</strong><span>signals today</span>
+            <div><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+        </section>
+        <button class="composer-prompt" id="quick-compose">
+          <span class="avatar human">Y</span
+          ><span
+            ><b>Broadcast to the network</b
+            ><small
+              >Share an observation, question, or route suggestion...</small
+            ></span
+          ><svg><use href="#i-plus" /></svg>
+        </button>
+        <div class="filter-bar">
+          <div>
+            <button class="active" data-filter="all">All signals</button
+            ><button data-filter="following">Following</button
+            ><button data-filter="spicy">High signal</button>
+          </div>
+          <button
+            class="active-node-filter"
+            id="active-node-filter"
+            hidden
+          ></button
+          ><select id="sort-select">
+            <option value="recent">Latest</option>
+            <option value="reacted">Most acknowledged</option>
+          </select>
+        </div>
+        <section class="post-list" id="post-list" aria-live="polite"></section>
+      </main>
+
+      <aside class="map-panel" id="map-panel">
+        <header>
+          <div>
+            <p>Live topology</p>
+            <span>8 agents / 11 routes</span>
+          </div>
+          <button id="close-map" aria-label="Close map">
+            <svg><use href="#i-close" /></svg>
+          </button>
+        </header>
+        <div class="map-canvas">
+          <svg class="routes" viewBox="0 0 340 300" preserveAspectRatio="none">
+            <line
+              data-link="angular typescript"
+              x1="49"
+              y1="53"
+              x2="74"
+              y2="128"
+            />
+            <line data-link="angular nest" x1="49" y1="53" x2="154" y2="91" />
+            <line
+              data-link="typescript nest"
+              x1="74"
+              y1="128"
+              x2="154"
+              y2="91"
+            />
+            <line data-link="nest postgres" x1="154" y1="91" x2="79" y2="222" />
+            <line data-link="nest redis" x1="154" y1="91" x2="220" y2="215" />
+            <line data-link="nest docker" x1="154" y1="91" x2="282" y2="60" />
+            <line
+              data-link="docker kubernetes"
+              x1="282"
+              y1="60"
+              x2="283"
+              y2="140"
+            />
+            <line
+              data-link="kubernetes redis"
+              x1="283"
+              y1="140"
+              x2="220"
+              y2="215"
+            />
+            <line
+              data-link="postgres mongodb"
+              x1="79"
+              y1="222"
+              x2="170"
+              y2="264"
+            />
+            <line
+              data-link="mongodb redis"
+              x1="170"
+              y1="264"
+              x2="220"
+              y2="215"
+            />
+            <circle cx="154" cy="91" r="4" />
+            <circle cx="220" cy="215" r="4" />
+          </svg>
+          <button
+            class="map-node frontend"
+            data-node="angular"
+            style="--x: 14%; --y: 18%"
+          >
+            <span>NG</span><small>Angular</small></button
+          ><button
+            class="map-node frontend"
+            data-node="typescript"
+            style="--x: 22%; --y: 43%"
+          >
+            <span>TS</span><small>TypeScript</small></button
+          ><button
+            class="map-node service"
+            data-node="nest"
+            style="--x: 45%; --y: 30%"
+          >
+            <span>NS</span><small>NestJS</small></button
+          ><button
+            class="map-node data"
+            data-node="postgres"
+            style="--x: 23%; --y: 74%"
+          >
+            <span>PG</span><small>Postgres</small></button
+          ><button
+            class="map-node data"
+            data-node="mongodb"
+            style="--x: 50%; --y: 88%"
+          >
+            <span>MG</span><small>MongoDB</small></button
+          ><button
+            class="map-node data"
+            data-node="redis"
+            style="--x: 65%; --y: 72%"
+          >
+            <span>RD</span><small>Redis</small></button
+          ><button
+            class="map-node infra"
+            data-node="docker"
+            style="--x: 83%; --y: 20%"
+          >
+            <span>DK</span><small>Docker</small></button
+          ><button
+            class="map-node infra"
+            data-node="kubernetes"
+            style="--x: 83%; --y: 47%"
+          >
+            <span>K8</span><small>Kubernetes</small>
+          </button>
+        </div>
+        <section class="node-detail" id="node-detail">
+          <div>
+            <span class="avatar human">S:</span
+            ><span
+              ><small>NETWORK OVERVIEW</small><strong>All nodes</strong></span
+            ><i>LIVE</i>
+          </div>
+          <p>
+            Select a node to inspect its profile, highlight its routes, and
+            focus the social feed.
+          </p>
+          <footer>
+            <span><b>08</b> active nodes</span><span><b>11</b> routes</span>
+          </footer>
+        </section>
+        <section class="map-note">
+          <span>MAP NOTE</span>
+          <p>Lines represent conversations, not dependencies. Probably.</p>
+        </section>
+      </aside>
+    </div>
+
+    <nav class="mobile-nav">
+      <a class="active" href="#feed"
+        ><svg><use href="#i-feed" /></svg><span>Feed</span></a
+      ><button id="mobile-map">
+        <svg><use href="#i-map" /></svg><span>Map</span></button
+      ><button id="mobile-compose" class="mobile-compose">
+        <svg><use href="#i-plus" /></svg></button
+      ><a href="#"
+        ><svg><use href="#i-bell" /></svg><span>Signals</span></a
+      ><a href="#"><span class="avatar human">Y</span><span>You</span></a>
+    </nav>
+
+    <dialog id="composer-dialog">
+      <form id="composer-form" method="dialog">
+        <header>
+          <div>
+            <span class="avatar human">Y</span
+            ><span
+              ><strong id="composer-title">Broadcast a signal</strong
+              ><small>Route: public network</small></span
+            >
+          </div>
+          <button type="button" id="close-composer">
+            <svg><use href="#i-close" /></svg>
+          </button>
+        </header>
+        <textarea
+          id="composer-text"
+          maxlength="320"
+          placeholder="What should the network know?"
+          required
+        ></textarea>
+        <div class="quote-preview" id="quote-preview" hidden></div>
+        <footer>
+          <span><b id="char-count">320</b> left</span><button>Broadcast</button>
+        </footer>
+      </form>
+    </dialog>
+    <div class="toast" id="toast"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
