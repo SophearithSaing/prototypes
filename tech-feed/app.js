@@ -410,11 +410,11 @@ const profiles = {
 };
 
 const reactionTypes = [
-  { id: "useful", label: "Useful", mark: "◆" },
-  { id: "agree", label: "Agree", mark: "+1" },
-  { id: "brilliant", label: "Brilliant", mark: "✦" },
-  { id: "spicy", label: "Spicy", mark: "▲" },
-  { id: "ship", label: "Ship it", mark: "→" },
+  { id: "useful", label: "Useful", icon: "useful" },
+  { id: "agree", label: "Agree", icon: "agree" },
+  { id: "brilliant", label: "Brilliant", icon: "brilliant" },
+  { id: "spicy", label: "Spicy", icon: "spicy" },
+  { id: "ship", label: "Ship it", icon: "ship" },
 ];
 
 const trends = [
@@ -515,7 +515,7 @@ function postTemplate(post) {
     .slice(0, 3)
     .map(([id]) => {
       const reaction = reactionTypes.find((item) => item.id === id);
-      return `<i class="reaction-mark ${id}" title="${reaction.label}">${reaction.mark}</i>`;
+      return `<i class="reaction-mark ${id}" role="img" aria-label="${reaction.label}">${icon(reaction.icon)}</i>`;
     })
     .join("");
   const replyMarkup = post.replies
@@ -535,7 +535,7 @@ function postTemplate(post) {
       <div class="post-main">
         <div class="post-head">
           <div class="post-author">
-             <div class="author-line">${profiles[post.agent] ? `<button class="profile-link" data-profile="${post.agent}">${post.name}</button>` : `<strong>${post.name}</strong>`}<span class="verified">v</span><span class="handle">${post.handle}</span><span class="post-time">&middot; ${post.time}</span></div>
+             <div class="author-line">${profiles[post.agent] ? `<button class="profile-link" data-profile="${post.agent}">${post.name}</button>` : `<strong>${post.name}</strong>`}<span class="verified" role="img" aria-label="Verified account">${icon("verified")}</span><span class="handle">${post.handle}</span><span class="post-time">&middot; ${post.time}</span></div>
             <div class="agent-status"><span></span>${post.status}</div>
           </div>
           <button class="more-button" aria-label="More options">${icon("more")}</button>
@@ -548,8 +548,8 @@ function postTemplate(post) {
         <div class="post-actions">
           <button class="action-button comment-action" aria-label="Show comments">${icon("message")}<span>${compactNumber(post.comments)}</span></button>
           <div class="action-wrap">
-            <button class="action-button reaction-action ${selectedReaction ? "reacted" : ""}" aria-label="Choose a reaction"><b>${selectedType?.mark || "◇"}</b><span>${selectedType?.label || "React"}</span></button>
-            <div class="action-menu reaction-menu">${reactionTypes.map((reaction) => `<button data-reaction="${reaction.id}"><b>${reaction.mark}</b><span>${reaction.label}</span></button>`).join("")}</div>
+            <button class="action-button reaction-action ${selectedReaction ? "reacted" : ""}" data-selected="${selectedReaction || ""}" aria-label="Choose a reaction" aria-haspopup="menu" aria-expanded="false">${icon(selectedType?.icon || "react")}<span>${selectedType?.label || "React"}</span></button>
+            <div class="action-menu reaction-menu" role="menu">${reactionTypes.map((reaction) => `<button class="${selectedReaction === reaction.id ? "selected" : ""}" data-reaction="${reaction.id}" role="menuitemradio" aria-checked="${selectedReaction === reaction.id}">${icon(reaction.icon)}<span>${reaction.label}</span></button>`).join("")}</div>
           </div>
           <div class="action-wrap">
             <button class="action-button repost-action ${state.reposted.has(post.id) ? "reposted" : ""}" aria-label="Repost and sharing options">${icon("repeat")}<span>${compactNumber(post.reposts + (state.reposted.has(post.id) ? 1 : 0))}</span></button>
@@ -624,6 +624,9 @@ function closeMenus() {
   document
     .querySelectorAll(".action-menu.open")
     .forEach((menu) => menu.classList.remove("open"));
+  document
+    .querySelectorAll('.action-button[aria-expanded="true"]')
+    .forEach((button) => button.setAttribute("aria-expanded", "false"));
 }
 
 function openComposer(quoteId = null) {
@@ -737,7 +740,10 @@ feedList.addEventListener("click", async (event) => {
     const menu = button.nextElementSibling;
     const wasOpen = menu.classList.contains("open");
     closeMenus();
-    if (!wasOpen) menu.classList.add("open");
+    if (!wasOpen) {
+      menu.classList.add("open");
+      button.setAttribute("aria-expanded", "true");
+    }
     return;
   }
   const reaction = button.dataset.reaction;

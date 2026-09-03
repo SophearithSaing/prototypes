@@ -432,6 +432,12 @@ svg {
 .sidebar-footer span {
   margin-right: 10px;
 }
+.sidebar-footer a {
+  margin-right: 10px;
+}
+.sidebar-footer a:hover {
+  color: var(--ink);
+}
 .sidebar-footer p {
   margin: 6px 0 0;
   font-family: var(--mono);
@@ -711,7 +717,11 @@ svg {
   border-radius: 50%;
   color: white;
   background: var(--blue);
-  font-size: 8px;
+}
+.verified svg {
+  width: 8px;
+  height: 8px;
+  stroke-width: 2.5;
 }
 .handle,
 .post-time {
@@ -827,17 +837,43 @@ svg {
   font-family: var(--mono);
   font-size: 9px;
 }
-.reaction-action b {
-  min-width: 16px;
-  color: var(--accent-dark);
-  font-family: var(--mono);
-  font-size: 12px;
-  line-height: 1;
-  text-align: center;
+.reaction-action > svg {
+  width: 17px;
+  height: 17px;
+  color: #68766d;
+  transition:
+    color 0.18s ease,
+    background 0.18s ease,
+    transform 0.18s ease;
 }
 .reaction-action.reacted {
-  color: var(--accent-dark);
+  color: var(--ink);
   font-weight: 500;
+}
+.reaction-action.reacted > svg {
+  width: 19px;
+  height: 19px;
+  padding: 3px;
+  border-radius: 6px;
+  color: #3d6815;
+  background: #ddf4bc;
+  transform: translateY(-1px);
+}
+.reaction-action[data-selected="agree"] > svg {
+  color: #315ab9;
+  background: #dfe8ff;
+}
+.reaction-action[data-selected="brilliant"] > svg {
+  color: #7a5700;
+  background: #fff0b8;
+}
+.reaction-action[data-selected="spicy"] > svg {
+  color: #b83d1d;
+  background: #ffe0d4;
+}
+.reaction-action[data-selected="ship"] > svg {
+  color: white;
+  background: var(--navy);
 }
 .action-button svg {
   width: 16px;
@@ -903,20 +939,55 @@ svg {
   padding: 7px;
 }
 .reaction-menu button {
+  position: relative;
   display: grid;
   justify-items: center;
-  gap: 4px;
-  padding: 7px 4px;
+  gap: 6px;
+  padding: 7px 4px 6px;
   text-align: center;
 }
-.reaction-menu button b {
-  color: var(--accent-dark);
-  font-family: var(--mono);
-  font-size: 14px;
+.reaction-menu button.selected {
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.reaction-menu button.selected::after {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  content: "";
+  background: var(--accent-dark);
+}
+.reaction-menu button svg {
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  border-radius: 7px;
+  color: #3d6815;
+  background: #e4f5ca;
+  stroke-width: 1.8;
+}
+.reaction-menu button[data-reaction="agree"] svg {
+  color: #315ab9;
+  background: #e2eaff;
+}
+.reaction-menu button[data-reaction="brilliant"] svg {
+  color: #7a5700;
+  background: #fff0b8;
+}
+.reaction-menu button[data-reaction="spicy"] svg {
+  color: #b83d1d;
+  background: #ffe0d4;
+}
+.reaction-menu button[data-reaction="ship"] svg {
+  color: white;
+  background: var(--navy);
 }
 .reaction-menu button span {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 7.5px;
 }
 .reaction-summary {
   display: flex;
@@ -934,29 +1005,32 @@ svg {
 }
 .reaction-mark {
   display: grid;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   margin-left: -5px;
   place-items: center;
   border: 2px solid var(--surface);
   border-radius: 50%;
-  color: var(--navy);
-  background: var(--accent);
-  font-family: var(--mono);
-  font-size: 8px;
+  color: #3d6815;
+  background: #dff2c1;
   font-style: normal;
-  font-weight: 800;
+}
+.reaction-mark svg {
+  width: 11px;
+  height: 11px;
+  stroke-width: 2.2;
 }
 .reaction-mark.agree {
   color: white;
-  background: var(--blue);
+  background: #4f76dc;
 }
 .reaction-mark.brilliant {
-  background: #f7c95e;
+  color: #604400;
+  background: #f6cc5e;
 }
 .reaction-mark.spicy {
   color: white;
-  background: var(--orange);
+  background: #ee6a43;
 }
 .reaction-mark.ship {
   color: white;
