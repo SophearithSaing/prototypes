@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f3f5ef" />
+    <title>Daymark &mdash; Design System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="design-system-page" id="top">
+    <div class="page-glow glow-one"></div>
+    <div class="page-glow glow-two"></div>
+
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="Daymark home">
+        <span class="brand-symbol" aria-hidden="true"><i></i><i></i></span>
+        <span>daymark</span>
+      </a>
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="index.html">Today</a>
+        <a href="projects.html">Projects</a>
+        <a href="progress.html">Progress</a>
+        <a class="active" href="design-system.html">System</a>
+      </nav>
+      <div class="header-actions">
+        <a class="ds-back" href="index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+          Back to planner
+        </a>
+        <span class="avatar" aria-hidden="true">DS</span>
+      </div>
+    </header>
+
+    <main class="ds-main">
+      <section class="ds-hero">
+        <div class="ds-hero-copy">
+          <p class="overline">Daymark design system &middot; 01</p>
+          <h1>Calm structure for <span>meaningful days.</span></h1>
+          <p>
+            A warm, low-pressure interface system that protects attention,
+            explains its choices, and makes progress feel humane.
+          </p>
+        </div>
+        <aside class="ds-manifesto" aria-label="Design direction">
+          <span class="assistant-face" aria-hidden="true"
+            ><i></i><i></i><b></b
+          ></span>
+          <div>
+            <p class="overline">Design direction</p>
+            <strong>Soft, not vague.</strong>
+            <p>
+              Clear hierarchy, gentle language, and enough contrast to act with
+              confidence.
+            </p>
+          </div>
+        </aside>
+      </section>
+
+      <nav class="ds-jump-nav" aria-label="Design system sections">
+        <a href="#principles">Principles</a>
+        <a href="#typography">Typography</a>
+        <a href="#color">Color</a>
+        <a href="#components">Components</a>
+        <a href="#layout">Layout</a>
+      </nav>
+
+      <section class="ds-section" id="principles">
+        <header class="ds-section-heading">
+          <div>
+            <p class="overline">01 &middot; Foundation</p>
+            <h2>Design principles</h2>
+          </div>
+          <p>
+            The interface should reduce decision pressure without hiding useful
+            information.
+          </p>
+        </header>
+        <div class="ds-principle-grid">
+          <article>
+            <span>01</span>
+            <h3>Protect attention</h3>
+            <p>
+              One clear next action leads. Secondary work recedes until it is
+              useful.
+            </p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Explain the plan</h3>
+            <p>
+              Recommendations include timing, effort, and a human-readable
+              reason.
+            </p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Honor capacity</h3>
+            <p>
+              Energy, breaks, and finish lines are planning inputs, not
+              afterthoughts.
+            </p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Use forgiving language</h3>
+            <p>
+              Work is parked, moved, or completed. It is never framed as
+              personal failure.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="ds-section" id="typography">
+        <header class="ds-section-heading">
+          <div>
+            <p class="overline">02 &middot; Typography</p>
+            <h2>Warm editorial, precise utility</h2>
+          </div>
+          <p>
+            Newsreader gives reflection a human voice. Manrope keeps controls
+            and data crisp.
+          </p>
+        </header>
+        <div class="ds-type-grid">
+          <article class="ds-font-card ds-serif-card">
+            <div>
+              <p class="overline">Display &middot; Newsreader</p>
+              <span>Ag</span>
+            </div>
+            <p>Meaningful work,<br />room to breathe.</p>
+            <footer>Weights 500 and 600 &middot; Optical sizing enabled</footer>
+          </article>
+          <article class="ds-font-card ds-sans-card">
+            <div>
+              <p class="overline">Interface &middot; Manrope</p>
+              <span>Ag</span>
+            </div>
+            <p>Plan the day with clarity.<br />0123456789 &middot; 09:30 AM</p>
+            <footer>Weights 400, 500, 600, and 700</footer>
+          </article>
+        </div>
+        <div class="ds-type-scale">
+          <div class="ds-type-row ds-display">
+            <span>Display</span><strong>Notice the progress.</strong
+            ><code>52 / 51</code>
+          </div>
+          <div class="ds-type-row ds-title">
+            <span>Page title</span><strong>A comfortably full day</strong
+            ><code>24 / 29</code>
+          </div>
+          <div class="ds-type-row ds-heading">
+            <span>Section</span><strong>Today&rsquo;s plan</strong
+            ><code>22 / 27</code>
+          </div>
+          <div class="ds-type-row ds-body">
+            <span>Body</span
+            ><strong>Enough space between tasks to reset.</strong
+            ><code>14 / 22</code>
+          </div>
+          <div class="ds-type-row ds-label">
+            <span>Label</span><strong>PLANNED WITH YOU</strong
+            ><code>9 / 12</code>
+          </div>
+        </div>
+        <p class="ds-guidance">
+          Use sentence case for actions and headings. Uppercase is reserved for
+          short overlines, statuses, and metadata. Keep body copy concise and
+          use the serif for meaning, not controls.
+        </p>
+      </section>
+
+      <section class="ds-section" id="color">
+        <header class="ds-section-heading">
+          <div>
+            <p class="overline">03 &middot; Color</p>
+            <h2>An organic, quiet palette</h2>
+          </div>
+          <p>
+            Neutrals carry the interface. Accent colors communicate category and
+            tone, not urgency.
+          </p>
+        </header>
+        <div class="ds-color-group">
+          <h3>Core neutrals</h3>
+          <div class="ds-swatches ds-swatches-core">
+            <article>
+              <span class="ds-swatch-ink"></span><strong>Ink</strong
+              ><code>#28312C</code><small>Primary text</small>
+            </article>
+            <article>
+              <span class="ds-swatch-muted"></span><strong>Muted</strong
+              ><code>#77817A</code><small>Supporting text</small>
+            </article>
+            <article>
+              <span class="ds-swatch-faint"></span><strong>Faint</strong
+              ><code>#9BA49E</code><small>Metadata</small>
+            </article>
+            <article>
+              <span class="ds-swatch-line"></span><strong>Line</strong
+              ><code>#DFE4DC</code><small>Borders</small>
+            </article>
+            <article>
+              <span class="ds-swatch-paper"></span><strong>Paper</strong
+              ><code>#F3F5EF</code><small>Canvas</small>
+            </article>
+            <article>
+              <span class="ds-swatch-white"></span><strong>White</strong
+              ><code>#FFFFFC</code><small>Raised surface</small>
+            </article>
+          </div>
+        </div>
+        <div class="ds-color-group">
+          <h3>Accent families</h3>
+          <div class="ds-accent-grid">
+            <article class="ds-accent-family">
+              <span class="ds-accent-chip ds-swatch-sage"></span>
+              <div>
+                <strong>Sage</strong><code>#789884</code
+                ><small>Progress, steady energy, completion</small>
+              </div>
+              <span class="ds-accent-chip ds-swatch-sage-soft"></span>
+            </article>
+            <article class="ds-accent-family">
+              <span class="ds-accent-chip ds-swatch-peach"></span>
+              <div>
+                <strong>Peach</strong><code>#DFA17F</code
+                ><small>Priority, current moment, warmth</small>
+              </div>
+              <span class="ds-accent-chip ds-swatch-peach-soft"></span>
+            </article>
+            <article class="ds-accent-family">
+              <span class="ds-accent-chip ds-swatch-butter"></span>
+              <div>
+                <strong>Butter</strong><code>#EFCC7C</code
+                ><small>Rest, personal time, assistant</small>
+              </div>
+              <span class="ds-accent-chip ds-swatch-butter-soft"></span>
+            </article>
+            <article class="ds-accent-family">
+              <span class="ds-accent-chip ds-swatch-blue"></span>
+              <div>
+                <strong>Blue</strong><code>#7FA1AD</code
+                ><small>Meetings, focused work, build</small>
+              </div>
+              <span class="ds-accent-chip ds-swatch-blue-soft"></span>
+            </article>
+            <article class="ds-accent-family">
+              <span class="ds-accent-chip ds-swatch-lavender"></span>
+              <div>
+                <strong>Lavender</strong><code>#9990B5</code
+                ><small>Design work and collaboration</small>
+              </div>
+              <span class="ds-accent-chip ds-swatch-lavender-soft"></span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="ds-section" id="components">
+        <header class="ds-section-heading">
+          <div>
+            <p class="overline">04 &middot; Components</p>
+            <h2>Quiet controls, clear states</h2>
+          </div>
+          <p>
+            Rounded controls feel approachable while borders and tonal shifts
+            preserve hierarchy.
+          </p>
+        </header>
+
+        <div class="ds-component-block">
+          <div class="ds-component-title">
+            <h3>Actions</h3>
+            <p>Use one filled primary action per local decision area.</p>
+          </div>
+          <div class="ds-component-stage ds-actions-stage">
+            <button class="add-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              <span>Add task</span>
+            </button>
+            <button class="soft-action emphasized" type="button">
+              Change time
+            </button>
+            <button class="soft-action" type="button">Replace</button>
+            <button
+              class="quiet-toggle active"
+              type="button"
+              aria-pressed="true"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 12h16M7 7h10M9 17h6" />
+              </svg>
+              <span>Calm view</span>
+            </button>
+            <button class="more-button" type="button" aria-label="More options">
+              &bull;&bull;&bull;
+            </button>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <div class="ds-component-title">
+            <h3>Selection and status</h3>
+            <p>
+              Selected states use a white lift; status uses soft color fields.
+            </p>
+          </div>
+          <div class="ds-component-stage ds-selection-stage">
+            <div class="energy-check">
+              <span>How are you feeling?</span>
+              <div>
+                <button type="button"><i class="ds-energy-low"></i>Low</button>
+                <button class="active" type="button"><i></i>Steady</button>
+                <button type="button">
+                  <i class="ds-energy-strong"></i>Strong
+                </button>
+              </div>
+            </div>
+            <div class="ds-statuses">
+              <span class="state-label">Done</span>
+              <span class="state-label muted">Personal</span>
+              <span class="effort-pill">Medium</span>
+              <span class="effort-pill low">Light</span>
+              <span class="task-kind design">Design</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <div class="ds-component-title">
+            <h3>Inputs</h3>
+            <p>
+              Inputs sit on quiet off-white surfaces with a sage focus ring.
+            </p>
+          </div>
+          <div class="ds-component-stage">
+            <form class="ds-form" action="#" onsubmit="return false;">
+              <label
+                ><span>Task name</span
+                ><input type="text" placeholder="What needs attention?"
+              /></label>
+              <label
+                ><span>Place it in</span
+                ><select>
+                  <option>Now</option>
+                  <option>Next</option>
+                  <option>Later</option>
+                </select></label
+              >
+              <button class="dialog-save" type="submit">Add task</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="ds-card-gallery">
+          <div class="ds-gallery-label">
+            <p class="overline">Cards and content</p>
+            <h3>Information with breathing room</h3>
+          </div>
+          <article class="calm-task-card priority">
+            <div class="task-card-top">
+              <span class="task-kind strategy">Strategy</span>
+              <button type="button" aria-label="Task menu">
+                &bull;&bull;&bull;
+              </button>
+            </div>
+            <h3>Finish launch proposal</h3>
+            <p>Finalize scope, timeline, and success metrics.</p>
+            <div class="subtask-line">
+              <span><i class="ds-two-thirds"></i></span
+              ><small>4 of 6 steps</small>
+            </div>
+            <footer>
+              <span class="gentle-due soon">Tomorrow</span>
+              <span class="workload">90 min</span>
+              <span class="mini-avatar">AK</span>
+            </footer>
+          </article>
+          <article class="assistant-card ds-assistant-sample">
+            <div class="assistant-heading">
+              <span class="assistant-face" aria-hidden="true"
+                ><i></i><i></i><b></b
+              ></span>
+              <div>
+                <p class="overline">Planned with you</p>
+                <h2>A gentler fit.</h2>
+              </div>
+            </div>
+            <p class="assistant-message">
+              The focused task comes first, with smaller work saved for the
+              afternoon dip.
+            </p>
+            <div class="placement-summary">
+              <span
+                ><svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 8v4l3 2" />
+                  <circle cx="12" cy="12" r="9" /></svg
+              ></span>
+              <p>
+                <strong>Protected: 10:00 &ndash; 11:30</strong>Meeting-free
+                focus time.
+              </p>
+            </div>
+          </article>
+          <article class="ds-metric-sample">
+            <span class="metric-symbol sage">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m5 12 4 4L19 6" />
+              </svg>
+            </span>
+            <div>
+              <p>Completion</p>
+              <strong>87%</strong><small>20 of 23 tasks</small>
+            </div>
+            <em>Up 9%</em>
+          </article>
+          <article class="schedule-section ds-schedule-sample">
+            <header class="section-heading">
+              <div>
+                <p class="overline">Your day</p>
+                <h2>Today&rsquo;s plan</h2>
+              </div>
+            </header>
+            <div class="schedule-item">
+              <time>2:00</time>
+              <span class="task-check"></span>
+              <div>
+                <h3>QA onboarding flow</h3>
+                <p>1 hour &middot; Mobile app</p>
+              </div>
+              <span class="effort-pill">Medium</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="ds-section" id="layout">
+        <header class="ds-section-heading">
+          <div>
+            <p class="overline">05 &middot; Responsive layout</p>
+            <h2>The priority survives every screen</h2>
+          </div>
+          <p>
+            Layouts collapse and reorder around meaning, rather than simply
+            shrinking in place.
+          </p>
+        </header>
+
+        <div class="ds-layout-principles">
+          <article>
+            <strong>1180px</strong><span>Maximum content width</span>
+          </article>
+          <article>
+            <strong>24px</strong><span>Desktop page gutter</span>
+          </article>
+          <article>
+            <strong>15px</strong><span>Mobile page gutter</span>
+          </article>
+          <article><strong>18px</strong><span>Primary grid gap</span></article>
+        </div>
+
+        <div class="ds-device-grid">
+          <article class="ds-device ds-device-desktop">
+            <header>
+              <span></span><strong>Desktop</strong><code>&gt; 980px</code>
+            </header>
+            <div class="ds-screen">
+              <span class="ds-wire-nav"></span>
+              <span class="ds-wire-hero"></span>
+              <div class="ds-wire-columns"><i></i><b></b></div>
+            </div>
+            <p>
+              Centered 1180px canvas. Today uses a 1.5fr / .72fr split; project
+              work uses four columns.
+            </p>
+          </article>
+          <article class="ds-device ds-device-tablet">
+            <header>
+              <span></span><strong>Tablet</strong><code>721&ndash;980px</code>
+            </header>
+            <div class="ds-screen">
+              <span class="ds-wire-nav"></span>
+              <span class="ds-wire-hero"></span>
+              <div class="ds-wire-columns"><i></i><b></b></div>
+            </div>
+            <p>
+              Main content stacks. Supporting cards can share two columns;
+              metric cards become a 2-by-2 grid.
+            </p>
+          </article>
+          <article class="ds-device ds-device-mobile">
+            <header>
+              <span></span><strong>Mobile</strong><code>&le; 720px</code>
+            </header>
+            <div class="ds-screen">
+              <span class="ds-wire-hero"></span>
+              <div class="ds-wire-columns"><i></i><b></b></div>
+              <span class="ds-wire-mobile-nav"></span>
+            </div>
+            <p>
+              Single-column reading order. Key selectors and boards scroll
+              horizontally; navigation moves to the bottom.
+            </p>
+          </article>
+        </div>
+
+        <div class="ds-breakpoint-table-shell">
+          <table class="ds-breakpoint-table">
+            <caption>
+              Responsive behavior by breakpoint
+            </caption>
+            <thead>
+              <tr class="ds-table-row ds-table-header">
+                <th scope="col">Range</th>
+                <th scope="col">Structure</th>
+                <th scope="col">Behavior</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="ds-table-row">
+                <td><code>981px+</code></td>
+                <td><span>Wide, multi-column</span></td>
+                <td>
+                  <p>
+                    Desktop navigation, full metadata, parallel primary and
+                    supporting content.
+                  </p>
+                </td>
+              </tr>
+              <tr class="ds-table-row">
+                <td><code>721&ndash;980px</code></td>
+                <td><span>Stacked tablet</span></td>
+                <td>
+                  <p>
+                    Desktop navigation hides; primary content becomes one column
+                    and charts stack.
+                  </p>
+                </td>
+              </tr>
+              <tr class="ds-table-row">
+                <td><code>401&ndash;720px</code></td>
+                <td><span>Mobile flow</span></td>
+                <td>
+                  <p>
+                    15px gutters, fixed bottom navigation, scrollable date and
+                    project strips, reordered cards.
+                  </p>
+                </td>
+              </tr>
+              <tr class="ds-table-row">
+                <td><code>400px and below</code></td>
+                <td><span>Compact mobile</span></td>
+                <td>
+                  <p>
+                    Metrics become one column and low-priority labels or
+                    descriptions may be removed.
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <aside
+          class="ds-accessibility-note"
+          aria-label="Accessibility guidance"
+        >
+          <span class="learned-icon sage">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z" />
+              <path d="m8.5 12 2 2 5-5" />
+            </svg>
+          </span>
+          <div>
+            <p class="overline">Interaction standard</p>
+            <h3>Motion should reassure, never rush.</h3>
+            <p>
+              Transitions stay near 200&ndash;350ms, focus remains visible, and
+              reduced-motion preferences disable non-essential movement.
+            </p>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="ds-footer">
+      <a class="brand" href="index.html"
+        ><span class="brand-symbol" aria-hidden="true"><i></i><i></i></span
+        ><span>daymark</span></a
+      >
+      <p>A calmer system for planning what matters.</p>
+      <a href="#top">Back to top &uarr;</a>
+    </footer>
+  </body>
+</html>
