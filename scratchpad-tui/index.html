@@ -1,0 +1,1363 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A technical walkthrough of Scratchpad, a keyboard-first terminal notebook built in Go with Bubble Tea."
+    />
+    <title>How Scratchpad Works</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #eceff8;
+        --muted: #9199ad;
+        --quiet: #626a7d;
+        --paper: #0c1019;
+        --panel: #111827;
+        --raised: #172033;
+        --line: #28344c;
+        --line-bright: #3a4c70;
+        --blue: #6ea8fe;
+        --blue-bright: #9ccaff;
+        --blue-deep: #265fae;
+        --cyan: #7dd3fc;
+        --code: #0a0e16;
+        --max: 1180px;
+        --mono:
+          "SFMono-Regular", "Cascadia Code", "Roboto Mono", Consolas, monospace;
+        --sans:
+          Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(
+            circle at 84% 9%,
+            rgba(68, 120, 209, 0.17),
+            transparent 28rem
+          ),
+          linear-gradient(rgba(110, 168, 254, 0.025) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(110, 168, 254, 0.025) 1px,
+            transparent 1px
+          ),
+          var(--paper);
+        background-size:
+          auto,
+          32px 32px,
+          32px 32px,
+          auto;
+        color: var(--ink);
+        font-family: var(--sans);
+        line-height: 1.65;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      code,
+      pre,
+      kbd {
+        font-family: var(--mono);
+      }
+
+      code {
+        color: var(--blue-bright);
+      }
+
+      .skip-link {
+        position: fixed;
+        left: 1rem;
+        top: -5rem;
+        z-index: 100;
+        border-radius: 0.35rem;
+        background: var(--blue);
+        color: #07101f;
+        padding: 0.6rem 0.9rem;
+        font-weight: 800;
+        transition: top 120ms ease;
+      }
+
+      .skip-link:focus {
+        top: 1rem;
+      }
+
+      .shell {
+        width: min(calc(100% - 2rem), var(--max));
+        margin-inline: auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-bottom: 1px solid rgba(58, 76, 112, 0.6);
+        background: rgba(12, 16, 25, 0.82);
+        backdrop-filter: blur(18px);
+      }
+
+      .topbar-inner {
+        min-height: 4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        font-family: var(--mono);
+        font-size: 0.84rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+      }
+
+      .brand-mark {
+        width: 1.6rem;
+        height: 1.6rem;
+        display: grid;
+        place-items: center;
+        border-radius: 0.25rem;
+        background: var(--blue);
+        color: #07101f;
+        box-shadow: 0 0 24px rgba(110, 168, 254, 0.28);
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 1.4rem;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.76rem;
+      }
+
+      nav a {
+        text-decoration: none;
+      }
+
+      nav a:hover,
+      nav a:focus-visible {
+        color: var(--blue-bright);
+      }
+
+      .hero {
+        padding: clamp(4.5rem, 10vw, 8rem) 0 clamp(4rem, 8vw, 7rem);
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 0.86fr) minmax(28rem, 1.14fr);
+        gap: clamp(2.5rem, 7vw, 6.5rem);
+        align-items: center;
+      }
+
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        margin: 0 0 1.15rem;
+        color: var(--blue-bright);
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 2.4rem;
+        border-top: 1px solid var(--blue);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 720px;
+        margin-bottom: 1.6rem;
+        font-size: clamp(3.25rem, 7vw, 6.6rem);
+        line-height: 0.95;
+        letter-spacing: -0.065em;
+      }
+
+      h1 span {
+        color: var(--blue);
+      }
+
+      .lede {
+        max-width: 38rem;
+        margin-bottom: 2rem;
+        color: #b7bece;
+        font-size: clamp(1rem, 1.8vw, 1.2rem);
+      }
+
+      .runline {
+        width: fit-content;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border: 1px solid var(--line-bright);
+        border-radius: 0.45rem;
+        background: rgba(17, 24, 39, 0.85);
+        padding: 0.65rem 0.85rem;
+        font-family: var(--mono);
+        font-size: 0.82rem;
+        box-shadow: 0 12px 50px rgba(0, 0, 0, 0.2);
+      }
+
+      .prompt {
+        color: var(--blue);
+        user-select: none;
+      }
+
+      .terminal-wrap {
+        position: relative;
+      }
+
+      .terminal-wrap::before {
+        content: "";
+        position: absolute;
+        inset: 12% -7% -10% 18%;
+        z-index: -1;
+        background: rgba(38, 95, 174, 0.26);
+        filter: blur(80px);
+      }
+
+      .terminal {
+        overflow: hidden;
+        border: 1px solid var(--line-bright);
+        border-radius: 0.7rem;
+        background: #090d14;
+        box-shadow: 0 32px 80px rgba(0, 0, 0, 0.46);
+        font-family: var(--mono);
+        font-size: clamp(0.64rem, 1vw, 0.78rem);
+      }
+
+      .window-bar {
+        height: 2.35rem;
+        display: flex;
+        align-items: center;
+        gap: 0.42rem;
+        border-bottom: 1px solid #232c3d;
+        background: #111722;
+        padding: 0 0.9rem;
+      }
+
+      .window-dot {
+        width: 0.56rem;
+        height: 0.56rem;
+        border-radius: 50%;
+        background: #344057;
+      }
+
+      .window-title {
+        margin-left: auto;
+        color: #69738a;
+        font-size: 0.65rem;
+        letter-spacing: 0.04em;
+      }
+
+      .tui-tabs {
+        display: flex;
+        align-items: center;
+        min-height: 2rem;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .tui-logo {
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+        background: var(--blue);
+        color: #08101d;
+        padding: 0 0.75rem;
+        font-weight: 900;
+      }
+
+      .tui-tab {
+        color: #71798b;
+        padding: 0.4rem 0.8rem;
+      }
+
+      .tui-tab.active {
+        background: #1d2533;
+        color: #e8ecf5;
+        font-weight: 800;
+      }
+
+      .tui-editor-shell {
+        margin: 0 0.65rem;
+        border: 1px solid #2e3a50;
+      }
+
+      .tui-editor {
+        min-height: 17rem;
+        padding: 1.35rem 1rem;
+        color: #dfe4ee;
+        line-height: 1.65;
+        white-space: pre-wrap;
+      }
+
+      .cursor {
+        display: inline-block;
+        width: 0.62em;
+        height: 1.15em;
+        vertical-align: -0.18em;
+        background: var(--blue);
+        box-shadow: 0 0 14px rgba(110, 168, 254, 0.5);
+        animation: blink 1.05s step-end infinite;
+      }
+
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      .tui-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.38rem 0.7rem;
+        color: #6f788b;
+        white-space: nowrap;
+      }
+
+      main section {
+        scroll-margin-top: 5rem;
+      }
+
+      .section {
+        padding: clamp(4rem, 9vw, 7rem) 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: 9rem minmax(0, 1fr);
+        gap: 2rem;
+        margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+      }
+
+      .section-number {
+        color: var(--blue);
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+      }
+
+      h2 {
+        max-width: 780px;
+        margin-bottom: 1rem;
+        font-size: clamp(2.15rem, 5vw, 4.25rem);
+        line-height: 1.05;
+        letter-spacing: -0.05em;
+      }
+
+      .section-intro {
+        max-width: 720px;
+        color: var(--muted);
+        font-size: 1.08rem;
+      }
+
+      .principles {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        border: 1px solid var(--line);
+        background: var(--line);
+      }
+
+      .principle {
+        min-height: 18rem;
+        background: var(--panel);
+        padding: clamp(1.4rem, 3vw, 2.25rem);
+      }
+
+      .principle-index {
+        display: block;
+        margin-bottom: 4.5rem;
+        color: var(--blue);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+      }
+
+      h3 {
+        margin-bottom: 0.8rem;
+        font-size: 1.25rem;
+        letter-spacing: -0.025em;
+      }
+
+      .principle p,
+      .decision p,
+      .file p {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      .stack-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: clamp(2rem, 6vw, 5rem);
+        align-items: start;
+      }
+
+      .layers {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .layer {
+        position: relative;
+        display: grid;
+        grid-template-columns: 7rem 1fr;
+        gap: 1.25rem;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--blue-deep);
+        background:
+          linear-gradient(90deg, rgba(110, 168, 254, 0.08), transparent 60%),
+          var(--panel);
+        padding: 1.4rem;
+      }
+
+      .layer strong {
+        font-family: var(--mono);
+        color: var(--blue-bright);
+        font-size: 0.83rem;
+      }
+
+      .layer span {
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      .code-panel {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 0.45rem;
+        background: var(--code);
+      }
+
+      .code-label {
+        border-bottom: 1px solid var(--line);
+        padding: 0.65rem 1rem;
+        color: var(--quiet);
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      pre {
+        overflow-x: auto;
+        margin: 0;
+        padding: 1.25rem;
+        color: #c8d0df;
+        font-size: 0.78rem;
+        line-height: 1.7;
+      }
+
+      .kw {
+        color: #c4a7ff;
+      }
+      .fn {
+        color: var(--blue-bright);
+      }
+      .str {
+        color: #a7d9b7;
+      }
+      .comment {
+        color: #667086;
+      }
+
+      .loop {
+        display: grid;
+        grid-template-columns: 1fr 2.7rem 1fr 2.7rem 1fr 2.7rem 1fr;
+        align-items: stretch;
+      }
+
+      .loop-step {
+        min-height: 11rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 1px solid var(--line-bright);
+        background: var(--panel);
+        padding: 1.25rem;
+      }
+
+      .loop-step b {
+        color: var(--blue-bright);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .loop-step span {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .loop-arrow {
+        display: grid;
+        place-items: center;
+        color: var(--blue);
+        font-family: var(--mono);
+      }
+
+      .note {
+        max-width: 760px;
+        margin: 2rem 0 0 auto;
+        border-left: 2px solid var(--blue);
+        padding: 0.3rem 0 0.3rem 1.25rem;
+        color: var(--muted);
+      }
+
+      .timeline {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+      }
+
+      .timeline::before {
+        content: "";
+        position: absolute;
+        top: 0.52rem;
+        left: 0.5rem;
+        right: 0.5rem;
+        border-top: 1px solid var(--line-bright);
+      }
+
+      .moment {
+        position: relative;
+        padding-top: 2.2rem;
+      }
+
+      .moment::before {
+        content: "";
+        position: absolute;
+        top: 0.25rem;
+        left: 0;
+        width: 0.58rem;
+        height: 0.58rem;
+        border: 3px solid var(--paper);
+        border-radius: 50%;
+        background: var(--blue);
+        box-shadow: 0 0 0 1px var(--blue-deep);
+      }
+
+      .moment small {
+        display: block;
+        margin-bottom: 0.55rem;
+        color: var(--blue-bright);
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .moment p {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .persistence {
+        margin-top: 4rem;
+        display: grid;
+        grid-template-columns: 0.8fr 1.2fr;
+        gap: clamp(2rem, 6vw, 5rem);
+        align-items: center;
+      }
+
+      .atomic-path {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        padding: clamp(1.5rem, 4vw, 2.5rem);
+      }
+
+      .atomic-step {
+        display: grid;
+        grid-template-columns: 2rem 1fr;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .atomic-step:last-child {
+        border-bottom: 0;
+      }
+
+      .atomic-step b {
+        color: var(--blue);
+        font-family: var(--mono);
+        font-size: 0.75rem;
+      }
+
+      .atomic-step span {
+        color: #c4cad7;
+        font-size: 0.92rem;
+      }
+
+      .decisions {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        border-top: 1px solid var(--line);
+      }
+
+      .decision {
+        display: grid;
+        grid-template-columns: 3rem 1fr;
+        gap: 1rem;
+        border-bottom: 1px solid var(--line);
+        padding: 2rem 2rem 2rem 0;
+      }
+
+      .decision:nth-child(odd) {
+        border-right: 1px solid var(--line);
+      }
+
+      .decision:nth-child(even) {
+        padding-left: 2rem;
+      }
+
+      .decision-mark {
+        color: var(--blue);
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .files {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+      }
+
+      .file {
+        border-top: 2px solid var(--blue-deep);
+        background: var(--panel);
+        padding: 1.5rem;
+      }
+
+      .file code {
+        display: block;
+        margin-bottom: 2.6rem;
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+
+      .keys {
+        margin-top: 4rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+      }
+
+      .key {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        padding: 0.55rem 0.7rem;
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      kbd {
+        border: 1px solid var(--line-bright);
+        border-bottom-width: 2px;
+        border-radius: 0.25rem;
+        background: var(--raised);
+        color: var(--blue-bright);
+        padding: 0.12rem 0.42rem;
+        font-size: 0.7rem;
+        font-weight: 800;
+      }
+
+      .closing {
+        padding: clamp(5rem, 12vw, 9rem) 0;
+        border-top: 1px solid var(--line);
+        text-align: center;
+      }
+
+      .closing h2 {
+        margin-inline: auto;
+      }
+
+      .closing p {
+        max-width: 580px;
+        margin: 0 auto 2rem;
+        color: var(--muted);
+      }
+
+      .closing .runline {
+        margin-inline: auto;
+      }
+
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 1.6rem 0;
+        color: var(--quiet);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+      }
+
+      .footer-inner {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      @media (max-width: 900px) {
+        .hero-grid,
+        .stack-grid,
+        .persistence {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-grid {
+          gap: 4rem;
+        }
+
+        .terminal-wrap {
+          max-width: 680px;
+        }
+
+        .principles,
+        .files {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .loop {
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+        }
+
+        .loop-step {
+          min-height: 8rem;
+        }
+
+        .loop-arrow {
+          height: 1rem;
+          transform: rotate(90deg);
+        }
+
+        .timeline {
+          grid-template-columns: repeat(2, 1fr);
+          row-gap: 2rem;
+        }
+
+        .timeline::before {
+          display: none;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .shell {
+          width: min(calc(100% - 1.25rem), var(--max));
+        }
+
+        nav {
+          display: none;
+        }
+
+        .hero {
+          padding-top: 4rem;
+        }
+
+        .hero-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        h1 {
+          font-size: clamp(3rem, 17vw, 4.8rem);
+        }
+
+        .section-heading {
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+        }
+
+        .principles,
+        .files,
+        .decisions,
+        .timeline {
+          grid-template-columns: 1fr;
+        }
+
+        .principle {
+          min-height: auto;
+        }
+
+        .principle-index {
+          margin-bottom: 2.5rem;
+        }
+
+        .decision,
+        .decision:nth-child(even) {
+          border-right: 0;
+          padding: 1.5rem 0;
+        }
+
+        .tui-tab:nth-of-type(n + 3) {
+          display: none;
+        }
+
+        .tui-editor {
+          min-height: 13rem;
+        }
+
+        .tui-footer span:first-child {
+          display: none;
+        }
+
+        .layer {
+          grid-template-columns: 1fr;
+          gap: 0.4rem;
+        }
+
+        .footer-inner {
+          flex-direction: column;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .cursor {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="#top" aria-label="Scratchpad overview">
+          <span class="brand-mark">S</span>
+          SCRATCHPAD / BUILD NOTES
+        </a>
+        <nav aria-label="Page sections">
+          <a href="#intent">Intent</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#runtime">Runtime</a>
+          <a href="#decisions">Decisions</a>
+          <a href="#source">Source</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="content">
+      <section class="hero" id="top">
+        <div class="shell hero-grid">
+          <div>
+            <p class="eyebrow">Go + The Elm Architecture</p>
+            <h1>A quiet place for <span>fast thoughts.</span></h1>
+            <p class="lede">
+              Scratchpad is a keyboard-first terminal notebook. It opens ready
+              to type, keeps every draft automatically, and waits until you
+              decide a thought deserves a real file.
+            </p>
+            <div class="runline" aria-label="Run command">
+              <span class="prompt" aria-hidden="true">$</span>
+              <code>go run .</code>
+            </div>
+          </div>
+
+          <div
+            class="terminal-wrap"
+            aria-label="Scratchpad terminal interface illustration"
+          >
+            <div class="terminal">
+              <div class="window-bar">
+                <span class="window-dot"></span>
+                <span class="window-dot"></span>
+                <span class="window-dot"></span>
+                <span class="window-title">scratchpad - 92x24</span>
+              </div>
+              <div class="tui-tabs">
+                <span class="tui-logo">SCRATCHPAD</span>
+                <span class="tui-tab active">1 &nbsp; Product notes</span>
+                <span class="tui-tab">2 &nbsp; Weekend ideas</span>
+              </div>
+              <div class="tui-editor-shell">
+                <div class="tui-editor">
+                  Product notes Keep capture friction close to zero. Drafts
+                  should survive without asking. The interface is the
+                  workflow.<span class="cursor" aria-label="cursor"></span>
+                </div>
+              </div>
+              <div class="tui-footer">
+                <span>Drafts saved</span>
+                <span
+                  >^N new &nbsp; ^W close &nbsp; ^S export &nbsp; F1 keys</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="intent">
+        <div class="shell">
+          <div class="section-heading">
+            <div class="section-number">01 / INTENT</div>
+            <div>
+              <h2>The requirements became three rules.</h2>
+              <p class="section-intro">
+                The product brief was only seven lines long. Instead of adding a
+                full note-taking system, the implementation protects the
+                behavior those lines imply.
+              </p>
+            </div>
+          </div>
+
+          <div class="principles">
+            <article class="principle">
+              <span class="principle-index">RULE 01</span>
+              <h3>Open means ready</h3>
+              <p>
+                Focus starts in the editor. There is no welcome screen, file
+                picker, workspace setup, or save decision between launch and the
+                first character.
+              </p>
+            </article>
+            <article class="principle">
+              <span class="principle-index">RULE 02</span>
+              <h3>Drafts are not files</h3>
+              <p>
+                Working state is restored automatically. Export is a separate,
+                intentional action for the moment temporary thinking becomes
+                something permanent.
+              </p>
+            </article>
+            <article class="principle">
+              <span class="principle-index">RULE 03</span>
+              <h3>The keyboard is enough</h3>
+              <p>
+                Tabs, export, help, and exit all have direct shortcuts. Mouse
+                support is unnecessary, keeping the interaction model small and
+                predictable.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="shell">
+          <div class="section-heading">
+            <div class="section-number">02 / STACK</div>
+            <div>
+              <h2>Charm tools, each doing one job.</h2>
+              <p class="section-intro">
+                The app uses the Charm ecosystem rather than building terminal
+                input, editing, and styling from raw escape sequences.
+              </p>
+            </div>
+          </div>
+
+          <div class="stack-grid">
+            <div class="layers">
+              <div class="layer">
+                <strong>BUBBLE TEA</strong>
+                <span
+                  >Owns the event loop, terminal lifecycle, messages, commands,
+                  and alternate-screen rendering.</span
+                >
+              </div>
+              <div class="layer">
+                <strong>BUBBLES</strong>
+                <span
+                  >Provides the multiline textarea, export path input, cursor
+                  behavior, scrolling, and editing keys.</span
+                >
+              </div>
+              <div class="layer">
+                <strong>LIP GLOSS</strong>
+                <span
+                  >Provides the blue palette, tabs, border, spacing, overlays,
+                  and width-aware terminal layout.</span
+                >
+              </div>
+              <div class="layer">
+                <strong>GO STDLIB</strong>
+                <span
+                  >Handles JSON sessions, paths, file permissions, atomic
+                  replacement, time, and Unicode-safe counts.</span
+                >
+              </div>
+            </div>
+
+            <div class="code-panel">
+              <div class="code-label">main.go / composition root</div>
+              <pre><span class="kw">func</span> <span class="fn">run</span>(in io.Reader, out io.Writer) error {
+    store, err := <span class="fn">newSessionStore</span>()
+    <span class="comment">// Missing state is a valid first launch.</span>
+    session, err := store.<span class="fn">load</span>()
+
+    model := <span class="fn">newModel</span>(store, session)
+    program := tea.<span class="fn">NewProgram</span>(
+        model,
+        tea.<span class="fn">WithInput</span>(in),
+        tea.<span class="fn">WithOutput</span>(out),
+        tea.<span class="fn">WithAltScreen</span>(),
+    )
+    _, err = program.<span class="fn">Run</span>()
+    <span class="kw">return</span> err
+}</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="shell">
+          <div class="section-heading">
+            <div class="section-number">03 / LOOP</div>
+            <div>
+              <h2>Everything is a message.</h2>
+              <p class="section-intro">
+                Scratchpad follows The Elm Architecture used by Bubble Tea.
+                State stays in one model, events transform that model, and the
+                view is recreated from the result.
+              </p>
+            </div>
+          </div>
+
+          <div class="loop" aria-label="Bubble Tea message loop">
+            <div class="loop-step">
+              <b>Message</b>
+              <span
+                >A key press, resize, cursor blink, or autosave timer
+                arrives.</span
+              >
+            </div>
+            <div class="loop-arrow" aria-hidden="true">-&gt;</div>
+            <div class="loop-step">
+              <b>Update</b>
+              <span
+                >The active mode handles it and returns changed state plus
+                optional work.</span
+              >
+            </div>
+            <div class="loop-arrow" aria-hidden="true">-&gt;</div>
+            <div class="loop-step">
+              <b>Model</b>
+              <span
+                >Tabs, active index, inputs, dimensions, status, and revision
+                remain together.</span
+              >
+            </div>
+            <div class="loop-arrow" aria-hidden="true">-&gt;</div>
+            <div class="loop-step">
+              <b>View</b>
+              <span
+                >Lip Gloss renders tabs, the bordered editor, footer, and active
+                overlay.</span
+              >
+            </div>
+          </div>
+
+          <p class="note">
+            <strong>Why this matters:</strong> the filesystem is kept out of
+            rendering, and the view never becomes a second source of truth.
+            Given a model, the same terminal frame is produced every time.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="runtime">
+        <div class="shell">
+          <div class="section-heading">
+            <div class="section-number">04 / RUNTIME</div>
+            <div>
+              <h2>From keystroke to safe draft.</h2>
+              <p class="section-intro">
+                Typing remains immediate because persistence is delayed just
+                enough to combine a burst of edits into one disk write.
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline">
+            <article class="moment">
+              <small>Key press</small>
+              <h3>Edit active tab</h3>
+              <p>
+                The Bubbles textarea applies cursor movement or modifies its
+                value.
+              </p>
+            </article>
+            <article class="moment">
+              <small>Revision +1</small>
+              <h3>Mark changed</h3>
+              <p>
+                The model increments a revision and schedules a timer tagged
+                with that exact revision.
+              </p>
+            </article>
+            <article class="moment">
+              <small>350 ms</small>
+              <h3>Debounce</h3>
+              <p>
+                Older timers become harmless when newer typing has already
+                advanced the revision.
+              </p>
+            </article>
+            <article class="moment">
+              <small>Latest only</small>
+              <h3>Persist session</h3>
+              <p>
+                The current tabs and active index are serialized only when the
+                timer is still current.
+              </p>
+            </article>
+          </div>
+
+          <div class="persistence">
+            <div>
+              <p class="eyebrow">Crash-resistant state</p>
+              <h2>Replace, never rewrite.</h2>
+              <p class="section-intro">
+                Draft JSON is not written directly over the last known-good
+                session. A temporary sibling file is completed first, then moved
+                into place as one filesystem operation.
+              </p>
+            </div>
+            <div class="atomic-path">
+              <div class="atomic-step">
+                <b>01</b
+                ><span
+                  >Encode all tabs, the active index, the next tab ID, and
+                  schema version as JSON.</span
+                >
+              </div>
+              <div class="atomic-step">
+                <b>02</b
+                ><span
+                  >Create a temporary file beside the session with private
+                  <code>0600</code> permissions.</span
+                >
+              </div>
+              <div class="atomic-step">
+                <b>03</b
+                ><span
+                  >Write, sync, and close the temporary file so its content
+                  reaches storage.</span
+                >
+              </div>
+              <div class="atomic-step">
+                <b>04</b
+                ><span
+                  >Rename it over <code>session.json</code>, atomically
+                  replacing the previous snapshot.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="decisions">
+        <div class="shell">
+          <div class="section-heading">
+            <div class="section-number">05 / DECISIONS</div>
+            <div>
+              <h2>Deliberately less product.</h2>
+              <p class="section-intro">
+                Most of the design work was deciding what Scratchpad should not
+                ask the user to manage.
+              </p>
+            </div>
+          </div>
+
+          <div class="decisions">
+            <article class="decision">
+              <div class="decision-mark">D1</div>
+              <div>
+                <h3>Autosave, not save state</h3>
+                <p>
+                  No dirty markers or confirmation dialogs. Draft persistence is
+                  infrastructure, not a task the user has to remember.
+                </p>
+              </div>
+            </article>
+            <article class="decision">
+              <div class="decision-mark">D2</div>
+              <div>
+                <h3>Export stays explicit</h3>
+                <p>
+                  <code>Ctrl+S</code> asks for a path and writes only the
+                  current tab. A draft becomes a normal file on the user's
+                  terms.
+                </p>
+              </div>
+            </article>
+            <article class="decision">
+              <div class="decision-mark">D3</div>
+              <div>
+                <h3>Titles derive from content</h3>
+                <p>
+                  The first non-empty line names a tab automatically. There is
+                  no separate rename workflow to interrupt capture.
+                </p>
+              </div>
+            </article>
+            <article class="decision">
+              <div class="decision-mark">D4</div>
+              <div>
+                <h3>JSON over a database</h3>
+                <p>
+                  The state is one small versioned snapshot. A database would
+                  add migrations and operational weight without improving this
+                  workload.
+                </p>
+              </div>
+            </article>
+            <article class="decision">
+              <div class="decision-mark">D5</div>
+              <div>
+                <h3>No line-number gutter</h3>
+                <p>
+                  Notes are prose-first, and terminal mouse selection copies
+                  rendered cells. A clean gutter preserves frictionless
+                  selection and copying.
+                </p>
+              </div>
+            </article>
+            <article class="decision">
+              <div class="decision-mark">D6</div>
+              <div>
+                <h3>One package, small seams</h3>
+                <p>
+                  The app stays in <code>package main</code>, while storage and
+                  UI are separated by files and a tiny store value that tests
+                  can redirect.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="source">
+        <div class="shell">
+          <div class="section-heading">
+            <div class="section-number">06 / SOURCE</div>
+            <div>
+              <h2>A small codebase with visible seams.</h2>
+              <p class="section-intro">
+                There is no framework around the framework. Each file
+                corresponds to a concrete responsibility.
+              </p>
+            </div>
+          </div>
+
+          <div class="files">
+            <article class="file">
+              <code>main.go</code>
+              <h3>Boot</h3>
+              <p>
+                Find state, restore a session, configure Bubble Tea, and report
+                startup errors.
+              </p>
+            </article>
+            <article class="file">
+              <code>model.go</code>
+              <h3>Interact</h3>
+              <p>
+                Own tabs, key handling, autosave scheduling, export mode,
+                sizing, and terminal rendering.
+              </p>
+            </article>
+            <article class="file">
+              <code>store.go</code>
+              <h3>Persist</h3>
+              <p>
+                Version the session format and perform private, atomic writes in
+                the user config directory.
+              </p>
+            </article>
+            <article class="file">
+              <code>*_test.go</code>
+              <h3>Verify</h3>
+              <p>
+                Cover round trips, permissions, restoration, tab lifecycle,
+                export, autosave, and narrow layouts.
+              </p>
+            </article>
+          </div>
+
+          <div class="keys" aria-label="Keyboard shortcuts">
+            <span class="key"><kbd>Ctrl+N</kbd> new tab</span>
+            <span class="key"><kbd>Ctrl+W</kbd> close tab</span>
+            <span class="key"><kbd>Ctrl+[</kbd> previous</span>
+            <span class="key"><kbd>Ctrl+]</kbd> next</span>
+            <span class="key"><kbd>Ctrl+S</kbd> export</span>
+            <span class="key"><kbd>F1</kbd> key map</span>
+            <span class="key"><kbd>Ctrl+C</kbd> save and quit</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing">
+        <div class="shell">
+          <p class="eyebrow" style="justify-content: center">
+            The complete build
+          </p>
+          <h2>Small enough to understand. Fast enough to disappear.</h2>
+          <p>
+            Run it, type immediately, and close it without ceremony. That is the
+            whole contract.
+          </p>
+          <div class="runline" aria-label="Test command">
+            <span class="prompt" aria-hidden="true">$</span>
+            <code>go test -race ./...</code>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell footer-inner">
+        <span>SCRATCHPAD / GO 1.23+</span>
+        <span>Bubble Tea + Bubbles + Lip Gloss</span>
+      </div>
+    </footer>
+  </body>
+</html>
