@@ -4,7 +4,7 @@ A keyboard-first terminal scratchpad for quickly capturing thoughts. Notes live 
 
 ## Run
 
-Go 1.23 or newer is required.
+Go 1.25 or newer is required.
 
 ```sh
 go run .

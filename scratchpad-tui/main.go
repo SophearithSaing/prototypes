@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 )
 
 func main() {
@@ -28,7 +28,7 @@ func run(in io.Reader, out io.Writer) error {
 	}
 
 	model := newModel(store, session)
-	program := tea.NewProgram(model, tea.WithInput(in), tea.WithOutput(out), tea.WithAltScreen())
+	program := tea.NewProgram(model, tea.WithInput(in), tea.WithOutput(out))
 	_, err = program.Run()
 	return err
 }

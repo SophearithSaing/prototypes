@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 )
 
 func TestNewModelRestoresSession(t *testing.T) {
@@ -33,13 +33,13 @@ func TestNewModelRestoresSession(t *testing.T) {
 func TestTabLifecycle(t *testing.T) {
 	m := newModel(sessionStore{}, savedSession{})
 
-	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyCtrlN})
+	updated, _ := m.Update(tea.KeyPressMsg{Code: 'n', Mod: tea.ModCtrl})
 	m = updated.(model)
 	if len(m.tabs) != 2 || m.active != 1 {
 		t.Fatalf("after Ctrl+N = %d tabs, active %d", len(m.tabs), m.active)
 	}
 
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyCtrlW})
+	updated, _ = m.Update(tea.KeyPressMsg{Code: 'w', Mod: tea.ModCtrl})
 	m = updated.(model)
 	if len(m.tabs) != 1 || m.active != 0 {
 		t.Fatalf("after Ctrl+W = %d tabs, active %d", len(m.tabs), m.active)
@@ -108,12 +108,16 @@ func TestViewFitsNarrowTerminal(t *testing.T) {
 	m.status = "A deliberately long status message that must be truncated"
 	m.resizeEditors()
 
-	for lineNumber, line := range strings.Split(m.View(), "\n") {
+	view := m.View()
+	if !view.AltScreen || view.WindowTitle != "Scratchpad" {
+		t.Errorf("view terminal settings = AltScreen %t, title %q", view.AltScreen, view.WindowTitle)
+	}
+	for lineNumber, line := range strings.Split(view.Content, "\n") {
 		if width := lipgloss.Width(line); width > m.width {
 			t.Errorf("line %d width = %d, terminal width = %d", lineNumber+1, width, m.width)
 		}
 	}
-	if height := lipgloss.Height(m.View()); height != m.height {
+	if height := lipgloss.Height(view.Content); height != m.height {
 		t.Errorf("view height = %d, terminal height = %d", height, m.height)
 	}
 }

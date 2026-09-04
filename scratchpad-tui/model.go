@@ -8,10 +8,10 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/charmbracelet/bubbles/textarea"
-	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/textarea"
+	"charm.land/bubbles/v2/textinput"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 )
 
 const autosaveDelay = 350 * time.Millisecond
@@ -92,7 +92,9 @@ func newModel(store sessionStore, session savedSession) model {
 	m.pathInput.Prompt = "  Save to  "
 	m.pathInput.Placeholder = "notes.md"
 	m.pathInput.CharLimit = 4096
-	m.pathInput.Cursor.Style = lipgloss.NewStyle().Foreground(colorAccent)
+	pathStyles := m.pathInput.Styles()
+	pathStyles.Cursor.Color = colorAccent
+	m.pathInput.SetStyles(pathStyles)
 	m.focusActive()
 	return m
 }
@@ -107,10 +109,12 @@ func newTab(id int, fallback, content string) tab {
 	editor.SetValue(content)
 	editor.ShowLineNumbers = false
 	editor.CharLimit = 0
-	editor.FocusedStyle.Base = lipgloss.NewStyle().Foreground(colorInk)
-	editor.FocusedStyle.CursorLine = lipgloss.NewStyle()
-	editor.BlurredStyle.Base = lipgloss.NewStyle().Foreground(colorInk)
-	editor.Cursor.Style = lipgloss.NewStyle().Foreground(colorAccent)
+	styles := editor.Styles()
+	styles.Focused.Base = lipgloss.NewStyle().Foreground(colorInk)
+	styles.Focused.CursorLine = lipgloss.NewStyle()
+	styles.Blurred.Base = lipgloss.NewStyle().Foreground(colorInk)
+	styles.Cursor.Color = colorAccent
+	editor.SetStyles(styles)
 	return tab{id: id, fallback: fallback, editor: editor}
 }
 
@@ -134,7 +138,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 		return m, nil
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		if m.showHelp {
 			if msg.String() == "f1" || msg.String() == "esc" || msg.String() == "ctrl+c" {
 				m.showHelp = false
@@ -156,7 +160,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m model) updateEditorKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+func (m model) updateEditorKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "ctrl+c":
 		if err := m.saveSession(); err != nil {
@@ -199,7 +203,7 @@ func (m model) updateEditorKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m model) updateExport(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+func (m model) updateExport(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "esc", "ctrl+c":
 		m.mode = modeEdit
@@ -308,7 +312,7 @@ func (m *model) resizeEditors() {
 		m.tabs[i].editor.SetWidth(width)
 		m.tabs[i].editor.SetHeight(height)
 	}
-	m.pathInput.Width = max(10, m.width-16)
+	m.pathInput.SetWidth(max(10, m.width-16))
 }
 
 func (m model) changed() (tea.Model, tea.Cmd) {
@@ -345,7 +349,14 @@ func (t tab) title() string {
 	return truncate(t.fallback, 22)
 }
 
-func (m model) View() string {
+func (m model) View() tea.View {
+	view := tea.NewView(m.render())
+	view.AltScreen = true
+	view.WindowTitle = "Scratchpad"
+	return view
+}
+
+func (m model) render() string {
 	if m.width == 0 || m.height == 0 {
 		return "Loading scratchpad..."
 	}
@@ -514,6 +525,6 @@ func truncateWidth(value string, width int) string {
 func placeOverlay(width, height int, foreground string) string {
 	return lipgloss.Place(width, height, lipgloss.Center, lipgloss.Center, foreground,
 		lipgloss.WithWhitespaceChars(" "),
-		lipgloss.WithWhitespaceBackground(colorPaper),
+		lipgloss.WithWhitespaceStyle(lipgloss.NewStyle().Background(colorPaper)),
 	)
 }
