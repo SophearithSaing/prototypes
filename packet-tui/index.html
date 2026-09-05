@@ -1,0 +1,1671 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Engineering notes for Packet, a keyboard-first terminal HTTP client built in Go with Bubble Tea v2."
+    />
+    <title>Packet | Engineering a terminal HTTP client</title>
+    <style>
+      :root {
+        --ink: #101820;
+        --paper: #f3efe5;
+        --paper-deep: #e8e0d0;
+        --card: #faf7ef;
+        --line: #c8bdab;
+        --muted: #6b6b63;
+        --orange: #e45d2a;
+        --orange-dark: #b84218;
+        --blue: #176b87;
+        --green: #4f7d57;
+        --terminal: #10151a;
+        --terminal-line: #2d3943;
+        --terminal-text: #c4c8c2;
+        --terminal-dim: #707b84;
+        --terminal-yellow: #ffb454;
+        --terminal-blue: #59c2ff;
+        --terminal-green: #aad94c;
+        --display:
+          "Arial Narrow", "Roboto Condensed", "Helvetica Neue", sans-serif;
+        --body: Georgia, "Times New Roman", serif;
+        --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 82px;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(rgba(16, 24, 32, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(16, 24, 32, 0.025) 1px, transparent 1px),
+          var(--paper);
+        background-size: 28px 28px;
+        font-family: var(--body);
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0 0 auto;
+        z-index: 100;
+        height: 3px;
+        transform-origin: left;
+        transform: scaleX(var(--progress, 0));
+        background: var(--orange);
+      }
+
+      a {
+        color: inherit;
+      }
+      button {
+        font: inherit;
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 44px));
+        margin-inline: auto;
+      }
+
+      .site-nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: color-mix(in srgb, var(--paper) 92%, transparent);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(12px);
+      }
+
+      .nav-inner {
+        min-height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 32px;
+      }
+
+      .wordmark {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--ink);
+        text-decoration: none;
+        font-family: var(--mono);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+      }
+
+      .wordmark-mark {
+        display: grid;
+        width: 26px;
+        height: 26px;
+        place-items: center;
+        color: var(--paper);
+        background: var(--orange);
+        font-size: 13px;
+        box-shadow: 4px 4px 0 var(--ink);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 24px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .nav-links::-webkit-scrollbar {
+        display: none;
+      }
+      .nav-links a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .nav-links a:hover,
+      .nav-links a:focus-visible {
+        color: var(--orange);
+      }
+
+      .hero {
+        min-height: min(760px, calc(100svh - 68px));
+        display: grid;
+        grid-template-columns: minmax(0, 0.92fr) minmax(480px, 1.08fr);
+        align-items: center;
+        gap: clamp(44px, 6vw, 82px);
+        padding-block: 64px 76px;
+      }
+
+      .eyebrow,
+      .section-kicker {
+        margin: 0 0 18px;
+        color: var(--orange-dark);
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before,
+      .section-kicker::before {
+        content: "[ ";
+      }
+      .eyebrow::after,
+      .section-kicker::after {
+        content: " ]";
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 700px;
+        margin-bottom: 22px;
+        font-family: var(--display);
+        font-size: clamp(54px, 6.8vw, 94px);
+        font-stretch: condensed;
+        font-weight: 900;
+        letter-spacing: -0.065em;
+        line-height: 0.86;
+        text-transform: uppercase;
+      }
+
+      h1 span {
+        display: block;
+        margin-top: 0.05em;
+        margin-left: 0.3em;
+        color: transparent;
+        -webkit-text-stroke: 2px var(--ink);
+      }
+
+      .lede {
+        max-width: 560px;
+        margin-bottom: 26px;
+        color: #424740;
+        font-size: clamp(19px, 1.65vw, 22px);
+        line-height: 1.5;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 11px;
+        margin-bottom: 32px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        min-height: 45px;
+        padding: 0 17px;
+        border: 1px solid var(--ink);
+        color: var(--paper);
+        background: var(--ink);
+        text-decoration: none;
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        transition:
+          transform 140ms ease,
+          box-shadow 140ms ease;
+      }
+
+      .button.secondary {
+        color: var(--ink);
+        background: transparent;
+      }
+      .button:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 4px 4px 0 var(--orange);
+      }
+
+      .hero-meta {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 570px;
+        border-block: 1px solid var(--line);
+      }
+
+      .hero-stat {
+        padding: 15px 12px 15px 0;
+        font-family: var(--mono);
+        font-size: 11px;
+        line-height: 1.4;
+        text-transform: uppercase;
+      }
+
+      .hero-stat + .hero-stat {
+        padding-left: 16px;
+        border-left: 1px solid var(--line);
+      }
+      .hero-stat strong {
+        display: block;
+        margin-bottom: 3px;
+        color: var(--orange-dark);
+        font-size: 19px;
+      }
+
+      .terminal-wrap {
+        position: relative;
+      }
+
+      .terminal-wrap::before {
+        content: "INTERACTION MODEL / 01";
+        position: absolute;
+        top: -32px;
+        right: 0;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+      }
+
+      .terminal {
+        overflow: hidden;
+        color: var(--terminal-text);
+        background: var(--terminal);
+        border: 1px solid #070a0c;
+        box-shadow:
+          16px 18px 0 var(--orange),
+          20px 22px 0 var(--ink);
+        font-family: var(--mono);
+        font-size: 11px;
+        line-height: 1.45;
+      }
+
+      .terminal-chrome {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        height: 34px;
+        padding: 0 12px;
+        background: #192128;
+        border-bottom: 1px solid var(--terminal-line);
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #46515a;
+      }
+      .dot:first-child {
+        background: #f07178;
+      }
+      .dot:nth-child(2) {
+        background: #ffb454;
+      }
+      .dot:nth-child(3) {
+        background: #aad94c;
+      }
+      .chrome-label {
+        margin-left: auto;
+        color: var(--terminal-dim);
+      }
+
+      .terminal-header,
+      .terminal-footer {
+        padding: 7px 10px;
+      }
+      .terminal-header {
+        color: var(--terminal-yellow);
+        border-bottom: 1px solid var(--terminal-line);
+      }
+      .terminal-footer {
+        color: var(--terminal-dim);
+        border-top: 1px solid var(--terminal-line);
+      }
+
+      .tui-grid {
+        display: grid;
+        grid-template-columns: 35% 65%;
+        min-height: 350px;
+      }
+      .tui-sidebar {
+        border-right: 1px solid var(--terminal-line);
+      }
+      .tui-title {
+        padding: 8px 10px;
+        color: var(--terminal-blue);
+        border-bottom: 1px solid var(--terminal-line);
+        font-weight: 700;
+      }
+      .collection-name {
+        padding: 8px 11px 4px;
+        color: var(--terminal-dim);
+      }
+      .request-line {
+        display: grid;
+        grid-template-columns: 48px 1fr;
+        padding: 5px 10px;
+      }
+      .request-line.active {
+        color: #e7e9e5;
+        background: #27303a;
+      }
+      .http-method {
+        color: var(--terminal-yellow);
+        font-weight: 700;
+      }
+      .tui-main {
+        min-width: 0;
+      }
+      .request-bar {
+        display: flex;
+        gap: 9px;
+        padding: 9px 10px;
+        overflow: hidden;
+        border-bottom: 1px solid var(--terminal-line);
+      }
+      .request-url {
+        overflow: hidden;
+        color: #d4d9d3;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .view-tabs {
+        padding: 5px 10px;
+        color: var(--terminal-dim);
+        border-bottom: 1px solid var(--terminal-line);
+      }
+      .view-tabs .on {
+        color: var(--terminal-blue);
+      }
+      .tui-panel {
+        min-height: 127px;
+        border-bottom: 1px solid var(--terminal-line);
+      }
+      .panel-label {
+        padding: 6px 10px;
+        color: var(--terminal-dim);
+      }
+      .panel-code {
+        padding: 5px 15px;
+        color: #d4d9d3;
+      }
+      .json-key {
+        color: var(--terminal-blue);
+      }
+      .json-string {
+        color: var(--terminal-green);
+      }
+      .response-meta {
+        float: right;
+        color: var(--terminal-green);
+      }
+
+      section {
+        padding-block: 108px;
+        border-top: 1px solid var(--line);
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr);
+        gap: clamp(34px, 6vw, 76px);
+        align-items: end;
+        margin-bottom: 62px;
+      }
+
+      .section-head > * {
+        min-width: 0;
+      }
+
+      h2 {
+        margin-bottom: 0;
+        font-family: var(--display);
+        font-size: clamp(48px, 6.6vw, 91px);
+        font-weight: 900;
+        letter-spacing: -0.06em;
+        line-height: 0.91;
+        text-wrap: balance;
+        text-transform: uppercase;
+      }
+
+      .section-intro {
+        max-width: 620px;
+        margin: 0;
+        color: #4d514b;
+        font-size: 21px;
+        overflow-wrap: break-word;
+      }
+
+      .timeline {
+        counter-reset: phase;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border-block: 1px solid var(--ink);
+      }
+
+      .phase {
+        counter-increment: phase;
+        min-height: 340px;
+        padding: 28px 24px 26px;
+        position: relative;
+      }
+
+      .phase + .phase {
+        border-left: 1px solid var(--ink);
+      }
+      .phase::before {
+        content: "0" counter(phase);
+        color: var(--orange);
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .phase h3 {
+        margin: 88px 0 14px;
+        font-family: var(--display);
+        font-size: 30px;
+        letter-spacing: -0.035em;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+      .phase p {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.55;
+      }
+      .phase-tag {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        color: var(--orange-dark);
+        font-family: var(--mono);
+        font-size: 10px;
+        text-transform: uppercase;
+      }
+
+      .architecture {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .architecture .section-kicker {
+        color: var(--terminal-yellow);
+      }
+      .architecture .section-intro {
+        color: #afb4ad;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        margin-bottom: 70px;
+        border: 1px solid #46515a;
+      }
+
+      .flow-step {
+        position: relative;
+        min-height: 210px;
+        padding: 25px 20px;
+      }
+      .flow-step + .flow-step {
+        border-left: 1px solid #46515a;
+      }
+      .flow-step + .flow-step::before {
+        content: ">";
+        position: absolute;
+        top: 30px;
+        left: -7px;
+        color: var(--terminal-yellow);
+        background: var(--ink);
+        font-family: var(--mono);
+      }
+      .flow-index {
+        color: var(--terminal-yellow);
+        font-family: var(--mono);
+        font-size: 11px;
+      }
+      .flow-step h3 {
+        margin: 52px 0 8px;
+        font-family: var(--mono);
+        font-size: 15px;
+        text-transform: uppercase;
+      }
+      .flow-step p {
+        color: #929a94;
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .architecture-detail {
+        display: grid;
+        grid-template-columns: 0.8fr 1.2fr;
+        gap: 70px;
+        align-items: start;
+      }
+
+      .file-tree {
+        margin: 0;
+        padding: 24px;
+        color: var(--terminal-text);
+        background: #0b1014;
+        border-left: 3px solid var(--terminal-yellow);
+        font: 13px/1.75 var(--mono);
+        white-space: pre-wrap;
+      }
+
+      .detail-copy h3 {
+        margin-bottom: 18px;
+        color: var(--terminal-blue);
+        font: 700 17px var(--mono);
+        text-transform: uppercase;
+      }
+      .detail-copy p {
+        max-width: 630px;
+        color: #afb4ad;
+      }
+      .detail-copy p:last-child {
+        margin-bottom: 0;
+      }
+
+      .decision-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+
+      .decision {
+        min-height: 310px;
+        padding: 30px;
+        background: var(--card);
+        transition: background 160ms ease;
+      }
+
+      .decision:hover {
+        background: #fffaf0;
+      }
+      .decision-number {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 54px;
+        color: var(--orange-dark);
+        font: 11px var(--mono);
+        letter-spacing: 0.08em;
+      }
+      .decision h3 {
+        margin-bottom: 13px;
+        font-family: var(--display);
+        font-size: 29px;
+        letter-spacing: -0.025em;
+        line-height: 1.05;
+        text-transform: uppercase;
+      }
+      .decision p {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 16px;
+      }
+
+      .code-section {
+        background: var(--paper-deep);
+      }
+
+      .code-story {
+        display: grid;
+        grid-template-columns: 300px minmax(0, 1fr);
+        gap: 50px;
+        margin-bottom: 70px;
+        align-items: start;
+      }
+
+      .code-story:last-child {
+        margin-bottom: 0;
+      }
+      .code-note {
+        position: sticky;
+        top: 94px;
+      }
+      .code-note .number {
+        color: var(--orange-dark);
+        font: 800 12px var(--mono);
+      }
+      .code-note h3 {
+        margin: 40px 0 14px;
+        font-family: var(--display);
+        font-size: 34px;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+      .code-note p {
+        color: var(--muted);
+        font-size: 16px;
+      }
+
+      .code-window {
+        overflow: hidden;
+        background: var(--terminal);
+        border: 1px solid #070a0c;
+        box-shadow: 8px 8px 0 rgba(16, 24, 32, 0.15);
+      }
+      .code-bar {
+        display: flex;
+        align-items: center;
+        height: 42px;
+        padding: 0 13px 0 17px;
+        color: var(--terminal-dim);
+        background: #192128;
+        border-bottom: 1px solid var(--terminal-line);
+        font: 11px var(--mono);
+      }
+      .code-bar span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .copy-button {
+        margin-left: auto;
+        padding: 5px 9px;
+        color: var(--terminal-text);
+        background: transparent;
+        border: 1px solid #46515a;
+        cursor: pointer;
+        font: 10px var(--mono);
+        text-transform: uppercase;
+      }
+      .copy-button:hover,
+      .copy-button:focus-visible {
+        color: var(--terminal-yellow);
+        border-color: var(--terminal-yellow);
+      }
+      pre {
+        margin: 0;
+        overflow: auto;
+      }
+      pre code {
+        display: block;
+        min-width: max-content;
+        padding: 24px;
+        color: var(--terminal-text);
+        font: 13px/1.65 var(--mono);
+        tab-size: 4;
+      }
+      .kw {
+        color: #ff8f40;
+      }
+      .fn {
+        color: var(--terminal-blue);
+      }
+      .str {
+        color: var(--terminal-green);
+      }
+      .type {
+        color: #dcc98a;
+      }
+      .comment {
+        color: var(--terminal-dim);
+        font-style: italic;
+      }
+
+      .verification-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 60px;
+        align-items: start;
+      }
+
+      .test-terminal {
+        color: var(--terminal-text);
+        background: var(--terminal);
+        box-shadow: 10px 10px 0 var(--green);
+        font: 13px/1.8 var(--mono);
+      }
+      .test-terminal .code-bar {
+        color: var(--terminal-yellow);
+      }
+      .test-output {
+        padding: 25px;
+      }
+      .pass {
+        color: var(--terminal-green);
+      }
+      .terminal-green {
+        color: var(--terminal-green);
+      }
+
+      .test-list {
+        border-top: 1px solid var(--ink);
+      }
+      .test-row {
+        display: grid;
+        grid-template-columns: 42px 1fr auto;
+        gap: 16px;
+        align-items: center;
+        padding: 17px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .test-check {
+        display: grid;
+        width: 27px;
+        height: 27px;
+        place-items: center;
+        color: var(--paper);
+        background: var(--green);
+        font: 13px var(--mono);
+      }
+      .test-name {
+        font-family: var(--display);
+        font-size: 18px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+      .test-area {
+        color: var(--muted);
+        font: 10px var(--mono);
+        text-transform: uppercase;
+      }
+
+      .closing {
+        padding-block: 90px;
+        color: var(--paper);
+        background: var(--orange);
+        border-top: 0;
+      }
+
+      .closing-grid {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 50px;
+        align-items: end;
+      }
+      .closing h2 {
+        max-width: 800px;
+      }
+      .launch-box {
+        min-width: 315px;
+        padding: 18px 20px;
+        color: var(--terminal-text);
+        background: var(--terminal);
+        box-shadow: 8px 8px 0 var(--ink);
+        font: 13px var(--mono);
+      }
+      .launch-box::before {
+        content: "$ ";
+        color: var(--terminal-green);
+      }
+
+      footer {
+        padding: 28px 0;
+        color: var(--muted);
+        background: var(--ink);
+        font: 11px var(--mono);
+        text-transform: uppercase;
+      }
+      .footer-inner {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(22px);
+        transition:
+          opacity 550ms ease,
+          transform 550ms ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .reveal {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .button {
+          transition: none;
+        }
+      }
+
+      @media (max-width: 1020px) {
+        .section-head {
+          grid-template-columns: 1fr;
+          gap: 28px;
+        }
+        .section-intro {
+          max-width: 720px;
+        }
+      }
+
+      @media (max-width: 940px) {
+        .hero {
+          grid-template-columns: 1fr;
+          min-height: auto;
+          gap: 68px;
+        }
+        .terminal-wrap {
+          max-width: 720px;
+        }
+        .timeline {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .phase:nth-child(3) {
+          border-left: 0;
+          border-top: 1px solid var(--ink);
+        }
+        .phase:nth-child(4) {
+          border-top: 1px solid var(--ink);
+        }
+        .flow {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .flow-step:nth-child(odd) {
+          border-left: 0;
+        }
+        .flow-step:nth-child(n + 3) {
+          border-top: 1px solid #46515a;
+        }
+        .flow-step + .flow-step::before {
+          display: none;
+        }
+        .flow-step:last-child {
+          grid-column: span 2;
+        }
+        .code-story {
+          grid-template-columns: 1fr;
+          gap: 22px;
+        }
+        .code-note {
+          position: static;
+          max-width: 650px;
+        }
+        .code-note h3 {
+          margin-top: 18px;
+        }
+        .verification-grid {
+          grid-template-columns: 1fr;
+        }
+        .closing-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 650px) {
+        body {
+          font-size: 17px;
+        }
+        .shell {
+          width: min(100% - 26px, 1180px);
+        }
+        .nav-inner {
+          min-height: 58px;
+          gap: 18px;
+        }
+        .nav-links {
+          gap: 17px;
+        }
+        .nav-links a:nth-child(2),
+        .nav-links a:nth-child(3) {
+          display: none;
+        }
+        .hero {
+          gap: 58px;
+          padding-block: 48px 62px;
+        }
+        h1 {
+          font-size: clamp(50px, 17vw, 72px);
+          line-height: 0.88;
+        }
+        h1 span {
+          margin-left: 0.14em;
+        }
+        .hero-meta {
+          grid-template-columns: 1fr;
+        }
+        .hero-stat + .hero-stat {
+          padding-left: 0;
+          border-top: 1px solid var(--line);
+          border-left: 0;
+        }
+        .terminal {
+          font-size: 9px;
+          box-shadow:
+            8px 10px 0 var(--orange),
+            11px 13px 0 var(--ink);
+        }
+        .tui-grid {
+          grid-template-columns: 1fr;
+        }
+        .tui-sidebar {
+          max-height: 138px;
+          overflow: hidden;
+          border-right: 0;
+          border-bottom: 1px solid var(--terminal-line);
+        }
+        .request-line:nth-of-type(n + 5) {
+          display: none;
+        }
+        section {
+          padding-block: 74px;
+        }
+        .section-head {
+          margin-bottom: 42px;
+        }
+        .timeline,
+        .decision-grid {
+          grid-template-columns: 1fr;
+        }
+        .phase {
+          min-height: 270px;
+        }
+        .phase + .phase {
+          border-top: 1px solid var(--ink);
+          border-left: 0;
+        }
+        .flow {
+          grid-template-columns: 1fr;
+        }
+        .flow-step,
+        .flow-step:last-child {
+          grid-column: auto;
+        }
+        .flow-step + .flow-step {
+          border-top: 1px solid #46515a;
+          border-left: 0;
+        }
+        .architecture-detail {
+          grid-template-columns: 1fr;
+          gap: 38px;
+        }
+        .code-window {
+          margin-inline: -13px;
+          border-inline: 0;
+          box-shadow: none;
+        }
+        pre code {
+          padding: 19px 14px;
+          font-size: 11px;
+        }
+        .closing {
+          padding-block: 70px;
+        }
+        .launch-box {
+          min-width: 0;
+          width: 100%;
+          overflow-x: auto;
+        }
+        .footer-inner {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="site-nav" aria-label="Project sections">
+      <div class="shell nav-inner">
+        <a class="wordmark" href="#top"
+          ><span class="wordmark-mark">P</span> packet</a
+        >
+        <div class="nav-links">
+          <a href="#development">Development</a>
+          <a href="#architecture">How it works</a>
+          <a href="#decisions">Decisions</a>
+          <a href="#code">Code</a>
+          <a href="#verification">Verification</a>
+        </div>
+      </div>
+    </nav>
+
+    <main id="top">
+      <header class="shell hero">
+        <div class="hero-copy reveal">
+          <p class="eyebrow">Engineering field notes / Go 1.26</p>
+          <h1>HTTP at <span>keystroke.</span></h1>
+          <p class="lede">
+            Packet is a keyboard-first HTTP workbench that brings Postman
+            collections, session cookies, JWT signing, and structured responses
+            into one focused terminal process.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="#development">Read the build log</a>
+            <a class="button secondary" href="#code">Inspect the code</a>
+          </div>
+          <div class="hero-meta" aria-label="Project facts">
+            <div class="hero-stat"><strong>2.0.9</strong>Bubble Tea v2</div>
+            <div class="hero-stat"><strong>5 modes</strong>Request bodies</div>
+            <div class="hero-stat"><strong>10 MiB</strong>Response guard</div>
+          </div>
+        </div>
+
+        <div
+          class="terminal-wrap reveal"
+          aria-label="Illustration of the Packet terminal interface"
+        >
+          <div class="terminal">
+            <div class="terminal-chrome">
+              <i class="dot"></i><i class="dot"></i><i class="dot"></i>
+              <span class="chrome-label">packet / 104 x 28</span>
+            </div>
+            <div class="terminal-header">
+              <strong>packet</strong> &nbsp;HTTP WORKBENCH
+            </div>
+            <div class="tui-grid">
+              <aside class="tui-sidebar">
+                <div class="tui-title">COLLECTIONS</div>
+                <div class="collection-name">Core API</div>
+                <div class="request-line">
+                  <span class="http-method">GET</span><span>Health</span>
+                </div>
+                <div class="request-line active">
+                  <span class="http-method">POST</span
+                  ><span>Users / Create</span>
+                </div>
+                <div class="request-line">
+                  <span class="http-method">GET</span
+                  ><span>Users / Profile</span>
+                </div>
+                <div class="request-line">
+                  <span class="http-method">PATCH</span
+                  ><span>Users / Update</span>
+                </div>
+                <div class="collection-name">Billing</div>
+                <div class="request-line">
+                  <span class="http-method">GET</span><span>Invoices</span>
+                </div>
+                <div class="request-line">
+                  <span class="http-method">POST</span><span>Checkout</span>
+                </div>
+              </aside>
+              <div class="tui-main">
+                <div class="request-bar">
+                  <span class="http-method">POST</span
+                  ><span class="request-url">https://api.packet.dev/users</span>
+                </div>
+                <div class="view-tabs">
+                  <span class="on">[split]</span>&nbsp;&nbsp;
+                  request&nbsp;&nbsp; response
+                </div>
+                <div class="tui-panel">
+                  <div class="panel-label">REQUEST BODY</div>
+                  <div class="panel-code">
+                    {<br />&nbsp;&nbsp;<span class="json-key">"name"</span>:
+                    <span class="json-string">"Ada Lovelace"</span
+                    >,<br />&nbsp;&nbsp;<span class="json-key">"role"</span>:
+                    <span class="json-string">"engineer"</span><br />}
+                  </div>
+                </div>
+                <div class="tui-panel">
+                  <div class="panel-label">
+                    RESPONSE
+                    <span class="response-meta">201 Created &nbsp; 84ms</span>
+                  </div>
+                  <div class="panel-code">
+                    {<br />&nbsp;&nbsp;<span class="json-key">"id"</span>:
+                    <span class="json-string">"usr_01J9"</span
+                    >,<br />&nbsp;&nbsp;<span class="json-key">"created"</span>:
+                    <span class="json-string">true</span><br />}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="terminal-footer">
+              j/k navigate | enter send | a JWT | / search | i import | v view
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section id="development">
+        <div class="shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">Development</p>
+              <h2>From brief to binary.</h2>
+            </div>
+            <p class="section-intro">
+              The project began as eleven product requirements and an otherwise
+              empty directory. Development moved from data boundaries outward:
+              define requests, make transport correct, then build the interface
+              around those guarantees.
+            </p>
+          </div>
+
+          <div class="timeline reveal">
+            <article class="phase">
+              <h3>Establish the core</h3>
+              <p>
+                A small domain package defines collections, requests, headers,
+                body modes, authentication, and responses. UI concerns never
+                leak into transport types.
+              </p>
+              <span class="phase-tag">model first</span>
+            </article>
+            <article class="phase">
+              <h3>Translate Postman</h3>
+              <p>
+                V2.0 and v2.1 collections are decoded, nested folders become
+                paths, inherited bearer auth is retained, and collection
+                variables are expanded.
+              </p>
+              <span class="phase-tag">boundary work</span>
+            </article>
+            <article class="phase">
+              <h3>Shape interaction</h3>
+              <p>
+                Focus states, modals, view modes, and asynchronous commands form
+                one explicit Bubble Tea model. Every action remains reachable
+                from the keyboard.
+              </p>
+              <span class="phase-tag">state machine</span>
+            </article>
+            <article class="phase">
+              <h3>Harden the edges</h3>
+              <p>
+                Long collection scrolling, narrow terminal stacking, multipart
+                paths, response limits, cookie behavior, JWT errors, race tests,
+                and vet complete the pass.
+              </p>
+              <span class="phase-tag">verify last</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="architecture" id="architecture">
+        <div class="shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">How it works</p>
+              <h2>One event loop, clear boundaries.</h2>
+            </div>
+            <p class="section-intro">
+              Bubble Tea owns interaction state. The packet package owns
+              protocol behavior. Slow work crosses the boundary through commands
+              and returns as messages, keeping rendering deterministic.
+            </p>
+          </div>
+
+          <div class="flow reveal" aria-label="Packet request lifecycle">
+            <article class="flow-step">
+              <span class="flow-index">01 / INPUT</span>
+              <h3>Keystroke</h3>
+              <p>
+                Navigation edits state. Ctrl+S snapshots the active request.
+              </p>
+            </article>
+            <article class="flow-step">
+              <span class="flow-index">02 / COMMAND</span>
+              <h3>Async send</h3>
+              <p>A tea.Cmd performs network I/O outside Update.</p>
+            </article>
+            <article class="flow-step">
+              <span class="flow-index">03 / TRANSPORT</span>
+              <h3>Build HTTP</h3>
+              <p>Body mode, headers, JWT, timeout, and cookies are applied.</p>
+            </article>
+            <article class="flow-step">
+              <span class="flow-index">04 / MESSAGE</span>
+              <h3>Normalize</h3>
+              <p>
+                Status, sorted headers, timing, size, and body return together.
+              </p>
+            </article>
+            <article class="flow-step">
+              <span class="flow-index">05 / VIEW</span>
+              <h3>Render</h3>
+              <p>The viewport resets to the top and displays the result.</p>
+            </article>
+          </div>
+
+          <div class="architecture-detail reveal">
+            <pre class="file-tree" aria-label="Project file structure">
+packet-tui/
+|-- cmd/packet/
+|   `-- main.go          entry point
+|-- internal/packet/
+|   |-- types.go         domain model
+|   |-- postman.go       import boundary
+|   |-- client.go        HTTP transport
+|   `-- jwt.go           bearer signing
+|-- internal/tui/
+|   `-- model.go         state + rendering
+|-- README.md
+`-- requirements.md</pre>
+            <div class="detail-copy">
+              <h3>The runtime model</h3>
+              <p>
+                The TUI stores collections and lightweight references into them.
+                Search rebuilds only the visible reference list, so the request
+                data remains stable and edits are not duplicated. Before
+                selection or transport changes, URL and body widgets synchronize
+                into the active request.
+              </p>
+              <p>
+                The shared <code>packet.Client</code> owns one standard-library
+                cookie jar. That makes cookie behavior automatic across every
+                request in the process without inventing a second session
+                abstraction.
+              </p>
+              <p>
+                Postman files can enter at startup or through an import modal.
+                Both routes use the same parser, preserving one import contract
+                and one set of tests.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="decisions">
+        <div class="shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">Decision records</p>
+              <h2>Constraints became structure.</h2>
+            </div>
+            <p class="section-intro">
+              The implementation favors explicit, standard-library behavior over
+              additional frameworks. Each choice narrows the number of states
+              the application can enter.
+            </p>
+          </div>
+
+          <div class="decision-grid reveal">
+            <article class="decision">
+              <div class="decision-number">
+                <span>ADR 001</span><span>ACCEPTED</span>
+              </div>
+              <h3>Keep protocol code outside the TUI</h3>
+              <p>
+                Imports, signing, and HTTP execution are independently testable.
+                Bubble Tea receives plain messages instead of knowing transport
+                details.
+              </p>
+            </article>
+            <article class="decision">
+              <div class="decision-number">
+                <span>ADR 002</span><span>ACCEPTED</span>
+              </div>
+              <h3>Flatten folders, preserve paths</h3>
+              <p>
+                Nested Postman folders become names such as
+                <code>Users / Create</code>. A flat reference list makes quick
+                search and scrolling simple without losing context.
+              </p>
+            </article>
+            <article class="decision">
+              <div class="decision-number">
+                <span>ADR 003</span><span>ACCEPTED</span>
+              </div>
+              <h3>Make body modes explicit</h3>
+              <p>
+                Raw, URL-encoded, GraphQL, multipart, and file bodies retain
+                their transport semantics. The client chooses encoding and
+                content type at send time.
+              </p>
+            </article>
+            <article class="decision">
+              <div class="decision-number">
+                <span>ADR 004</span><span>ACCEPTED</span>
+              </div>
+              <h3>Use standard crypto primitives</h3>
+              <p>
+                JWT HMAC signing uses <code>crypto/hmac</code>, SHA-2, JSON, and
+                base64url. Supporting three understood algorithms is safer than
+                a broad opaque dependency.
+              </p>
+            </article>
+            <article class="decision">
+              <div class="decision-number">
+                <span>ADR 005</span><span>ACCEPTED</span>
+              </div>
+              <h3>Session-local by design</h3>
+              <p>
+                Cookies and edits live for one run. No persistence format,
+                secret storage policy, or migration layer is introduced before
+                the product requires it.
+              </p>
+            </article>
+            <article class="decision">
+              <div class="decision-number">
+                <span>ADR 006</span><span>ACCEPTED</span>
+              </div>
+              <h3>Bound every response</h3>
+              <p>
+                The reader stops after 10 MiB plus one byte. That extra byte
+                detects truncation while keeping a surprising endpoint from
+                consuming unbounded memory.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="code-section" id="code">
+        <div class="shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">Source notes</p>
+              <h2>The important paths.</h2>
+            </div>
+            <p class="section-intro">
+              These excerpts are condensed from the working implementation. They
+              show the boundaries where interface events become protocol
+              operations.
+            </p>
+          </div>
+
+          <article class="code-story reveal">
+            <div class="code-note">
+              <span class="number">01 / ASYNC UPDATE</span>
+              <h3>Network work returns as data</h3>
+              <p>
+                <code>send</code> synchronizes the widgets, copies the request,
+                marks the interface busy, and returns a command. The event loop
+                never blocks on HTTP.
+              </p>
+            </div>
+            <div class="code-window">
+              <div class="code-bar">
+                <span>internal/tui/model.go</span
+                ><button class="copy-button" type="button">Copy</button>
+              </div>
+              <pre><code><span class="kw">func</span> (m Model) <span class="fn">send</span>() (tea.Model, tea.Cmd) {
+    <span class="kw">if</span> m.loading {
+        <span class="kw">return</span> m, <span class="kw">nil</span>
+    }
+    m.syncCurrent()
+    request := m.currentRequestPointer()
+    <span class="kw">if</span> request == <span class="kw">nil</span> {
+        <span class="kw">return</span> m, <span class="kw">nil</span>
+    }
+
+    copy := *request
+    m.loading = <span class="kw">true</span>
+    m.status = <span class="str">"Sending "</span> + copy.Method + <span class="str">"..."</span>
+
+    <span class="kw">return</span> m, <span class="kw">func</span>() tea.Msg {
+        response, err := m.client.Do(copy)
+        <span class="kw">return</span> responseMsg{response: response, err: err}
+    }
+}</code></pre>
+            </div>
+          </article>
+
+          <article class="code-story reveal">
+            <div class="code-note">
+              <span class="number">02 / HTTP SESSION</span>
+              <h3>Cookies are a client property</h3>
+              <p>
+                A single cookie jar sits on the shared HTTP client.
+                Authentication and inferred content type are applied only after
+                user headers, so explicit input wins where appropriate.
+              </p>
+            </div>
+            <div class="code-window">
+              <div class="code-bar">
+                <span>internal/packet/client.go</span
+                ><button class="copy-button" type="button">Copy</button>
+              </div>
+              <pre><code><span class="kw">func</span> <span class="fn">NewClient</span>() *Client {
+    jar, _ := cookiejar.New(<span class="kw">nil</span>)
+    <span class="kw">return</span> &amp;Client{http: &amp;http.Client{
+        Jar: jar, Timeout: <span class="type">30</span> * time.Second,
+    }}
+}
+
+<span class="kw">func</span> (c *Client) <span class="fn">Do</span>(in Request) (Response, error) {
+    bodyReader, contentType, err := requestBody(in)
+    <span class="kw">if</span> err != <span class="kw">nil</span> {
+        <span class="kw">return</span> Response{}, err
+    }
+
+    req, err := http.NewRequest(
+        strings.ToUpper(in.Method),
+        strings.TrimSpace(in.URL),
+        bodyReader,
+    )
+    <span class="comment">// Headers, inferred content type, and bearer auth follow.</span>
+    res, err := c.http.Do(req)
+    <span class="comment">// The response is normalized before returning to the TUI.</span>
+}</code></pre>
+            </div>
+          </article>
+
+          <article class="code-story reveal">
+            <div class="code-note">
+              <span class="number">03 / IMPORT</span>
+              <h3>Recursion removes UI complexity</h3>
+              <p>
+                The importer walks arbitrary folder depth and emits request
+                paths. Folder-level authentication flows downward unless a
+                request overrides it.
+              </p>
+            </div>
+            <div class="code-window">
+              <div class="code-bar">
+                <span>internal/packet/postman.go</span
+                ><button class="copy-button" type="button">Copy</button>
+              </div>
+              <pre><code><span class="kw">func</span> <span class="fn">walkPostmanItems</span>(
+    items []postmanItem,
+    prefix <span class="type">string</span>,
+    inheritedAuth *postmanAuth,
+    variables <span class="kw">map</span>[<span class="type">string</span>]<span class="type">string</span>,
+    output *[]Request,
+) {
+    <span class="kw">for</span> _, item := <span class="kw">range</span> items {
+        name := item.Name
+        <span class="kw">if</span> prefix != <span class="str">""</span> {
+            name = prefix + <span class="str">" / "</span> + item.Name
+        }
+        auth := inheritedAuth
+        <span class="kw">if</span> item.Auth != <span class="kw">nil</span> {
+            auth = item.Auth
+        }
+        <span class="kw">if</span> len(item.Items) &gt; <span class="type">0</span> {
+            walkPostmanItems(item.Items, name, auth, variables, output)
+            <span class="kw">continue</span>
+        }
+        request, err := decodePostmanRequest(item.Request, name, auth, variables)
+        <span class="kw">if</span> err == <span class="kw">nil</span> {
+            *output = append(*output, request)
+        }
+    }
+}</code></pre>
+            </div>
+          </article>
+
+          <article class="code-story reveal">
+            <div class="code-note">
+              <span class="number">04 / JWT</span>
+              <h3>Signing is deliberately narrow</h3>
+              <p>
+                Claims must parse as JSON. The selected HMAC algorithm chooses a
+                standard hash constructor, then header and payload are encoded
+                without padding before signing.
+              </p>
+            </div>
+            <div class="code-window">
+              <div class="code-bar">
+                <span>internal/packet/jwt.go</span
+                ><button class="copy-button" type="button">Copy</button>
+              </div>
+              <pre><code>headerJSON, _ := json.Marshal(<span class="kw">map</span>[<span class="type">string</span>]<span class="type">string</span>{
+    <span class="str">"alg"</span>: algorithm,
+    <span class="str">"typ"</span>: <span class="str">"JWT"</span>,
+})
+encode := base64.RawURLEncoding.EncodeToString
+unsigned := encode(headerJSON) + <span class="str">"."</span> + encode(payloadJSON)
+
+mac := hmac.New(newHash, []<span class="type">byte</span>(a.Secret))
+_, _ = mac.Write([]<span class="type">byte</span>(unsigned))
+
+<span class="kw">return</span> unsigned + <span class="str">"."</span> + encode(mac.Sum(<span class="kw">nil</span>)), <span class="kw">nil</span></code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="verification">
+        <div class="shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">Verification</p>
+              <h2>Correct at the boundaries.</h2>
+            </div>
+            <p class="section-intro">
+              The suite targets behavior that is easy to regress: imports,
+              cryptographic output, multipart encoding, cookie continuity, large
+              lists, and narrow layouts.
+            </p>
+          </div>
+
+          <div class="verification-grid reveal">
+            <div class="test-terminal">
+              <div class="code-bar">verification.log</div>
+              <div class="test-output">
+                <span class="terminal-green">$</span> go test ./...<br /><span
+                  class="pass"
+                  >ok</span
+                >&nbsp;&nbsp; packet/internal/packet<br /><span class="pass"
+                  >ok</span
+                >&nbsp;&nbsp; packet/internal/tui<br /><br /><span
+                  class="terminal-green"
+                  >$</span
+                >
+                go test -race ./...<br /><span class="pass">ok</span
+                >&nbsp;&nbsp; packet/internal/packet<br /><span class="pass"
+                  >ok</span
+                >&nbsp;&nbsp; packet/internal/tui<br /><br /><span
+                  class="terminal-green"
+                  >$</span
+                >
+                go vet ./...<br /><span class="pass">clean</span
+                ><br /><br /><span class="terminal-green">$</span> go build
+                ./cmd/packet<br /><span class="pass">built</span>
+              </div>
+            </div>
+            <div class="test-list">
+              <div class="test-row">
+                <span class="test-check">OK</span
+                ><span class="test-name">Cookie continuity</span
+                ><span class="test-area">client</span>
+              </div>
+              <div class="test-row">
+                <span class="test-check">OK</span
+                ><span class="test-name">Body encodings</span
+                ><span class="test-area">transport</span>
+              </div>
+              <div class="test-row">
+                <span class="test-check">OK</span
+                ><span class="test-name">JWT signatures</span
+                ><span class="test-area">crypto</span>
+              </div>
+              <div class="test-row">
+                <span class="test-check">OK</span
+                ><span class="test-name">Nested imports</span
+                ><span class="test-area">postman</span>
+              </div>
+              <div class="test-row">
+                <span class="test-check">OK</span
+                ><span class="test-name">Long collections</span
+                ><span class="test-area">tui</span>
+              </div>
+              <div class="test-row">
+                <span class="test-check">OK</span
+                ><span class="test-name">Narrow rendering</span
+                ><span class="test-area">layout</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing">
+        <div class="shell closing-grid reveal">
+          <div>
+            <p class="section-kicker">Run packet</p>
+            <h2>Import less interface. Send more requests.</h2>
+          </div>
+          <div class="launch-box">go run ./cmd/packet collection.json</div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell footer-inner">
+        <span>Packet engineering notes</span
+        ><span>Go 1.26 / Bubble Tea v2 / session-local by design</span>
+      </div>
+    </footer>
+
+    <script>
+      const root = document.documentElement;
+      const updateProgress = () => {
+        const scrollable = root.scrollHeight - innerHeight;
+        root.style.setProperty(
+          "--progress",
+          scrollable > 0 ? scrollY / scrollable : 0,
+        );
+      };
+      addEventListener("scroll", updateProgress, { passive: true });
+      updateProgress();
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.08 },
+      );
+      document
+        .querySelectorAll(".reveal")
+        .forEach((element) => observer.observe(element));
+
+      document.querySelectorAll(".copy-button").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const code = button
+            .closest(".code-window")
+            .querySelector("code").innerText;
+          try {
+            await navigator.clipboard.writeText(code);
+            button.textContent = "Copied";
+            setTimeout(() => {
+              button.textContent = "Copy";
+            }, 1200);
+          } catch {
+            button.textContent = "Unavailable";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
