@@ -10,7 +10,9 @@ import (
 
 	"charm.land/bubbles/v2/textarea"
 	"charm.land/bubbles/v2/textinput"
+	"charm.land/bubbles/v2/viewport"
 	tea "charm.land/bubbletea/v2"
+	"charm.land/glamour/v2"
 	"charm.land/lipgloss/v2"
 )
 
@@ -45,6 +47,7 @@ type inputMode int
 
 const (
 	modeEdit inputMode = iota
+	modeView
 	modeExport
 )
 
@@ -56,6 +59,9 @@ type model struct {
 	width       int
 	height      int
 	mode        inputMode
+	exportMode  inputMode
+	preview     viewport.Model
+	help        viewport.Model
 	pathInput   textinput.Model
 	showHelp    bool
 	status      string
@@ -68,7 +74,10 @@ type autosaveMsg uint64
 
 // newModel builds the application state from a saved session.
 func newModel(store sessionStore, session savedSession) model {
-	m := model{store: store, nextID: 1}
+	m := model{store: store, nextID: 1, preview: viewport.New(), help: viewport.New()}
+	m.preview.FillHeight = true
+	m.help.SoftWrap = true
+	m.help.FillHeight = true
 	for _, saved := range session.Tabs {
 		id := saved.ID
 		if id < 1 {
@@ -131,6 +140,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width, m.height = msg.Width, msg.Height
 		m.resizeEditors()
+		if m.mode == modeView || (m.mode == modeExport && m.exportMode == modeView) {
+			m.refreshPreview()
+		}
 		return m, nil
 	case autosaveMsg:
 		if uint64(msg) == m.revision && m.savedRev != m.revision {
@@ -146,9 +158,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.showHelp {
 			if msg.String() == "f1" || msg.String() == "esc" || msg.String() == "ctrl+c" {
 				m.showHelp = false
-				m.focusActive()
+				return m, m.focusActive()
 			}
-			return m, nil
+			var cmd tea.Cmd
+			m.help, cmd = m.help.Update(msg)
+			return m, cmd
 		}
 		if m.mode == modeExport {
 			return m.updateExport(msg)
@@ -156,12 +170,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m.updateEditorKey(msg)
 	}
 
-	if m.mode == modeEdit && len(m.tabs) > 0 {
+	if m.showHelp {
+		return m, nil
+	}
+	if m.mode == modeExport {
 		var cmd tea.Cmd
-		m.tabs[m.active].editor, cmd = m.tabs[m.active].editor.Update(msg)
+		m.pathInput, cmd = m.pathInput.Update(msg)
 		return m, cmd
 	}
-	return m, nil
+	return m.updateContent(msg)
 }
 
 // updateEditorKey handles shortcuts and editor input.
@@ -176,29 +193,59 @@ func (m model) updateEditorKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	case "ctrl+n":
 		m.blurActive()
 		m.addTab()
+		m.mode = modeEdit
 		m.resizeEditors()
 		m.focusActive()
 		return m.changed()
 	case "ctrl+w":
 		m.closeActive()
+		if m.mode == modeView {
+			m.refreshPreview()
+			m.preview.GotoTop()
+		}
 		return m.changed()
+	case "ctrl+p":
+		if m.mode == modeView {
+			m.mode = modeEdit
+			return m, m.focusActive()
+		}
+		m.mode = modeView
+		m.blurActive()
+		m.refreshPreview()
+		m.preview.GotoTop()
+		return m, nil
+	case "esc":
+		if m.mode == modeView {
+			m.mode = modeEdit
+			return m, m.focusActive()
+		}
 	case "ctrl+right", "ctrl+]", "alt+l":
 		m.switchTab(1)
-		return m, nil
+		return m, m.focusActive()
 	case "ctrl+left", "ctrl+[", "alt+h":
 		m.switchTab(-1)
-		return m, nil
+		return m, m.focusActive()
 	case "ctrl+s":
 		m.openExport()
 		return m, textinput.Blink
 	case "f1":
 		m.showHelp = true
 		m.blurActive()
+		m.help.GotoTop()
 		return m, nil
 	}
 
-	before := m.tabs[m.active].editor.Value()
+	return m.updateContent(msg)
+}
+
+// updateContent routes input without allowing preview navigation to edit drafts.
+func (m model) updateContent(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
+	if m.mode == modeView {
+		m.preview, cmd = m.preview.Update(msg)
+		return m, cmd
+	}
+	before := m.tabs[m.active].editor.Value()
 	m.tabs[m.active].editor, cmd = m.tabs[m.active].editor.Update(msg)
 	if m.tabs[m.active].editor.Value() != before {
 		updated, saveCmd := m.changed()
@@ -212,11 +259,10 @@ func (m model) updateEditorKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 func (m model) updateExport(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "esc", "ctrl+c":
-		m.mode = modeEdit
+		m.mode = m.exportMode
 		m.pathInput.Blur()
-		m.focusActive()
 		m.setStatus("Export cancelled", false)
-		return m, nil
+		return m, m.focusActive()
 	case "enter":
 		path := strings.TrimSpace(m.pathInput.Value())
 		if path == "" {
@@ -237,7 +283,7 @@ func (m model) updateExport(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		m.tabs[m.active].fallback = filepath.Base(path)
-		m.mode = modeEdit
+		m.mode = m.exportMode
 		m.pathInput.Blur()
 		m.focusActive()
 		m.setStatus("Saved to "+path, false)
@@ -283,10 +329,15 @@ func (m *model) switchTab(offset int) {
 	m.blurActive()
 	m.active = (m.active + offset + len(m.tabs)) % len(m.tabs)
 	m.focusActive()
+	if m.mode == modeView {
+		m.refreshPreview()
+		m.preview.GotoTop()
+	}
 }
 
 // openExport prepares and focuses the export prompt.
 func (m *model) openExport() {
+	m.exportMode = m.mode
 	m.mode = modeExport
 	m.blurActive()
 	name := sanitizeFilename(m.tabs[m.active].title())
@@ -300,14 +351,16 @@ func (m *model) openExport() {
 }
 
 // focusActive gives input focus only to the active editor.
-func (m *model) focusActive() {
+func (m *model) focusActive() tea.Cmd {
+	var cmd tea.Cmd
 	for i := range m.tabs {
-		if i == m.active {
-			m.tabs[i].editor.Focus()
+		if i == m.active && m.mode == modeEdit && !m.showHelp {
+			cmd = m.tabs[i].editor.Focus()
 		} else {
 			m.tabs[i].editor.Blur()
 		}
 	}
+	return cmd
 }
 
 // blurActive removes focus from the active editor.
@@ -326,6 +379,30 @@ func (m *model) resizeEditors() {
 		m.tabs[i].editor.SetHeight(height)
 	}
 	m.pathInput.SetWidth(max(10, m.width-16))
+	m.preview.SetWidth(width)
+	m.preview.SetHeight(height)
+	m.help.SetWidth(max(1, min(58, m.width-8)-styleOverlay.GetHorizontalFrameSize()))
+	m.help.SetHeight(max(1, min(m.height-6, lipgloss.Height(m.helpView()))))
+	m.help.SetContent(m.helpView())
+}
+
+// refreshPreview renders only when entering view mode, switching tabs, or resizing.
+func (m *model) refreshPreview() {
+	renderer, err := glamour.NewTermRenderer(
+		glamour.WithStandardStyle("dark"),
+		glamour.WithWordWrap(max(1, m.preview.Width())),
+	)
+	content := m.tabs[m.active].editor.Value()
+	if err == nil {
+		var rendered string
+		rendered, err = renderer.Render(content)
+		if err == nil {
+			m.preview.SetContent(strings.TrimRight(rendered, "\n"))
+			return
+		}
+	}
+	m.setStatus("Preview failed: "+err.Error(), true)
+	m.preview.SetContent(content)
 }
 
 // changed advances the revision and schedules autosave.
@@ -385,6 +462,9 @@ func (m model) render() string {
 
 	header := m.renderHeader()
 	body := styleEditor.Render(m.tabs[m.active].editor.View())
+	if m.mode == modeView {
+		body = styleEditor.Render(m.preview.View())
+	}
 	footer := m.renderFooter()
 	page := lipgloss.JoinVertical(lipgloss.Left, header, body, footer)
 
@@ -397,7 +477,7 @@ func (m model) render() string {
 		return placeOverlay(m.width, m.height, panel)
 	}
 	if m.showHelp {
-		panel := styleOverlay.Width(min(58, m.width-8)).Render(m.helpView())
+		panel := styleOverlay.Width(min(58, m.width-8)).Render(m.help.View())
 		return placeOverlay(m.width, m.height, panel)
 	}
 	return page
@@ -450,9 +530,16 @@ func (m model) renderFooter() string {
 	} else {
 		leftText = fmt.Sprintf("tab %d/%d  |  %d chars", m.active+1, len(m.tabs), utf8.RuneCountInString(m.tabs[m.active].editor.Value()))
 	}
-	rightText := "^N new   ^W close   ^S export   F1 keys"
+	rightText := "^N new   ^W close   ^S export   ^P view   F1 keys"
 	if m.width < 80 {
-		rightText = "^N new  ^S export  F1 keys"
+		rightText = "^N new  ^P view  F1 keys"
+	}
+	if m.mode == modeView {
+		rightText = "^P edit  F1 keys"
+		leftText = fmt.Sprintf("VIEW  |  %.0f%%", m.preview.ScrollPercent()*100)
+		if m.statusError {
+			leftText = m.status
+		}
 	}
 	leftText = truncateWidth(leftText, max(1, m.width-lipgloss.Width(rightText)-3))
 	left := styleMuted.Render(leftText)
@@ -472,8 +559,11 @@ func (m model) helpView() string {
 		keyLine("Ctrl+Left / Right", "switch tabs") +
 		keyLine("Ctrl+[ / Ctrl+]", "switch tabs") +
 		keyLine("Ctrl+S", "export current note") +
+		keyLine("Ctrl+P", "toggle Markdown view / edit") +
+		keyLine("Up / Down, PgUp / Dn", "scroll in view mode") +
+		keyLine("Esc", "return to editing from view") +
 		keyLine("Ctrl+C", "save drafts and quit") +
-		"\n" + styleMuted.Render("Drafts autosave between sessions. Press Esc to return.")
+		"\n" + styleMuted.Render("Drafts autosave. Up/Down scroll help; Esc returns.")
 }
 
 // keyLine formats one keyboard reference row.

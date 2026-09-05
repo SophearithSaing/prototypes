@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -25,7 +24,7 @@ func run(in io.Reader, out io.Writer) error {
 	}
 
 	session, err := store.load()
-	if err != nil && !errors.Is(err, os.ErrNotExist) {
+	if err != nil {
 		return fmt.Errorf("load drafts: %w", err)
 	}
 
