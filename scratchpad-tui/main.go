@@ -9,6 +9,7 @@ import (
 	tea "charm.land/bubbletea/v2"
 )
 
+// main starts Scratchpad and reports fatal errors.
 func main() {
 	if err := run(os.Stdin, os.Stdout); err != nil {
 		fmt.Fprintf(os.Stderr, "scratchpad: %v\n", err)
@@ -16,6 +17,7 @@ func main() {
 	}
 }
 
+// run restores drafts and runs the terminal program.
 func run(in io.Reader, out io.Writer) error {
 	store, err := newSessionStore()
 	if err != nil {

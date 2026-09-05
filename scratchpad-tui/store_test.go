@@ -7,6 +7,7 @@ import (
 	"testing"
 )
 
+// TestSessionStoreRoundTrip verifies private session persistence.
 func TestSessionStoreRoundTrip(t *testing.T) {
 	store := sessionStore{path: filepath.Join(t.TempDir(), "nested", "session.json")}
 	want := savedSession{
@@ -39,6 +40,7 @@ func TestSessionStoreRoundTrip(t *testing.T) {
 	}
 }
 
+// TestSessionStoreRejectsUnknownVersion verifies schema validation.
 func TestSessionStoreRejectsUnknownVersion(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "session.json")
 	if err := os.WriteFile(path, []byte(`{"version":99}`), 0o600); err != nil {

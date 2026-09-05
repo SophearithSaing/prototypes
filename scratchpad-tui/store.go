@@ -26,6 +26,7 @@ type sessionStore struct {
 	path string
 }
 
+// newSessionStore resolves the draft session path.
 func newSessionStore() (sessionStore, error) {
 	if dir := os.Getenv("SCRATCHPAD_STATE_DIR"); dir != "" {
 		return sessionStore{path: filepath.Join(dir, "session.json")}, nil
@@ -38,6 +39,7 @@ func newSessionStore() (sessionStore, error) {
 	return sessionStore{path: filepath.Join(dir, "scratchpad", "session.json")}, nil
 }
 
+// load reads and validates a saved session.
 func (s sessionStore) load() (savedSession, error) {
 	data, err := os.ReadFile(s.path)
 	if err != nil {
@@ -54,6 +56,7 @@ func (s sessionStore) load() (savedSession, error) {
 	return session, nil
 }
 
+// save atomically persists a session with private permissions.
 func (s sessionStore) save(session savedSession) error {
 	dir := filepath.Dir(s.path)
 	if err := os.MkdirAll(dir, 0o700); err != nil {

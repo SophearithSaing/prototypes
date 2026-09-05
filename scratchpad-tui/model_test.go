@@ -10,6 +10,7 @@ import (
 	"charm.land/lipgloss/v2"
 )
 
+// TestNewModelRestoresSession verifies restoration of tabs and focus.
 func TestNewModelRestoresSession(t *testing.T) {
 	session := savedSession{
 		Version: sessionVersion,
@@ -30,6 +31,7 @@ func TestNewModelRestoresSession(t *testing.T) {
 	}
 }
 
+// TestTabLifecycle verifies keyboard-driven tab creation and removal.
 func TestTabLifecycle(t *testing.T) {
 	m := newModel(sessionStore{}, savedSession{})
 
@@ -46,6 +48,7 @@ func TestTabLifecycle(t *testing.T) {
 	}
 }
 
+// TestAutosaveMessagePersistsCurrentDraft verifies revision persistence.
 func TestAutosaveMessagePersistsCurrentDraft(t *testing.T) {
 	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
 	m := newModel(store, savedSession{})
@@ -67,6 +70,7 @@ func TestAutosaveMessagePersistsCurrentDraft(t *testing.T) {
 	}
 }
 
+// TestWriteExport verifies nested file export.
 func TestWriteExport(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "ideas", "today.md")
 	if err := writeExport(path, "first thought\n"); err != nil {
@@ -81,6 +85,7 @@ func TestWriteExport(t *testing.T) {
 	}
 }
 
+// TestTabTitleUsesFirstContentLine verifies automatic tab labels.
 func TestTabTitleUsesFirstContentLine(t *testing.T) {
 	tab := newTab(1, "Note 1", "\n# A useful heading\nbody")
 	if got := tab.title(); got != "A useful heading" {
@@ -88,6 +93,7 @@ func TestTabTitleUsesFirstContentLine(t *testing.T) {
 	}
 }
 
+// TestSanitizeFilename verifies safe export suggestions.
 func TestSanitizeFilename(t *testing.T) {
 	got := sanitizeFilename("  project/notes: one  ")
 	if got != "project-notes- one" {
@@ -98,6 +104,7 @@ func TestSanitizeFilename(t *testing.T) {
 	}
 }
 
+// TestViewFitsNarrowTerminal verifies responsive frame dimensions.
 func TestViewFitsNarrowTerminal(t *testing.T) {
 	m := newModel(sessionStore{}, savedSession{})
 	for range 4 {

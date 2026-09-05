@@ -66,6 +66,7 @@ type model struct {
 
 type autosaveMsg uint64
 
+// newModel builds the application state from a saved session.
 func newModel(store sessionStore, session savedSession) model {
 	m := model{store: store, nextID: 1}
 	for _, saved := range session.Tabs {
@@ -99,6 +100,7 @@ func newModel(store sessionStore, session savedSession) model {
 	return m
 }
 
+// newTab creates a configured note editor.
 func newTab(id int, fallback, content string) tab {
 	if fallback == "" {
 		fallback = fmt.Sprintf("Note %d", id)
@@ -118,10 +120,12 @@ func newTab(id int, fallback, content string) tab {
 	return tab{id: id, fallback: fallback, editor: editor}
 }
 
+// Init starts cursor blinking.
 func (m model) Init() tea.Cmd {
 	return textarea.Blink
 }
 
+// Update handles terminal events and component messages.
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
@@ -160,6 +164,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+// updateEditorKey handles shortcuts and editor input.
 func (m model) updateEditorKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "ctrl+c":
@@ -203,6 +208,7 @@ func (m model) updateEditorKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
+// updateExport handles the export path prompt.
 func (m model) updateExport(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "esc", "ctrl+c":
@@ -243,12 +249,14 @@ func (m model) updateExport(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
+// addTab appends and activates an empty note.
 func (m *model) addTab() {
 	m.tabs = append(m.tabs, newTab(m.nextID, "", ""))
 	m.active = len(m.tabs) - 1
 	m.nextID++
 }
 
+// closeActive removes the active note or clears the final tab.
 func (m *model) closeActive() {
 	m.blurActive()
 	if len(m.tabs) == 1 {
@@ -267,6 +275,7 @@ func (m *model) closeActive() {
 	m.setStatus("Tab closed", false)
 }
 
+// switchTab moves focus by a wrapped offset.
 func (m *model) switchTab(offset int) {
 	if len(m.tabs) < 2 {
 		return
@@ -276,6 +285,7 @@ func (m *model) switchTab(offset int) {
 	m.focusActive()
 }
 
+// openExport prepares and focuses the export prompt.
 func (m *model) openExport() {
 	m.mode = modeExport
 	m.blurActive()
@@ -289,6 +299,7 @@ func (m *model) openExport() {
 	m.setStatus("Enter saves here; Esc cancels", false)
 }
 
+// focusActive gives input focus only to the active editor.
 func (m *model) focusActive() {
 	for i := range m.tabs {
 		if i == m.active {
@@ -299,12 +310,14 @@ func (m *model) focusActive() {
 	}
 }
 
+// blurActive removes focus from the active editor.
 func (m *model) blurActive() {
 	if len(m.tabs) > 0 {
 		m.tabs[m.active].editor.Blur()
 	}
 }
 
+// resizeEditors fits inputs within the terminal frame.
 func (m *model) resizeEditors() {
 	width := max(20, m.width-6)
 	height := max(1, m.height-4)
@@ -315,12 +328,14 @@ func (m *model) resizeEditors() {
 	m.pathInput.SetWidth(max(10, m.width-16))
 }
 
+// changed advances the revision and schedules autosave.
 func (m model) changed() (tea.Model, tea.Cmd) {
 	m.revision++
 	revision := m.revision
 	return m, tea.Tick(autosaveDelay, func(time.Time) tea.Msg { return autosaveMsg(revision) })
 }
 
+// saveSession snapshots the current tabs to the session store.
 func (m *model) saveSession() error {
 	tabs := make([]savedTab, 0, len(m.tabs))
 	for _, tab := range m.tabs {
@@ -334,11 +349,13 @@ func (m *model) saveSession() error {
 	})
 }
 
+// setStatus updates the footer message.
 func (m *model) setStatus(message string, isError bool) {
 	m.status = message
 	m.statusError = isError
 }
 
+// title derives a compact label from the note content.
 func (t tab) title() string {
 	for _, line := range strings.Split(t.editor.Value(), "\n") {
 		line = strings.TrimSpace(strings.TrimLeft(line, "#*- "))
@@ -349,6 +366,7 @@ func (t tab) title() string {
 	return truncate(t.fallback, 22)
 }
 
+// View declares the full-screen terminal view.
 func (m model) View() tea.View {
 	view := tea.NewView(m.render())
 	view.AltScreen = true
@@ -356,6 +374,7 @@ func (m model) View() tea.View {
 	return view
 }
 
+// render composes the current application frame.
 func (m model) render() string {
 	if m.width == 0 || m.height == 0 {
 		return "Loading scratchpad..."
@@ -384,6 +403,7 @@ func (m model) render() string {
 	return page
 }
 
+// renderHeader renders the logo and visible tabs.
 func (m model) renderHeader() string {
 	logo := styleLogo.Render("SCRATCHPAD")
 	available := max(0, m.width-lipgloss.Width(logo)-1)
@@ -422,6 +442,7 @@ func (m model) renderHeader() string {
 	return lipgloss.JoinHorizontal(lipgloss.Top, logo, " ", strings.Join(tabs, " "))
 }
 
+// renderFooter renders status and shortcut hints.
 func (m model) renderFooter() string {
 	leftText := ""
 	if m.status != "" {
@@ -443,6 +464,7 @@ func (m model) renderFooter() string {
 	return lipgloss.NewStyle().Padding(0, 1).Render(left + strings.Repeat(" ", gap) + right)
 }
 
+// helpView renders the keyboard reference.
 func (m model) helpView() string {
 	return styleAccent.Bold(true).Render("KEYBOARD MAP") + "\n\n" +
 		keyLine("Ctrl+N", "new tab") +
@@ -454,10 +476,12 @@ func (m model) helpView() string {
 		"\n" + styleMuted.Render("Drafts autosave between sessions. Press Esc to return.")
 }
 
+// keyLine formats one keyboard reference row.
 func keyLine(key, description string) string {
 	return lipgloss.NewStyle().Width(20).Foreground(colorBlue).Render(key) + description + "\n"
 }
 
+// writeExport creates parent directories and writes note content.
 func writeExport(path, content string) error {
 	info, err := os.Stat(path)
 	if err == nil && info.IsDir() {
@@ -472,6 +496,7 @@ func writeExport(path, content string) error {
 	return os.WriteFile(path, []byte(content), 0o644)
 }
 
+// expandHome resolves a leading home-directory shorthand.
 func expandHome(path string) string {
 	if path == "~" || strings.HasPrefix(path, "~/") {
 		if home, err := os.UserHomeDir(); err == nil {
@@ -481,6 +506,7 @@ func expandHome(path string) string {
 	return path
 }
 
+// sanitizeFilename removes path separators from a suggested name.
 func sanitizeFilename(name string) string {
 	name = strings.TrimSpace(name)
 	name = strings.Map(func(r rune) rune {
@@ -497,6 +523,7 @@ func sanitizeFilename(name string) string {
 	return name
 }
 
+// truncate shortens text by rune count.
 func truncate(value string, width int) string {
 	runes := []rune(value)
 	if len(runes) <= width {
@@ -508,6 +535,7 @@ func truncate(value string, width int) string {
 	return string(runes[:width-3]) + "..."
 }
 
+// truncateWidth shortens text by terminal cell width.
 func truncateWidth(value string, width int) string {
 	if lipgloss.Width(value) <= width {
 		return value
@@ -522,6 +550,7 @@ func truncateWidth(value string, width int) string {
 	return value + "..."
 }
 
+// placeOverlay centers a panel within the terminal.
 func placeOverlay(width, height int, foreground string) string {
 	return lipgloss.Place(width, height, lipgloss.Center, lipgloss.Center, foreground,
 		lipgloss.WithWhitespaceChars(" "),
