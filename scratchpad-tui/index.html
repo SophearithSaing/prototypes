@@ -497,6 +497,43 @@
         color: #667086;
       }
 
+      .code-story {
+        display: grid;
+        grid-template-columns: minmax(16rem, 0.7fr) minmax(0, 1.3fr);
+        gap: clamp(1.5rem, 5vw, 4rem);
+        align-items: center;
+        margin-top: 3.5rem;
+      }
+
+      .code-story-copy {
+        max-width: 34rem;
+      }
+
+      .code-story-copy small {
+        display: block;
+        margin-bottom: 0.7rem;
+        color: var(--blue-bright);
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+
+      .code-story-copy p {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      .code-story.reverse {
+        grid-template-columns: minmax(0, 1.3fr) minmax(16rem, 0.7fr);
+      }
+
+      .code-story.reverse .code-panel {
+        order: -1;
+      }
+
       .loop {
         display: grid;
         grid-template-columns: 1fr 2.7rem 1fr 2.7rem 1fr 2.7rem 1fr;
@@ -741,8 +778,14 @@
       @media (max-width: 900px) {
         .hero-grid,
         .stack-grid,
-        .persistence {
+        .persistence,
+        .code-story,
+        .code-story.reverse {
           grid-template-columns: 1fr;
+        }
+
+        .code-story.reverse .code-panel {
+          order: initial;
         }
 
         .hero-grid {
@@ -1035,7 +1078,6 @@
         model,
         tea.<span class="fn">WithInput</span>(in),
         tea.<span class="fn">WithOutput</span>(out),
-        tea.<span class="fn">WithAltScreen</span>(),
     )
     _, err = program.<span class="fn">Run</span>()
     <span class="kw">return</span> err
@@ -1098,6 +1140,44 @@
             rendering, and the view never becomes a second source of truth.
             Given a model, the same terminal frame is produced every time.
           </p>
+
+          <div class="code-story">
+            <div class="code-story-copy">
+              <small>One event router</small>
+              <h3>Modes decide who receives the key.</h3>
+              <p>
+                <code>Update</code> handles global messages first, then routes
+                key presses to either the export input or the editor. The
+                focused component remains responsible for its own editing
+                behavior.
+              </p>
+            </div>
+            <div class="code-panel">
+              <div class="code-label">model.go / Update excerpt</div>
+              <pre><span class="kw">func</span> (m model) <span class="fn">Update</span>(msg tea.Msg) (tea.Model, tea.Cmd) {
+    <span class="kw">switch</span> msg := msg.(type) {
+    <span class="kw">case</span> tea.WindowSizeMsg:
+        m.width, m.height = msg.Width, msg.Height
+        m.<span class="fn">resizeEditors</span>()
+        <span class="kw">return</span> m, nil
+
+    <span class="kw">case</span> tea.KeyPressMsg:
+        <span class="kw">if</span> m.mode == modeExport {
+            <span class="kw">return</span> m.<span class="fn">updateExport</span>(msg)
+        }
+        <span class="kw">return</span> m.<span class="fn">updateEditorKey</span>(msg)
+    }
+    <span class="comment">// Non-key messages continue to the textarea.</span>
+    <span class="kw">if</span> m.mode == modeEdit &amp;&amp; len(m.tabs) &gt; 0 {
+        <span class="kw">var</span> cmd tea.Cmd
+        m.tabs[m.active].editor, cmd =
+            m.tabs[m.active].editor.<span class="fn">Update</span>(msg)
+        <span class="kw">return</span> m, cmd
+    }
+    <span class="kw">return</span> m, nil
+}</pre>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1149,6 +1229,42 @@
             </article>
           </div>
 
+          <div class="code-story reverse">
+            <div class="code-story-copy">
+              <small>Revision-tagged timers</small>
+              <h3>Debouncing without mutable timer state.</h3>
+              <p>
+                Every edit captures its revision in a Bubble Tea command. When
+                the timer returns as a message, only the message matching the
+                newest revision is allowed to write the session.
+              </p>
+            </div>
+            <div class="code-panel">
+              <div class="code-label">model.go / autosave scheduling</div>
+              <pre><span class="kw">func</span> (m model) <span class="fn">changed</span>() (tea.Model, tea.Cmd) {
+    m.revision++
+    revision := m.revision
+    <span class="kw">return</span> m, tea.<span class="fn">Tick</span>(autosaveDelay,
+        <span class="kw">func</span>(time.Time) tea.Msg {
+            <span class="kw">return</span> autosaveMsg(revision)
+        },
+    )
+}
+
+<span class="comment">// Inside Update:</span>
+<span class="kw">case</span> autosaveMsg:
+    <span class="kw">if</span> uint64(msg) == m.revision &amp;&amp;
+        m.savedRev != m.revision {
+        <span class="kw">if</span> err := m.<span class="fn">saveSession</span>(); err != nil {
+            m.<span class="fn">setStatus</span>(<span class="str">"Autosave failed: "</span>+err.<span class="fn">Error</span>(), true)
+        } <span class="kw">else</span> {
+            m.savedRev = m.revision
+            m.<span class="fn">setStatus</span>(<span class="str">"Drafts saved"</span>, false)
+        }
+    }</pre>
+            </div>
+          </div>
+
           <div class="persistence">
             <div>
               <p class="eyebrow">Crash-resistant state</p>
@@ -1188,6 +1304,48 @@
                   replacing the previous snapshot.</span
                 >
               </div>
+            </div>
+          </div>
+
+          <div class="code-story">
+            <div class="code-story-copy">
+              <small>Atomic filesystem handoff</small>
+              <h3>The old draft survives until the new one is complete.</h3>
+              <p>
+                The temporary file lives in the same directory as the session,
+                making the final rename an atomic operation on normal local
+                filesystems. A deferred cleanup removes it if any earlier step
+                fails.
+              </p>
+            </div>
+            <div class="code-panel">
+              <div class="code-label">store.go / session replacement</div>
+              <pre>tmp, err := os.<span class="fn">CreateTemp</span>(dir, <span class="str">".session-*"</span>)
+<span class="kw">if</span> err != nil {
+    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"create temporary session: %w"</span>, err)
+}
+tmpName := tmp.<span class="fn">Name</span>()
+<span class="kw">defer</span> os.<span class="fn">Remove</span>(tmpName)
+
+<span class="kw">if</span> err := tmp.<span class="fn">Chmod</span>(0o600); err != nil {
+    tmp.<span class="fn">Close</span>()
+    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"secure temporary session: %w"</span>, err)
+}
+<span class="kw">if</span> _, err := tmp.<span class="fn">Write</span>(data); err != nil {
+    tmp.<span class="fn">Close</span>()
+    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"write temporary session: %w"</span>, err)
+}
+<span class="kw">if</span> err := tmp.<span class="fn">Sync</span>(); err != nil {
+    tmp.<span class="fn">Close</span>()
+    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"sync temporary session: %w"</span>, err)
+}
+<span class="kw">if</span> err := tmp.<span class="fn">Close</span>(); err != nil {
+    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"close temporary session: %w"</span>, err)
+}
+<span class="kw">if</span> err := os.<span class="fn">Rename</span>(tmpName, s.path); err != nil {
+    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"replace session: %w"</span>, err)
+}
+<span class="kw">return</span> nil</pre>
             </div>
           </div>
         </div>
@@ -1355,7 +1513,7 @@
 
     <footer>
       <div class="shell footer-inner">
-      <span>SCRATCHPAD / GO 1.25+</span>
+        <span>SCRATCHPAD / GO 1.25+</span>
         <span>Bubble Tea + Bubbles + Lip Gloss</span>
       </div>
     </footer>
