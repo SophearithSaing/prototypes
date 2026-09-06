@@ -10,89 +10,89 @@ Bubble Tea consumes `QuitMsg` and `InterruptMsg` without calling `Update`, while
 
 Retrieve the final model and attempt a final save, combining run and save errors when both occur.
 
-References: `main.go:30-33`, `model.go:163-170`
+References: `main.go:20-34`, `model.go:185-192`
 
-### 2. Bracketed paste bypasses autosave tracking
-
-`tea.PasteMsg` changes the textarea through the generic update path, but `changed()` is only called for `tea.KeyPressMsg`. Pasted text remains unsaved until another edit or explicit quit.
-
-Compare editor content before and after every message forwarded to the textarea.
-
-References: `model.go:125-160`, `model.go:195-202`
-
-### 3. Export can corrupt an existing file on write failure
+### 2. Export can corrupt an existing file on write failure
 
 `os.WriteFile` truncates an existing destination before writing. Disk-full, interruption, or other I/O failures can therefore destroy the previous file.
 
 Define the overwrite policy and use either exclusive creation or same-directory temporary-file replacement.
 
-References: `model.go:461-472`
+References: `model.go:258-290`, `model.go:574-587`
 
 ## Medium Severity
 
-### 4. Filesystem I/O blocks Bubble Tea's event loop
+### 3. Filesystem I/O blocks Bubble Tea's event loop
 
 Autosave performs write, sync, close, and rename synchronously inside `Update`; export also writes synchronously. Slow filesystems can freeze input and rendering.
 
 Perform I/O in `tea.Cmd` functions and serialize save results by revision so stale saves cannot complete after newer ones.
 
-References: `model.go:131-139`, `model.go:214-238`, `store.go:57-94`
+References: `model.go:147-156`, `model.go:258-290`, `model.go:415-427`, `store.go:125-173`, `store.go:175-303`
 
-### 5. Transient autosave failures are not retried
+### 4. Transient autosave failures are not retried
 
 After a failed autosave, no retry is scheduled. If typing stops, the newest revision remains unsaved.
 
 Add bounded retry with backoff while retaining the revision being saved.
 
-References: `model.go:131-139`
+References: `model.go:147-156`, `model.go:408-413`
 
-### 6. Concurrent instances silently overwrite each other
+### 5. Concurrent instances silently overwrite each other
 
 Each process loads and replaces the complete session independently. An older process can overwrite newer drafts written by another instance.
 
 Use an application-lifetime lock or conflict detection.
 
-References: `main.go:20-31`, `store.go:41-94`
+References: `main.go:20-34`, `model.go:415-427`, `store.go:42-61`, `store.go:175-267`
 
-### 7. Focus commands are discarded
+### 6. Some focus commands are discarded
 
-`textarea.Model.Focus()` returns a command needed to restart cursor blinking, but `focusActive` ignores it. Switching tabs or dismissing overlays can leave a static cursor.
+`focusActive` returns a command needed to restart cursor blinking, but the new-tab path, `closeActive`, and successful export path discard it. Switching tabs and dismissing overlays now return the command correctly.
 
 Return and batch focus commands from focus transitions.
 
-References: `model.go:172-192`, `model.go:246-299`
+References: `model.go:193-200`, `model.go:258-290`, `model.go:305-321`, `model.go:353-364`
 
-### 8. Persistence tests cover mainly happy paths
+### 7. Persistence test gaps remain
 
-There are no tests for pasted-content autosave, final shutdown saves, stale timers, repeated replacement, failed writes, malformed JSON, or preserving an existing export after failure. Current statement coverage is 54.4%.
+Persistence tests now cover pasted-content autosave, repeated replacement, failed writes, malformed JSON, migration, rollback, and recovery. Final shutdown saves, stale autosave timers, autosave retry, and preserving an existing export after failure remain untested. Current statement coverage is 83.7%.
 
-References: `model_test.go:33-82`, `store_test.go:10-51`
+References: `main_test.go:10-20`, `model_test.go:52-87`, `model_test.go:263-283`, `store_test.go:13-555`
 
 ## Low Severity
 
-### 9. `expandHome("~")` produces `$HOME/~`
+### 8. `expandHome("~")` produces `$HOME/~`
 
 Handle the exact `"~"` case separately and return home-directory lookup errors rather than silently using the original path.
 
-References: `model.go:475-481`
+References: `model.go:589-597`
 
-### 10. Unicode tab titles can overflow terminal width
+### 9. Unicode tab titles can overflow terminal width
 
 `truncate` counts runes rather than display cells. CJK and other wide graphemes can exceed the calculated header space.
 
-References: `model.go:342-350`, `model.go:387-423`, `model.go:500-509`
+References: `model.go:435-444`, `model.go:486-523`, `model.go:616-626`
 
-### 11. `Ctrl+C` behavior contradicts the help text
+### 10. `Ctrl+C` behavior contradicts the help text
 
 In help and export modes, `Ctrl+C` dismisses the modal rather than saving and quitting. Either handle it globally or document the modal behavior.
 
-References: `model.go:141-151`, `model.go:206-213`, `model.go:446-454`
+References: `model.go:157-170`, `model.go:185-192`, `model.go:258-265`, `model.go:554-566`
 
-### 12. Explicit `WithInput(os.Stdin)` disables Bubble Tea's controlling-TTY fallback
+### 11. Explicit `WithInput(os.Stdin)` disables Bubble Tea's controlling-TTY fallback
 
 Redirected stdin can cause an interactive launch to exit instead of opening the controlling TTY. Keep injected input for tests, but use Bubble Tea's default input in production.
 
-References: `main.go:12-13`, `main.go:30-32`
+References: `main.go:11-16`, `main.go:19-33`
+
+## Resolved
+
+### Bracketed paste bypassed autosave tracking
+
+All messages forwarded to the textarea now compare content before and after the update and schedule autosave when it changes. A regression test covers pasted Markdown followed by a mode change.
+
+References: `model.go:137-182`, `model.go:241-255`, `model.go:408-413`, `model_test.go:263-283`
 
 ## Idiomatic Practices Already Present
 
@@ -108,6 +108,7 @@ References: `main.go:12-13`, `main.go:30-32`
 The following checks passed:
 
 - `go test -count=1 ./...`
+- `go test -cover ./...`
 - `go test -race -count=1 ./...`
 - `go vet ./...`
 - `staticcheck ./...`
