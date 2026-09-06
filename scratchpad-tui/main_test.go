@@ -7,6 +7,7 @@ import (
 	"testing"
 )
 
+// TestRunRejectsMissingDraft verifies startup reports an indexed draft that is absent.
 func TestRunRejectsMissingDraft(t *testing.T) {
 	dir := t.TempDir()
 	t.Setenv("SCRATCHPAD_STATE_DIR", dir)

@@ -61,6 +61,7 @@ func (s sessionStore) load() (savedSession, error) {
 	return session, nil
 }
 
+// loadIndex reads, validates, and repairs supported session metadata.
 func (s sessionStore) loadIndex() (savedSession, error) {
 	data, err := os.ReadFile(s.path)
 	if err != nil {
@@ -104,6 +105,7 @@ func (s sessionStore) loadIndex() (savedSession, error) {
 	return session, nil
 }
 
+// validateTabIDs rejects non-positive and duplicate tab IDs.
 func validateTabIDs(tabs []savedTab) error {
 	seen := make(map[int]bool, len(tabs))
 	for _, tab := range tabs {
@@ -115,15 +117,17 @@ func validateTabIDs(tabs []savedTab) error {
 	return nil
 }
 
+// notePath returns the draft path for a tab ID.
 func (s sessionStore) notePath(id int) string {
 	return filepath.Join(filepath.Dir(s.path), fmt.Sprintf("note-%d.md", id))
 }
 
+// pendingNotePath returns the ownership marker path for a draft.
 func pendingNotePath(path string) string {
 	return filepath.Join(filepath.Dir(path), ".scratchpad-"+filepath.Base(path)+".pending")
 }
 
-// Only a hard link to our staging file proves an unindexed note is ours.
+// recoverPendingNote removes an interrupted draft only when its hard-link marker proves ownership.
 // Remove the note first so another interruption never loses its ownership proof.
 func recoverPendingNote(path string) error {
 	marker := pendingNotePath(path)
@@ -155,6 +159,7 @@ func recoverPendingNote(path string) error {
 	return nil
 }
 
+// writePendingNote publishes a new draft with a marker retained until the index commits.
 func writePendingNote(path string, data []byte) error {
 	marker := pendingNotePath(path)
 	if err := writeAtomic(marker, data, false); err != nil {
@@ -261,6 +266,7 @@ func (s sessionStore) save(session savedSession) error {
 	return nil
 }
 
+// writeAtomic publishes a complete private file, optionally replacing its destination.
 func writeAtomic(path string, data []byte, replace bool) error {
 	tmp, err := os.CreateTemp(filepath.Dir(path), ".scratchpad-*")
 	if err != nil {

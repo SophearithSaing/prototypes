@@ -130,6 +130,7 @@ func TestViewFitsNarrowTerminal(t *testing.T) {
 	}
 }
 
+// TestMarkdownViewIsReadOnly verifies preview input cannot modify the draft.
 func TestMarkdownViewIsReadOnly(t *testing.T) {
 	m := newModel(sessionStore{}, savedSession{})
 	source := "Some **bold words** and `code`.\n"
@@ -168,6 +169,7 @@ func TestMarkdownViewIsReadOnly(t *testing.T) {
 	}
 }
 
+// TestMarkdownViewScrollResizeAndTabs verifies preview navigation and layout transitions.
 func TestMarkdownViewScrollResizeAndTabs(t *testing.T) {
 	m := newModel(sessionStore{}, savedSession{Tabs: []savedTab{
 		{ID: 1, Content: strings.Repeat("A **formatted** paragraph.\n\n", 40)},
@@ -212,6 +214,7 @@ func TestMarkdownViewScrollResizeAndTabs(t *testing.T) {
 	}
 }
 
+// TestMarkdownViewOverlaysAndExport verifies overlays preserve preview mode and source Markdown.
 func TestMarkdownViewOverlaysAndExport(t *testing.T) {
 	m := newModel(sessionStore{}, savedSession{})
 	source := "Export **original Markdown**\n"
@@ -257,6 +260,7 @@ func TestMarkdownViewOverlaysAndExport(t *testing.T) {
 	}
 }
 
+// TestPastedMarkdownAutosavesFromView verifies pending edits save after entering preview mode.
 func TestPastedMarkdownAutosavesFromView(t *testing.T) {
 	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
 	m := newModel(store, savedSession{})
@@ -278,6 +282,7 @@ func TestPastedMarkdownAutosavesFromView(t *testing.T) {
 	}
 }
 
+// TestHelpFitsShortTerminals verifies help remains bounded and scrollable at supported sizes.
 func TestHelpFitsShortTerminals(t *testing.T) {
 	for _, size := range []tea.WindowSizeMsg{{Width: 42, Height: 10}, {Width: 80, Height: 16}, {Width: 100, Height: 24}} {
 		m := newModel(sessionStore{}, savedSession{})

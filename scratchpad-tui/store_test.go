@@ -89,6 +89,7 @@ func TestSessionStoreRejectsUnknownVersion(t *testing.T) {
 	}
 }
 
+// TestSessionStoreLegacyMigration verifies legacy sessions receive safe IDs and split draft files.
 func TestSessionStoreLegacyMigration(t *testing.T) {
 	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
 	legacy := `{"version":1,"active":2,"next_id":8,"tabs":[{"id":3,"title":"First","content":"first\n"},{"id":3,"title":"Duplicate","content":"second"},{"id":0,"title":"Zero","content":"third"},{"id":-2,"title":"Negative","content":"fourth"},{"id":1,"title":"Reserved","content":""}]}`
@@ -129,6 +130,7 @@ func TestSessionStoreLegacyMigration(t *testing.T) {
 	}
 }
 
+// TestSessionStoreCollisionPreservesLegacy verifies migration does not overwrite unrelated files.
 func TestSessionStoreCollisionPreservesLegacy(t *testing.T) {
 	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
 	legacy := `{"version":1,"tabs":[{"id":1,"content":"draft one"},{"id":2,"content":"draft two"}]}`
@@ -156,6 +158,7 @@ func TestSessionStoreCollisionPreservesLegacy(t *testing.T) {
 	assertStoreFile(t, store.notePath(2), "draft two")
 }
 
+// TestSessionStoreInterruptedSaveRestart verifies interrupted draft publication can be recovered.
 func TestSessionStoreInterruptedSaveRestart(t *testing.T) {
 	for _, tc := range []struct {
 		name  string
@@ -228,6 +231,7 @@ func TestSessionStoreInterruptedSaveRestart(t *testing.T) {
 	}
 }
 
+// TestSessionStorePendingMarkerAfterIndexCommit verifies stale markers are cleaned after restart.
 func TestSessionStorePendingMarkerAfterIndexCommit(t *testing.T) {
 	for _, closeTab := range []bool{false, true} {
 		t.Run(fmt.Sprintf("closed=%t", closeTab), func(t *testing.T) {
@@ -261,6 +265,7 @@ func TestSessionStorePendingMarkerAfterIndexCommit(t *testing.T) {
 	}
 }
 
+// TestSessionStoreRecoveryRejectsUnrelatedNotes verifies recovery requires proof of draft ownership.
 func TestSessionStoreRecoveryRejectsUnrelatedNotes(t *testing.T) {
 	for _, kind := range []string{"no marker", "different inode", "symlink marker", "symlink note"} {
 		t.Run(kind, func(t *testing.T) {
@@ -300,6 +305,7 @@ func TestSessionStoreRecoveryRejectsUnrelatedNotes(t *testing.T) {
 	}
 }
 
+// TestSessionStoreCleanup verifies closed drafts are removed without touching unrelated files.
 func TestSessionStoreCleanup(t *testing.T) {
 	dir := t.TempDir()
 	store := sessionStore{path: filepath.Join(dir, "session.json")}
@@ -339,6 +345,7 @@ func TestSessionStoreCleanup(t *testing.T) {
 	assertNoStoreTemps(t, dir)
 }
 
+// TestSessionStoreFailedSaveKeepsClosedNotes verifies cleanup waits for a successful commit.
 func TestSessionStoreFailedSaveKeepsClosedNotes(t *testing.T) {
 	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
 	original := savedSession{Version: sessionVersion, Tabs: []savedTab{{ID: 1, Content: "keep"}}}
@@ -357,6 +364,7 @@ func TestSessionStoreFailedSaveKeepsClosedNotes(t *testing.T) {
 	assertStoreFile(t, store.notePath(2), "unowned")
 }
 
+// TestSessionStoreInvalidIDs verifies invalid tab IDs are rejected on load and save.
 func TestSessionStoreInvalidIDs(t *testing.T) {
 	for _, ids := range [][]int{{0}, {-1}, {1, 1}} {
 		t.Run(fmt.Sprint(ids), func(t *testing.T) {
@@ -383,6 +391,7 @@ func TestSessionStoreInvalidIDs(t *testing.T) {
 	}
 }
 
+// TestSessionStoreIndexFailureRemovesNewNotes verifies failed commits roll back new drafts.
 func TestSessionStoreIndexFailureRemovesNewNotes(t *testing.T) {
 	// A trailing separator lets directory creation succeed but index publication fail.
 	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json") + string(os.PathSeparator)}
@@ -398,6 +407,7 @@ func TestSessionStoreIndexFailureRemovesNewNotes(t *testing.T) {
 	assertNoStoreTemps(t, filepath.Dir(store.path))
 }
 
+// TestSessionStoreCleanupFailureCommitsIndex verifies cleanup errors do not undo the committed index.
 func TestSessionStoreCleanupFailureCommitsIndex(t *testing.T) {
 	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
 	if err := store.save(savedSession{Tabs: []savedTab{{ID: 1, Content: "one"}}}); err != nil {
@@ -427,6 +437,7 @@ func TestSessionStoreCleanupFailureCommitsIndex(t *testing.T) {
 	assertStoreFile(t, unrelated, "keep")
 }
 
+// TestSessionStoreMissingOwnedNotes verifies saving recreates missing drafts owned by the index.
 func TestSessionStoreMissingOwnedNotes(t *testing.T) {
 	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
 	session := savedSession{Tabs: []savedTab{{ID: 1, Content: "one"}, {ID: 2, Content: "two"}}}
@@ -445,6 +456,7 @@ func TestSessionStoreMissingOwnedNotes(t *testing.T) {
 	assertStoreFile(t, store.notePath(1), "one")
 }
 
+// TestSessionStoreErrors verifies malformed state and unsafe paths fail without data loss.
 func TestSessionStoreErrors(t *testing.T) {
 	t.Run("missing index", func(t *testing.T) {
 		store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
@@ -504,6 +516,7 @@ func TestSessionStoreErrors(t *testing.T) {
 	})
 }
 
+// TestWriteAtomicFailures verifies publication failures preserve destinations and remove temporaries.
 func TestWriteAtomicFailures(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "note.md")
@@ -522,6 +535,7 @@ func TestWriteAtomicFailures(t *testing.T) {
 	assertNoStoreTemps(t, filepath.Dir(dir))
 }
 
+// TestNewSessionStorePaths verifies configured and default state directory resolution.
 func TestNewSessionStorePaths(t *testing.T) {
 	dir := t.TempDir()
 	t.Setenv("SCRATCHPAD_STATE_DIR", dir)
@@ -540,6 +554,7 @@ func TestNewSessionStorePaths(t *testing.T) {
 	}
 }
 
+// writeStoreFile creates test state with the store's expected permissions.
 func writeStoreFile(t *testing.T, path, content string) {
 	t.Helper()
 	if err := os.WriteFile(path, []byte(content), 0o600); err != nil {
@@ -547,6 +562,7 @@ func writeStoreFile(t *testing.T, path, content string) {
 	}
 }
 
+// assertStoreFile checks that a state file contains the expected text.
 func assertStoreFile(t *testing.T, path, want string) {
 	t.Helper()
 	data, err := os.ReadFile(path)
@@ -555,6 +571,7 @@ func assertStoreFile(t *testing.T, path, want string) {
 	}
 }
 
+// assertStorePermissions checks a state file's permission bits.
 func assertStorePermissions(t *testing.T, path string, want os.FileMode) {
 	t.Helper()
 	info, err := os.Stat(path)
@@ -566,6 +583,7 @@ func assertStorePermissions(t *testing.T, path string, want os.FileMode) {
 	}
 }
 
+// assertNoStoreTemps checks that a state directory contains no temporary files.
 func assertNoStoreTemps(t *testing.T, dir string) {
 	t.Helper()
 	matches, err := filepath.Glob(filepath.Join(dir, ".scratchpad-*"))
