@@ -28,8 +28,8 @@ func run(in io.Reader, out io.Writer) error {
 		return fmt.Errorf("load drafts: %w", err)
 	}
 
-	model := newModel(store, session)
-	program := tea.NewProgram(model, tea.WithInput(in), tea.WithOutput(out))
+	app := newAppModel(store, session)
+	program := tea.NewProgram(app, tea.WithInput(in), tea.WithOutput(out))
 	_, err = program.Run()
 	return err
 }

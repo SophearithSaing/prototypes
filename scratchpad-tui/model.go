@@ -43,23 +43,23 @@ type tab struct {
 	editor   textarea.Model
 }
 
-type inputMode int
+type appMode int
 
 const (
-	modeEdit inputMode = iota
-	modeView
-	modeExport
+	editMode appMode = iota
+	viewMode
+	exportMode
 )
 
-type model struct {
+type appModel struct {
 	store       sessionStore
 	tabs        []tab
 	active      int
 	nextID      int
 	width       int
 	height      int
-	mode        inputMode
-	exportMode  inputMode
+	mode        appMode
+	returnMode  appMode
 	preview     viewport.Model
 	help        viewport.Model
 	pathInput   textinput.Model
@@ -72,20 +72,16 @@ type model struct {
 
 type autosaveMsg uint64
 
-// newModel builds the application state from a saved session.
-func newModel(store sessionStore, session savedSession) model {
-	m := model{store: store, nextID: 1, preview: viewport.New(), help: viewport.New()}
+// newAppModel builds the application state from a saved session.
+func newAppModel(store sessionStore, session savedSession) appModel {
+	m := appModel{store: store, nextID: 1, preview: viewport.New(), help: viewport.New()}
 	m.preview.FillHeight = true
 	m.help.SoftWrap = true
 	m.help.FillHeight = true
 	for _, saved := range session.Tabs {
-		id := saved.ID
-		if id < 1 {
-			id = m.nextID
-		}
-		m.tabs = append(m.tabs, newTab(id, saved.Title, saved.Content))
-		if id >= m.nextID {
-			m.nextID = id + 1
+		m.tabs = append(m.tabs, newTab(saved.ID, saved.Title, saved.Content))
+		if saved.ID >= m.nextID {
+			m.nextID = saved.ID + 1
 		}
 	}
 	if session.NextID > m.nextID {
@@ -130,17 +126,17 @@ func newTab(id int, fallback, content string) tab {
 }
 
 // Init starts cursor blinking.
-func (m model) Init() tea.Cmd {
+func (m appModel) Init() tea.Cmd {
 	return textarea.Blink
 }
 
 // Update handles terminal events and component messages.
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m appModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width, m.height = msg.Width, msg.Height
 		m.resizeEditors()
-		if m.mode == modeView || (m.mode == modeExport && m.exportMode == modeView) {
+		if m.mode == viewMode || (m.mode == exportMode && m.returnMode == viewMode) {
 			m.refreshPreview()
 		}
 		return m, nil
@@ -164,7 +160,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.help, cmd = m.help.Update(msg)
 			return m, cmd
 		}
-		if m.mode == modeExport {
+		if m.mode == exportMode {
 			return m.updateExport(msg)
 		}
 		return m.updateEditorKey(msg)
@@ -173,7 +169,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if m.showHelp {
 		return m, nil
 	}
-	if m.mode == modeExport {
+	if m.mode == exportMode {
 		var cmd tea.Cmd
 		m.pathInput, cmd = m.pathInput.Update(msg)
 		return m, cmd
@@ -182,7 +178,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 // updateEditorKey handles shortcuts and editor input.
-func (m model) updateEditorKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
+func (m appModel) updateEditorKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "ctrl+c":
 		if err := m.saveSession(); err != nil {
@@ -193,30 +189,30 @@ func (m model) updateEditorKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	case "ctrl+n":
 		m.blurActive()
 		m.addTab()
-		m.mode = modeEdit
+		m.mode = editMode
 		m.resizeEditors()
 		m.focusActive()
 		return m.changed()
 	case "ctrl+w":
 		m.closeActive()
-		if m.mode == modeView {
+		if m.mode == viewMode {
 			m.refreshPreview()
 			m.preview.GotoTop()
 		}
 		return m.changed()
 	case "ctrl+p":
-		if m.mode == modeView {
-			m.mode = modeEdit
+		if m.mode == viewMode {
+			m.mode = editMode
 			return m, m.focusActive()
 		}
-		m.mode = modeView
+		m.mode = viewMode
 		m.blurActive()
 		m.refreshPreview()
 		m.preview.GotoTop()
 		return m, nil
 	case "esc":
-		if m.mode == modeView {
-			m.mode = modeEdit
+		if m.mode == viewMode {
+			m.mode = editMode
 			return m, m.focusActive()
 		}
 	case "ctrl+right", "ctrl+]", "alt+l":
@@ -239,9 +235,9 @@ func (m model) updateEditorKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 }
 
 // updateContent routes input without allowing preview navigation to edit drafts.
-func (m model) updateContent(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m appModel) updateContent(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
-	if m.mode == modeView {
+	if m.mode == viewMode {
 		m.preview, cmd = m.preview.Update(msg)
 		return m, cmd
 	}
@@ -249,17 +245,17 @@ func (m model) updateContent(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.tabs[m.active].editor, cmd = m.tabs[m.active].editor.Update(msg)
 	if m.tabs[m.active].editor.Value() != before {
 		updated, saveCmd := m.changed()
-		m = updated.(model)
+		m = updated.(appModel)
 		return m, tea.Batch(cmd, saveCmd)
 	}
 	return m, cmd
 }
 
 // updateExport handles the export path prompt.
-func (m model) updateExport(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
+func (m appModel) updateExport(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "esc", "ctrl+c":
-		m.mode = m.exportMode
+		m.mode = m.returnMode
 		m.pathInput.Blur()
 		m.setStatus("Export cancelled", false)
 		return m, m.focusActive()
@@ -283,7 +279,7 @@ func (m model) updateExport(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		m.tabs[m.active].fallback = filepath.Base(path)
-		m.mode = m.exportMode
+		m.mode = m.returnMode
 		m.pathInput.Blur()
 		m.focusActive()
 		m.setStatus("Saved to "+path, false)
@@ -296,14 +292,14 @@ func (m model) updateExport(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 }
 
 // addTab appends and activates an empty note.
-func (m *model) addTab() {
+func (m *appModel) addTab() {
 	m.tabs = append(m.tabs, newTab(m.nextID, "", ""))
 	m.active = len(m.tabs) - 1
 	m.nextID++
 }
 
 // closeActive removes the active note or clears the final tab.
-func (m *model) closeActive() {
+func (m *appModel) closeActive() {
 	m.blurActive()
 	if len(m.tabs) == 1 {
 		m.tabs[0] = newTab(m.nextID, "", "")
@@ -322,23 +318,23 @@ func (m *model) closeActive() {
 }
 
 // switchTab moves focus by a wrapped offset.
-func (m *model) switchTab(offset int) {
+func (m *appModel) switchTab(offset int) {
 	if len(m.tabs) < 2 {
 		return
 	}
 	m.blurActive()
 	m.active = (m.active + offset + len(m.tabs)) % len(m.tabs)
 	m.focusActive()
-	if m.mode == modeView {
+	if m.mode == viewMode {
 		m.refreshPreview()
 		m.preview.GotoTop()
 	}
 }
 
 // openExport prepares and focuses the export prompt.
-func (m *model) openExport() {
-	m.exportMode = m.mode
-	m.mode = modeExport
+func (m *appModel) openExport() {
+	m.returnMode = m.mode
+	m.mode = exportMode
 	m.blurActive()
 	name := sanitizeFilename(m.tabs[m.active].title())
 	if filepath.Ext(name) == "" {
@@ -351,10 +347,10 @@ func (m *model) openExport() {
 }
 
 // focusActive gives input focus only to the active editor.
-func (m *model) focusActive() tea.Cmd {
+func (m *appModel) focusActive() tea.Cmd {
 	var cmd tea.Cmd
 	for i := range m.tabs {
-		if i == m.active && m.mode == modeEdit && !m.showHelp {
+		if i == m.active && m.mode == editMode && !m.showHelp {
 			cmd = m.tabs[i].editor.Focus()
 		} else {
 			m.tabs[i].editor.Blur()
@@ -364,14 +360,14 @@ func (m *model) focusActive() tea.Cmd {
 }
 
 // blurActive removes focus from the active editor.
-func (m *model) blurActive() {
+func (m *appModel) blurActive() {
 	if len(m.tabs) > 0 {
 		m.tabs[m.active].editor.Blur()
 	}
 }
 
 // resizeEditors fits inputs within the terminal frame.
-func (m *model) resizeEditors() {
+func (m *appModel) resizeEditors() {
 	width := max(20, m.width-4)
 	height := max(1, m.height-3)
 	for i := range m.tabs {
@@ -387,7 +383,7 @@ func (m *model) resizeEditors() {
 }
 
 // refreshPreview renders only when entering view mode, switching tabs, or resizing.
-func (m *model) refreshPreview() {
+func (m *appModel) refreshPreview() {
 	renderer, err := glamour.NewTermRenderer(
 		glamour.WithStandardStyle("dark"),
 		glamour.WithWordWrap(max(1, m.preview.Width())),
@@ -406,14 +402,14 @@ func (m *model) refreshPreview() {
 }
 
 // changed advances the revision and schedules autosave.
-func (m model) changed() (tea.Model, tea.Cmd) {
+func (m appModel) changed() (tea.Model, tea.Cmd) {
 	m.revision++
 	revision := m.revision
 	return m, tea.Tick(autosaveDelay, func(time.Time) tea.Msg { return autosaveMsg(revision) })
 }
 
 // saveSession snapshots the current tabs to the session store.
-func (m *model) saveSession() error {
+func (m *appModel) saveSession() error {
 	tabs := make([]savedTab, 0, len(m.tabs))
 	for _, tab := range m.tabs {
 		tabs = append(tabs, savedTab{ID: tab.id, Title: tab.fallback, Content: tab.editor.Value()})
@@ -426,7 +422,7 @@ func (m *model) saveSession() error {
 }
 
 // setStatus updates the footer message.
-func (m *model) setStatus(message string, isError bool) {
+func (m *appModel) setStatus(message string, isError bool) {
 	m.status = message
 	m.statusError = isError
 }
@@ -443,7 +439,7 @@ func (t tab) title() string {
 }
 
 // View declares the full-screen terminal view.
-func (m model) View() tea.View {
+func (m appModel) View() tea.View {
 	view := tea.NewView(m.render())
 	view.AltScreen = true
 	view.WindowTitle = "Scratchpad"
@@ -451,7 +447,7 @@ func (m model) View() tea.View {
 }
 
 // render composes the current application frame.
-func (m model) render() string {
+func (m appModel) render() string {
 	if m.width == 0 || m.height == 0 {
 		return "Loading scratchpad..."
 	}
@@ -461,13 +457,13 @@ func (m model) render() string {
 
 	header := m.renderHeader()
 	body := styleEditor.Render(m.tabs[m.active].editor.View())
-	if m.mode == modeView {
+	if m.mode == viewMode {
 		body = styleEditor.Render(m.preview.View())
 	}
 	footer := m.renderFooter()
 	page := lipgloss.JoinVertical(lipgloss.Left, header, body, footer)
 
-	if m.mode == modeExport {
+	if m.mode == exportMode {
 		panel := styleOverlay.Width(min(64, m.width-8)).Render(
 			styleAccent.Bold(true).Render("EXPORT NOTE") + "\n\n" +
 				m.pathInput.View() + "\n\n" +
@@ -483,7 +479,7 @@ func (m model) render() string {
 }
 
 // renderHeader renders the logo and visible tabs.
-func (m model) renderHeader() string {
+func (m appModel) renderHeader() string {
 	logo := styleLogo.Render("SCRATCHPAD")
 	available := max(0, m.width-lipgloss.Width(logo)-1)
 	renderTab := func(i int) string {
@@ -522,7 +518,7 @@ func (m model) renderHeader() string {
 }
 
 // renderFooter renders status and shortcut hints.
-func (m model) renderFooter() string {
+func (m appModel) renderFooter() string {
 	leftText := ""
 	if m.status != "" {
 		leftText = m.status
@@ -533,7 +529,7 @@ func (m model) renderFooter() string {
 	if m.width < 80 {
 		rightText = "^N new  ^P view  F1 keys"
 	}
-	if m.mode == modeView {
+	if m.mode == viewMode {
 		rightText = "^P edit  F1 keys"
 		leftText = fmt.Sprintf("VIEW  |  %.0f%%", m.preview.ScrollPercent()*100)
 		if m.statusError {
@@ -551,7 +547,7 @@ func (m model) renderFooter() string {
 }
 
 // helpView renders the keyboard reference.
-func (m model) helpView() string {
+func (m appModel) helpView() string {
 	return styleAccent.Bold(true).Render("KEYBOARD MAP") + "\n\n" +
 		keyLine("Ctrl+N", "new tab") +
 		keyLine("Ctrl+W", "close tab") +

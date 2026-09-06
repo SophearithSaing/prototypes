@@ -1077,9 +1077,9 @@
     <span class="comment">// Missing state is a valid first launch.</span>
     session, err := store.<span class="fn">load</span>()
 
-    model := <span class="fn">newModel</span>(store, session)
+    app := <span class="fn">newAppModel</span>(store, session)
     program := tea.<span class="fn">NewProgram</span>(
-        model,
+        app,
         tea.<span class="fn">WithInput</span>(in),
         tea.<span class="fn">WithOutput</span>(out),
     )
@@ -1159,9 +1159,9 @@
             </div>
             <div class="code-panel">
               <div class="code-label">model.go / content routing</div>
-              <pre tabindex="0"><span class="kw">func</span> (m model) <span class="fn">updateContent</span>(msg tea.Msg) (tea.Model, tea.Cmd) {
+              <pre tabindex="0"><span class="kw">func</span> (m appModel) <span class="fn">updateContent</span>(msg tea.Msg) (tea.Model, tea.Cmd) {
     <span class="kw">var</span> cmd tea.Cmd
-    <span class="kw">if</span> m.mode == modeView {
+    <span class="kw">if</span> m.mode == viewMode {
         m.preview, cmd = m.preview.<span class="fn">Update</span>(msg)
         <span class="kw">return</span> m, cmd
     }
@@ -1241,7 +1241,7 @@
             </div>
             <div class="code-panel">
               <div class="code-label">model.go / autosave scheduling</div>
-              <pre tabindex="0"><span class="kw">func</span> (m model) <span class="fn">changed</span>() (tea.Model, tea.Cmd) {
+              <pre tabindex="0"><span class="kw">func</span> (m appModel) <span class="fn">changed</span>() (tea.Model, tea.Cmd) {
     m.revision++
     revision := m.revision
     <span class="kw">return</span> m, tea.<span class="fn">Tick</span>(autosaveDelay,

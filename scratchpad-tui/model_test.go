@@ -11,8 +11,8 @@ import (
 	"github.com/charmbracelet/x/ansi"
 )
 
-// TestNewModelRestoresSession verifies restoration of tabs and focus.
-func TestNewModelRestoresSession(t *testing.T) {
+// TestNewAppModelRestoresSession verifies restoration of tabs and focus.
+func TestNewAppModelRestoresSession(t *testing.T) {
 	session := savedSession{
 		Active: 1,
 		NextID: 8,
@@ -22,9 +22,9 @@ func TestNewModelRestoresSession(t *testing.T) {
 		},
 	}
 
-	m := newModel(sessionStore{}, session)
+	m := newAppModel(sessionStore{}, session)
 	if len(m.tabs) != 2 || m.active != 1 || m.nextID != 8 {
-		t.Fatalf("restored model = %d tabs, active %d, next ID %d", len(m.tabs), m.active, m.nextID)
+		t.Fatalf("restored app model = %d tabs, active %d, next ID %d", len(m.tabs), m.active, m.nextID)
 	}
 	if got := m.tabs[1].editor.Value(); got != "beta" {
 		t.Errorf("active content = %q, want beta", got)
@@ -33,16 +33,16 @@ func TestNewModelRestoresSession(t *testing.T) {
 
 // TestTabLifecycle verifies keyboard-driven tab creation and removal.
 func TestTabLifecycle(t *testing.T) {
-	m := newModel(sessionStore{}, savedSession{})
+	m := newAppModel(sessionStore{}, savedSession{})
 
 	updated, _ := m.Update(tea.KeyPressMsg{Code: 'n', Mod: tea.ModCtrl})
-	m = updated.(model)
+	m = updated.(appModel)
 	if len(m.tabs) != 2 || m.active != 1 {
 		t.Fatalf("after Ctrl+N = %d tabs, active %d", len(m.tabs), m.active)
 	}
 
 	updated, _ = m.Update(tea.KeyPressMsg{Code: 'w', Mod: tea.ModCtrl})
-	m = updated.(model)
+	m = updated.(appModel)
 	if len(m.tabs) != 1 || m.active != 0 {
 		t.Fatalf("after Ctrl+W = %d tabs, active %d", len(m.tabs), m.active)
 	}
@@ -51,12 +51,12 @@ func TestTabLifecycle(t *testing.T) {
 // TestAutosaveMessagePersistsCurrentDraft verifies revision persistence.
 func TestAutosaveMessagePersistsCurrentDraft(t *testing.T) {
 	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
-	m := newModel(store, savedSession{})
+	m := newAppModel(store, savedSession{})
 	m.tabs[0].editor.SetValue("remember this")
 	m.revision = 3
 
 	updated, _ := m.Update(autosaveMsg(3))
-	m = updated.(model)
+	m = updated.(appModel)
 	if m.savedRev != 3 {
 		t.Fatalf("saved revision = %d, want 3", m.savedRev)
 	}
@@ -106,7 +106,7 @@ func TestSanitizeFilename(t *testing.T) {
 
 // TestViewFitsNarrowTerminal verifies responsive frame dimensions.
 func TestViewFitsNarrowTerminal(t *testing.T) {
-	m := newModel(sessionStore{}, savedSession{})
+	m := newAppModel(sessionStore{}, savedSession{})
 	for range 4 {
 		m.addTab()
 	}
@@ -131,14 +131,14 @@ func TestViewFitsNarrowTerminal(t *testing.T) {
 
 // TestMarkdownViewIsReadOnly verifies preview input cannot modify the draft.
 func TestMarkdownViewIsReadOnly(t *testing.T) {
-	m := newModel(sessionStore{}, savedSession{})
+	m := newAppModel(sessionStore{}, savedSession{})
 	source := "Some **bold words** and `code`.\n"
 	m.tabs[0].editor.SetValue(source)
 	updated, _ := m.Update(tea.WindowSizeMsg{Width: 80, Height: 24})
-	m = updated.(model)
+	m = updated.(appModel)
 	updated, _ = m.Update(tea.KeyPressMsg{Code: 'p', Mod: tea.ModCtrl})
-	m = updated.(model)
-	if m.mode != modeView || m.tabs[0].editor.Focused() {
+	m = updated.(appModel)
+	if m.mode != viewMode || m.tabs[0].editor.Focused() {
 		t.Fatal("Ctrl+P did not enter unfocused view mode")
 	}
 	rendered := ansi.Strip(m.preview.View())
@@ -151,18 +151,18 @@ func TestMarkdownViewIsReadOnly(t *testing.T) {
 		tea.PasteMsg{Content: "must not insert"},
 	} {
 		updated, _ = m.Update(msg)
-		m = updated.(model)
+		m = updated.(appModel)
 	}
 	if got := m.tabs[0].editor.Value(); got != source || m.revision != 0 {
 		t.Fatalf("view input changed draft: %q, revision %d", got, m.revision)
 	}
 	updated, _ = m.Update(tea.KeyPressMsg{Code: 'p', Mod: tea.ModCtrl})
-	m = updated.(model)
-	if m.mode != modeEdit || !m.tabs[0].editor.Focused() {
+	m = updated.(appModel)
+	if m.mode != editMode || !m.tabs[0].editor.Focused() {
 		t.Fatal("Ctrl+P did not restore editor focus")
 	}
 	updated, _ = m.Update(tea.KeyPressMsg{Code: 'x', Text: "x"})
-	m = updated.(model)
+	m = updated.(appModel)
 	if m.tabs[0].editor.Value() == source || m.revision != 1 {
 		t.Fatal("editor input was not restored")
 	}
@@ -170,22 +170,22 @@ func TestMarkdownViewIsReadOnly(t *testing.T) {
 
 // TestMarkdownViewScrollResizeAndTabs verifies preview navigation and layout transitions.
 func TestMarkdownViewScrollResizeAndTabs(t *testing.T) {
-	m := newModel(sessionStore{}, savedSession{Tabs: []savedTab{
+	m := newAppModel(sessionStore{}, savedSession{Tabs: []savedTab{
 		{ID: 1, Content: strings.Repeat("A **formatted** paragraph.\n\n", 40)},
 		{ID: 2, Content: "Second **note**"},
 	}})
 	updated, _ := m.Update(tea.WindowSizeMsg{Width: 80, Height: 24})
-	m = updated.(model)
+	m = updated.(appModel)
 	updated, _ = m.Update(tea.KeyPressMsg{Code: 'p', Mod: tea.ModCtrl})
-	m = updated.(model)
+	m = updated.(appModel)
 	updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyPgDown})
-	m = updated.(model)
+	m = updated.(appModel)
 	if m.preview.YOffset() == 0 {
 		t.Fatal("Page Down did not scroll preview")
 	}
 	for _, width := range []int{42, 100} {
 		updated, _ = m.Update(tea.WindowSizeMsg{Width: width, Height: 10})
-		m = updated.(model)
+		m = updated.(appModel)
 		view := m.View().Content
 		if lipgloss.Height(view) != m.height {
 			t.Fatalf("preview height = %d, want %d", lipgloss.Height(view), m.height)
@@ -197,43 +197,43 @@ func TestMarkdownViewScrollResizeAndTabs(t *testing.T) {
 		}
 	}
 	updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyRight, Mod: tea.ModCtrl})
-	m = updated.(model)
-	if m.active != 1 || m.mode != modeView || m.preview.YOffset() != 0 || !strings.Contains(ansi.Strip(m.preview.View()), "Second note") {
+	m = updated.(appModel)
+	if m.active != 1 || m.mode != viewMode || m.preview.YOffset() != 0 || !strings.Contains(ansi.Strip(m.preview.View()), "Second note") {
 		t.Fatal("switching tabs did not refresh preview at the top")
 	}
 	updated, _ = m.Update(tea.KeyPressMsg{Code: 'w', Mod: tea.ModCtrl})
-	m = updated.(model)
+	m = updated.(appModel)
 	if len(m.tabs) != 1 || !strings.Contains(ansi.Strip(m.preview.View()), "formatted") {
 		t.Fatal("closing a tab did not refresh preview")
 	}
 	updated, _ = m.Update(tea.KeyPressMsg{Code: 'n', Mod: tea.ModCtrl})
-	m = updated.(model)
-	if m.mode != modeEdit || !m.tabs[m.active].editor.Focused() {
+	m = updated.(appModel)
+	if m.mode != editMode || !m.tabs[m.active].editor.Focused() {
 		t.Fatal("new tab did not open for editing")
 	}
 }
 
 // TestMarkdownViewOverlaysAndExport verifies overlays preserve preview mode and source Markdown.
 func TestMarkdownViewOverlaysAndExport(t *testing.T) {
-	m := newModel(sessionStore{}, savedSession{})
+	m := newAppModel(sessionStore{}, savedSession{})
 	source := "Export **original Markdown**\n"
 	m.tabs[0].editor.SetValue(source)
 	updated, _ := m.Update(tea.WindowSizeMsg{Width: 80, Height: 24})
-	m = updated.(model)
+	m = updated.(appModel)
 	updated, _ = m.Update(tea.KeyPressMsg{Code: 'p', Mod: tea.ModCtrl})
-	m = updated.(model)
+	m = updated.(appModel)
 	updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyF1})
-	m = updated.(model)
+	m = updated.(appModel)
 	updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyEscape})
-	m = updated.(model)
-	if m.showHelp || m.mode != modeView || m.tabs[0].editor.Focused() {
+	m = updated.(appModel)
+	if m.showHelp || m.mode != viewMode || m.tabs[0].editor.Focused() {
 		t.Fatal("closing help did not preserve view mode")
 	}
 	for _, cancel := range []bool{true, false} {
 		updated, _ = m.Update(tea.KeyPressMsg{Code: 's', Mod: tea.ModCtrl})
-		m = updated.(model)
+		m = updated.(appModel)
 		updated, _ = m.Update(tea.WindowSizeMsg{Width: 42, Height: 10})
-		m = updated.(model)
+		m = updated.(appModel)
 		path := filepath.Join(t.TempDir(), "export.md")
 		m.pathInput.SetValue(path)
 		key := tea.KeyEnter
@@ -241,8 +241,8 @@ func TestMarkdownViewOverlaysAndExport(t *testing.T) {
 			key = tea.KeyEscape
 		}
 		updated, _ = m.Update(tea.KeyPressMsg{Code: key})
-		m = updated.(model)
-		if m.mode != modeView || m.tabs[0].editor.Focused() {
+		m = updated.(appModel)
+		if m.mode != viewMode || m.tabs[0].editor.Focused() {
 			t.Fatal("export did not return to view mode")
 		}
 		if !cancel {
@@ -253,8 +253,8 @@ func TestMarkdownViewOverlaysAndExport(t *testing.T) {
 		}
 	}
 	updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyEscape})
-	m = updated.(model)
-	if m.mode != modeEdit || !m.tabs[0].editor.Focused() {
+	m = updated.(appModel)
+	if m.mode != editMode || !m.tabs[0].editor.Focused() {
 		t.Fatal("Escape did not restore editing")
 	}
 }
@@ -262,16 +262,16 @@ func TestMarkdownViewOverlaysAndExport(t *testing.T) {
 // TestPastedMarkdownAutosavesFromView verifies pending edits save after entering preview mode.
 func TestPastedMarkdownAutosavesFromView(t *testing.T) {
 	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
-	m := newModel(store, savedSession{})
+	m := newAppModel(store, savedSession{})
 	updated, cmd := m.Update(tea.PasteMsg{Content: "# Pasted draft\n\n**Keep this**"})
-	m = updated.(model)
+	m = updated.(appModel)
 	if m.revision != 1 || cmd == nil {
 		t.Fatal("paste did not schedule autosave")
 	}
 	updated, _ = m.Update(tea.KeyPressMsg{Code: 'p', Mod: tea.ModCtrl})
-	m = updated.(model)
+	m = updated.(appModel)
 	updated, _ = m.Update(autosaveMsg(m.revision))
-	m = updated.(model)
+	m = updated.(appModel)
 	if m.savedRev != m.revision || m.statusError {
 		t.Fatalf("autosave in view mode failed: %s", m.status)
 	}
@@ -284,11 +284,11 @@ func TestPastedMarkdownAutosavesFromView(t *testing.T) {
 // TestHelpFitsShortTerminals verifies help remains bounded and scrollable at supported sizes.
 func TestHelpFitsShortTerminals(t *testing.T) {
 	for _, size := range []tea.WindowSizeMsg{{Width: 42, Height: 10}, {Width: 80, Height: 16}, {Width: 100, Height: 24}} {
-		m := newModel(sessionStore{}, savedSession{})
+		m := newAppModel(sessionStore{}, savedSession{})
 		updated, _ := m.Update(size)
-		m = updated.(model)
+		m = updated.(appModel)
 		updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyF1})
-		m = updated.(model)
+		m = updated.(appModel)
 		view := m.View().Content
 		if lipgloss.Height(view) != size.Height {
 			t.Fatalf("help height = %d, want %d", lipgloss.Height(view), size.Height)
@@ -300,7 +300,7 @@ func TestHelpFitsShortTerminals(t *testing.T) {
 		}
 		if size.Height < 20 {
 			updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyPgDown})
-			m = updated.(model)
+			m = updated.(appModel)
 			if m.help.YOffset() == 0 || !m.showHelp {
 				t.Fatal("help did not scroll")
 			}
