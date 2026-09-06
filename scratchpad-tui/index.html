@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="A technical walkthrough of Scratchpad, a keyboard-first terminal notebook built in Go with Bubble Tea."
+      content="A technical walkthrough of Scratchpad, a keyboard-first Markdown notebook built in Go with Bubble Tea and Glamour."
     />
     <title>How Scratchpad Works</title>
     <style>
@@ -240,7 +240,7 @@
       .terminal-wrap::before {
         content: "";
         position: absolute;
-        inset: 12% -7% -10% 18%;
+        inset: 12% 0 -10% 18%;
         z-index: -1;
         background: rgba(38, 95, 174, 0.26);
         filter: blur(80px);
@@ -311,7 +311,6 @@
 
       .tui-editor-shell {
         margin: 0 0.65rem;
-        border: 1px solid #2e3a50;
       }
 
       .tui-editor {
@@ -468,7 +467,7 @@
       .code-label {
         border-bottom: 1px solid var(--line);
         padding: 0.65rem 1rem;
-        color: var(--quiet);
+        color: var(--muted);
         font-family: var(--mono);
         font-size: 0.7rem;
         text-transform: uppercase;
@@ -494,7 +493,7 @@
         color: #a7d9b7;
       }
       .comment {
-        color: #667086;
+        color: var(--muted);
       }
 
       .code-story {
@@ -917,6 +916,7 @@
         <nav aria-label="Page sections">
           <a href="#intent">Intent</a>
           <a href="#architecture">Architecture</a>
+          <a href="#modes">Modes</a>
           <a href="#runtime">Runtime</a>
           <a href="#decisions">Decisions</a>
           <a href="#source">Source</a>
@@ -932,8 +932,8 @@
             <h1>A quiet place for <span>fast thoughts.</span></h1>
             <p class="lede">
               Scratchpad is a keyboard-first terminal notebook. It opens ready
-              to type, keeps every draft automatically, and waits until you
-              decide a thought deserves a real file.
+              to type, keeps every Markdown draft automatically, and switches
+              to a rendered view whenever you want to read instead of edit.
             </p>
             <div class="runline" aria-label="Run command">
               <span class="prompt" aria-hidden="true">$</span>
@@ -958,16 +958,13 @@
                 <span class="tui-tab">2 &nbsp; Weekend ideas</span>
               </div>
               <div class="tui-editor-shell">
-                <div class="tui-editor">
-                  Product notes Keep capture friction close to zero. Drafts
-                  should survive without asking. The interface is the
-                  workflow.<span class="cursor" aria-label="cursor"></span>
-                </div>
+                <div class="tui-editor"># Product notes<br /><br />Keep capture friction close to zero.<br />Drafts should survive without asking.<br /><br />**The interface is the workflow.**<span class="cursor" aria-hidden="true"></span></div>
               </div>
               <div class="tui-footer">
                 <span>Drafts saved</span>
                 <span
-                  >^N new &nbsp; ^W close &nbsp; ^S export &nbsp; F1 keys</span
+                  >^N new &nbsp; ^W close &nbsp; ^S export &nbsp; ^P view &nbsp;
+                  F1 keys</span
                 >
               </div>
             </div>
@@ -1001,20 +998,20 @@
             </article>
             <article class="principle">
               <span class="principle-index">RULE 02</span>
-              <h3>Drafts are not files</h3>
+              <h3>Drafts need no file picker</h3>
               <p>
-                Working state is restored automatically. Export is a separate,
-                intentional action for the moment temporary thinking becomes
-                something permanent.
+                Working Markdown is restored automatically from private app
+                storage. Export is a separate, intentional action for the moment
+                temporary thinking becomes something permanent.
               </p>
             </article>
             <article class="principle">
               <span class="principle-index">RULE 03</span>
               <h3>The keyboard is enough</h3>
               <p>
-                Tabs, export, help, and exit all have direct shortcuts. Mouse
-                support is unnecessary, keeping the interaction model small and
-                predictable.
+                Tabs, Markdown preview, export, help, and exit all have direct
+                shortcuts. Mouse support is unnecessary, keeping the
+                interaction model small and predictable.
               </p>
             </article>
           </div>
@@ -1046,29 +1043,36 @@
               <div class="layer">
                 <strong>BUBBLES</strong>
                 <span
-                  >Provides the multiline textarea, export path input, cursor
-                  behavior, scrolling, and editing keys.</span
+                  >Provides the multiline textarea, export path input, viewport,
+                  cursor behavior, scrolling, and editing keys.</span
+                >
+              </div>
+              <div class="layer">
+                <strong>GLAMOUR</strong>
+                <span
+                  >Renders each draft as terminal-friendly Markdown for the
+                  read-only preview mode.</span
                 >
               </div>
               <div class="layer">
                 <strong>LIP GLOSS</strong>
                 <span
-                  >Provides the blue palette, tabs, border, spacing, overlays,
-                  and width-aware terminal layout.</span
+                  >Provides the blue palette, tabs, spacing, overlays, and
+                  width-aware terminal layout.</span
                 >
               </div>
               <div class="layer">
                 <strong>GO STDLIB</strong>
                 <span
-                  >Handles JSON sessions, paths, file permissions, atomic
-                  replacement, time, and Unicode-safe counts.</span
+                  >Handles Markdown files, the JSON metadata index, paths,
+                  private permissions, atomic replacement, and time.</span
                 >
               </div>
             </div>
 
             <div class="code-panel">
               <div class="code-label">main.go / composition root</div>
-              <pre><span class="kw">func</span> <span class="fn">run</span>(in io.Reader, out io.Writer) error {
+              <pre tabindex="0"><span class="kw">func</span> <span class="fn">run</span>(in io.Reader, out io.Writer) error {
     store, err := <span class="fn">newSessionStore</span>()
     <span class="comment">// Missing state is a valid first launch.</span>
     session, err := store.<span class="fn">load</span>()
@@ -1087,16 +1091,17 @@
         </div>
       </section>
 
-      <section class="section">
+      <section class="section" id="modes">
         <div class="shell">
           <div class="section-heading">
             <div class="section-number">03 / LOOP</div>
             <div>
-              <h2>Everything is a message.</h2>
+              <h2>Edit and view share one message loop.</h2>
               <p class="section-intro">
                 Scratchpad follows The Elm Architecture used by Bubble Tea.
                 State stays in one model, events transform that model, and the
-                view is recreated from the result.
+                active mode decides whether input edits source Markdown or
+                scrolls its rendered preview.
               </p>
             </div>
           </div>
@@ -1129,8 +1134,8 @@
             <div class="loop-step">
               <b>View</b>
               <span
-                >Lip Gloss renders tabs, the bordered editor, footer, and active
-                overlay.</span
+                >Lip Gloss renders tabs, the editor or preview, the footer, and
+                the active overlay.</span
               >
             </div>
           </div>
@@ -1147,34 +1152,29 @@
               <h3>Modes decide who receives the key.</h3>
               <p>
                 <code>Update</code> handles global messages first, then routes
-                key presses to either the export input or the editor. The
-                focused component remains responsible for its own editing
-                behavior.
+                input to help, export, preview, or the editor. Comparing the
+                editor value around every forwarded message means bracketed
+                paste schedules autosave just like a key press.
               </p>
             </div>
             <div class="code-panel">
-              <div class="code-label">model.go / Update excerpt</div>
-              <pre><span class="kw">func</span> (m model) <span class="fn">Update</span>(msg tea.Msg) (tea.Model, tea.Cmd) {
-    <span class="kw">switch</span> msg := msg.(type) {
-    <span class="kw">case</span> tea.WindowSizeMsg:
-        m.width, m.height = msg.Width, msg.Height
-        m.<span class="fn">resizeEditors</span>()
-        <span class="kw">return</span> m, nil
-
-    <span class="kw">case</span> tea.KeyPressMsg:
-        <span class="kw">if</span> m.mode == modeExport {
-            <span class="kw">return</span> m.<span class="fn">updateExport</span>(msg)
-        }
-        <span class="kw">return</span> m.<span class="fn">updateEditorKey</span>(msg)
-    }
-    <span class="comment">// Non-key messages continue to the textarea.</span>
-    <span class="kw">if</span> m.mode == modeEdit &amp;&amp; len(m.tabs) &gt; 0 {
-        <span class="kw">var</span> cmd tea.Cmd
-        m.tabs[m.active].editor, cmd =
-            m.tabs[m.active].editor.<span class="fn">Update</span>(msg)
+              <div class="code-label">model.go / content routing</div>
+              <pre tabindex="0"><span class="kw">func</span> (m model) <span class="fn">updateContent</span>(msg tea.Msg) (tea.Model, tea.Cmd) {
+    <span class="kw">var</span> cmd tea.Cmd
+    <span class="kw">if</span> m.mode == modeView {
+        m.preview, cmd = m.preview.<span class="fn">Update</span>(msg)
         <span class="kw">return</span> m, cmd
     }
-    <span class="kw">return</span> m, nil
+
+    before := m.tabs[m.active].editor.<span class="fn">Value</span>()
+    m.tabs[m.active].editor, cmd =
+        m.tabs[m.active].editor.<span class="fn">Update</span>(msg)
+
+    <span class="kw">if</span> m.tabs[m.active].editor.<span class="fn">Value</span>() != before {
+        updated, saveCmd := m.<span class="fn">changed</span>()
+        <span class="kw">return</span> updated, tea.<span class="fn">Batch</span>(cmd, saveCmd)
+    }
+    <span class="kw">return</span> m, cmd
 }</pre>
             </div>
           </div>
@@ -1223,8 +1223,8 @@
               <small>Latest only</small>
               <h3>Persist session</h3>
               <p>
-                The current tabs and active index are serialized only when the
-                timer is still current.
+                 Markdown drafts are written first, then the metadata index is
+                 committed only when the timer is still current.
               </p>
             </article>
           </div>
@@ -1241,7 +1241,7 @@
             </div>
             <div class="code-panel">
               <div class="code-label">model.go / autosave scheduling</div>
-              <pre><span class="kw">func</span> (m model) <span class="fn">changed</span>() (tea.Model, tea.Cmd) {
+              <pre tabindex="0"><span class="kw">func</span> (m model) <span class="fn">changed</span>() (tea.Model, tea.Cmd) {
     m.revision++
     revision := m.revision
     <span class="kw">return</span> m, tea.<span class="fn">Tick</span>(autosaveDelay,
@@ -1267,41 +1267,42 @@
 
           <div class="persistence">
             <div>
-              <p class="eyebrow">Crash-resistant state</p>
-              <h2>Replace, never rewrite.</h2>
+              <p class="eyebrow">Markdown-first storage</p>
+              <h2>Readable drafts. Minimal metadata.</h2>
               <p class="section-intro">
-                Draft JSON is not written directly over the last known-good
-                session. A temporary sibling file is completed first, then moved
-                into place as one filesystem operation.
+                Every tab lives in a regular <code>note-&lt;id&gt;.md</code> file.
+                <code>session.json</code> stores only ordering, titles, the active
+                tab, and the next ID, so note text never depends on a private
+                data format.
               </p>
             </div>
             <div class="atomic-path">
               <div class="atomic-step">
                 <b>01</b
                 ><span
-                  >Encode all tabs, the active index, the next tab ID, and
-                  schema version as JSON.</span
+                  >Validate stable tab IDs and reject files the current session
+                  does not own.</span
                 >
               </div>
               <div class="atomic-step">
                 <b>02</b
                 ><span
-                  >Create a temporary file beside the session with private
-                  <code>0600</code> permissions.</span
+                  >Write each Markdown draft through a temporary sibling with
+                  private <code>0600</code> permissions.</span
                 >
               </div>
               <div class="atomic-step">
                 <b>03</b
                 ><span
-                  >Write, sync, and close the temporary file so its content
-                  reaches storage.</span
+                  >Publish <code>session.json</code> only after every current
+                  draft has reached storage.</span
                 >
               </div>
               <div class="atomic-step">
                 <b>04</b
                 ><span
-                  >Rename it over <code>session.json</code>, atomically
-                  replacing the previous snapshot.</span
+                  >Remove ownership markers and Markdown files belonging to
+                  tabs closed by the committed session.</span
                 >
               </div>
             </div>
@@ -1309,45 +1310,50 @@
 
           <div class="code-story">
             <div class="code-story-copy">
-              <small>Atomic filesystem handoff</small>
-              <h3>The old draft survives until the new one is complete.</h3>
+              <small>Atomic per-file handoff</small>
+              <h3>Complete files are published, never partial writes.</h3>
               <p>
-                The temporary file lives in the same directory as the session,
-                making the final rename an atomic operation on normal local
-                filesystems. A deferred cleanup removes it if any earlier step
-                fails.
+                Notes and metadata use the same helper: write, sync, close, then
+                rename an owned file or hard-link a new one. The files are
+                individually atomic; the session as a whole is intentionally a
+                small ordered transaction rather than one giant JSON document.
               </p>
             </div>
             <div class="code-panel">
-              <div class="code-label">store.go / session replacement</div>
-              <pre>tmp, err := os.<span class="fn">CreateTemp</span>(dir, <span class="str">".session-*"</span>)
-<span class="kw">if</span> err != nil {
-    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"create temporary session: %w"</span>, err)
-}
-tmpName := tmp.<span class="fn">Name</span>()
-<span class="kw">defer</span> os.<span class="fn">Remove</span>(tmpName)
+              <div class="code-label">store.go / file publication</div>
+              <pre tabindex="0"><span class="kw">func</span> <span class="fn">writeAtomic</span>(path string, data []byte, replace bool) error {
+    tmp, err := os.<span class="fn">CreateTemp</span>(
+        filepath.<span class="fn">Dir</span>(path), <span class="str">".scratchpad-*"</span>,
+    )
+    <span class="kw">if</span> err != nil {
+        <span class="kw">return</span> err
+    }
+    tmpName := tmp.<span class="fn">Name</span>()
+    <span class="kw">defer</span> os.<span class="fn">Remove</span>(tmpName)
 
-<span class="kw">if</span> err := tmp.<span class="fn">Chmod</span>(0o600); err != nil {
+    <span class="comment">// Error checks omitted here for brevity.</span>
+    tmp.<span class="fn">Chmod</span>(0o600)
+    tmp.<span class="fn">Write</span>(data)
+    tmp.<span class="fn">Sync</span>()
     tmp.<span class="fn">Close</span>()
-    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"secure temporary session: %w"</span>, err)
-}
-<span class="kw">if</span> _, err := tmp.<span class="fn">Write</span>(data); err != nil {
-    tmp.<span class="fn">Close</span>()
-    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"write temporary session: %w"</span>, err)
-}
-<span class="kw">if</span> err := tmp.<span class="fn">Sync</span>(); err != nil {
-    tmp.<span class="fn">Close</span>()
-    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"sync temporary session: %w"</span>, err)
-}
-<span class="kw">if</span> err := tmp.<span class="fn">Close</span>(); err != nil {
-    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"close temporary session: %w"</span>, err)
-}
-<span class="kw">if</span> err := os.<span class="fn">Rename</span>(tmpName, s.path); err != nil {
-    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"replace session: %w"</span>, err)
-}
-<span class="kw">return</span> nil</pre>
+
+    <span class="kw">if</span> replace {
+        err = os.<span class="fn">Rename</span>(tmpName, path)
+    } <span class="kw">else</span> {
+        err = os.<span class="fn">Link</span>(tmpName, path)
+    }
+    <span class="kw">return</span> err
+}</pre>
             </div>
           </div>
+
+          <p class="note">
+            <strong>On disk:</strong> state defaults to
+            <code>~/.config/scratchpad/</code> on Linux and can be redirected
+            with <code>SCRATCHPAD_STATE_DIR</code>. Markdown files can be edited
+            directly while Scratchpad is closed; they are authoritative on the
+            next launch.
+          </p>
         </div>
       </section>
 
@@ -1381,8 +1387,8 @@ tmpName := tmp.<span class="fn">Name</span>()
                 <h3>Export stays explicit</h3>
                 <p>
                   <code>Ctrl+S</code> asks for a path and writes only the
-                  current tab. A draft becomes a normal file on the user's
-                  terms.
+                  current tab's original Markdown, never the rendered terminal
+                  output. A draft becomes a normal file on the user's terms.
                 </p>
               </div>
             </article>
@@ -1399,22 +1405,22 @@ tmpName := tmp.<span class="fn">Name</span>()
             <article class="decision">
               <div class="decision-mark">D4</div>
               <div>
-                <h3>JSON over a database</h3>
+                <h3>Markdown plus metadata</h3>
                 <p>
-                  The state is one small versioned snapshot. A database would
-                  add migrations and operational weight without improving this
-                  workload.
+                  Note text stays in editable Markdown files. A tiny JSON index
+                  remembers tab order and focus without requiring filename
+                  sorting or a database.
                 </p>
               </div>
             </article>
             <article class="decision">
               <div class="decision-mark">D5</div>
               <div>
-                <h3>No line-number gutter</h3>
+                <h3>No copy-hostile chrome</h3>
                 <p>
                   Notes are prose-first, and terminal mouse selection copies
-                  rendered cells. A clean gutter preserves frictionless
-                  selection and copying.
+                  rendered cells. Removing the line-number gutter and editor
+                  border keeps selection and copying clean.
                 </p>
               </div>
             </article>
@@ -1426,6 +1432,29 @@ tmpName := tmp.<span class="fn">Name</span>()
                   The app stays in <code>package main</code>, while storage and
                   UI are separated by files and a tiny store value that tests
                   can redirect.
+                </p>
+              </div>
+            </article>
+            <article class="decision">
+              <div class="decision-mark">D7</div>
+              <div>
+                <h3>Preview never edits</h3>
+                <p>
+                  <code>Ctrl+P</code> swaps the textarea for a Glamour-rendered
+                  viewport. Typing and paste messages cannot mutate the source
+                  until edit mode returns. Tab switches remain in preview;
+                  opening a new tab returns to editing.
+                </p>
+              </div>
+            </article>
+            <article class="decision">
+              <div class="decision-mark">D8</div>
+              <div>
+                <h3>Stable file identities</h3>
+                <p>
+                  Tab IDs map directly to <code>note-&lt;id&gt;.md</code>. Renaming a
+                  derived title never moves a draft, and closing a tab removes
+                  only the file owned by that ID.
                 </p>
               </div>
             </article>
@@ -1459,24 +1488,24 @@ tmpName := tmp.<span class="fn">Name</span>()
               <code>model.go</code>
               <h3>Interact</h3>
               <p>
-                Own tabs, key handling, autosave scheduling, export mode,
-                sizing, and terminal rendering.
+                Own tabs, edit/view/export modes, autosave scheduling, Markdown
+                preview, sizing, and terminal rendering.
               </p>
             </article>
             <article class="file">
               <code>store.go</code>
               <h3>Persist</h3>
               <p>
-                Version the session format and perform private, atomic writes in
-                the user config directory.
+                Keep note text in Markdown, maintain the metadata index, and
+                perform private atomic writes in the user config directory.
               </p>
             </article>
             <article class="file">
               <code>*_test.go</code>
               <h3>Verify</h3>
               <p>
-                Cover round trips, permissions, restoration, tab lifecycle,
-                export, autosave, and narrow layouts.
+                Cover round trips, permissions, recovery, failed writes,
+                restoration, Markdown preview, autosave, and narrow layouts.
               </p>
             </article>
           </div>
@@ -1484,9 +1513,14 @@ tmpName := tmp.<span class="fn">Name</span>()
           <div class="keys" aria-label="Keyboard shortcuts">
             <span class="key"><kbd>Ctrl+N</kbd> new tab</span>
             <span class="key"><kbd>Ctrl+W</kbd> close tab</span>
+            <span class="key"><kbd>Ctrl+Left / Right</kbd> switch tabs</span>
             <span class="key"><kbd>Ctrl+[</kbd> previous</span>
             <span class="key"><kbd>Ctrl+]</kbd> next</span>
             <span class="key"><kbd>Ctrl+S</kbd> export</span>
+            <span class="key"><kbd>Ctrl+P</kbd> view / edit</span>
+            <span class="key"><kbd>Esc</kbd> return to editing</span>
+            <span class="key"><kbd>Up / Down</kbd> scroll view</span>
+            <span class="key"><kbd>PgUp / PgDn</kbd> scroll view</span>
             <span class="key"><kbd>F1</kbd> key map</span>
             <span class="key"><kbd>Ctrl+C</kbd> save and quit</span>
           </div>
@@ -1503,9 +1537,9 @@ tmpName := tmp.<span class="fn">Name</span>()
             Run it, type immediately, and close it without ceremony. That is the
             whole contract.
           </p>
-          <div class="runline" aria-label="Test command">
+          <div class="runline" aria-label="Install and run command">
             <span class="prompt" aria-hidden="true">$</span>
-            <code>go test -race ./...</code>
+            <code>go install . &amp;&amp; scratchpad</code>
           </div>
         </div>
       </section>
@@ -1513,8 +1547,8 @@ tmpName := tmp.<span class="fn">Name</span>()
 
     <footer>
       <div class="shell footer-inner">
-        <span>SCRATCHPAD / GO 1.25+</span>
-        <span>Bubble Tea + Bubbles + Lip Gloss</span>
+        <span>SCRATCHPAD / GO 1.25.8+</span>
+        <span>Bubble Tea + Bubbles + Glamour + Lip Gloss</span>
       </div>
     </footer>
   </body>
