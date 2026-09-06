@@ -34,7 +34,7 @@ var (
 	styleAccent  = lipgloss.NewStyle().Foreground(colorAccent)
 	styleDanger  = lipgloss.NewStyle().Foreground(colorDanger)
 	styleOverlay = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(colorFaint).Background(colorRaised).Padding(1, 2)
-	styleEditor  = lipgloss.NewStyle().Border(lipgloss.NormalBorder()).BorderForeground(colorFaint).Margin(0, 1).Padding(0, 1)
+	styleEditor  = lipgloss.NewStyle().Margin(0, 1).PaddingTop(1).PaddingLeft(1).PaddingRight(1)
 )
 
 type tab struct {
@@ -372,8 +372,8 @@ func (m *model) blurActive() {
 
 // resizeEditors fits inputs within the terminal frame.
 func (m *model) resizeEditors() {
-	width := max(20, m.width-6)
-	height := max(1, m.height-4)
+	width := max(20, m.width-4)
+	height := max(1, m.height-3)
 	for i := range m.tabs {
 		m.tabs[i].editor.SetWidth(width)
 		m.tabs[i].editor.SetHeight(height)
