@@ -18,7 +18,7 @@ References: `main.go:20-34`, `model.go:185-192`
 
 Define the overwrite policy and use either exclusive creation or same-directory temporary-file replacement.
 
-References: `model.go:258-290`, `model.go:574-587`
+References: `model.go:258-290`, `model.go:573-586`
 
 ## Medium Severity
 
@@ -28,7 +28,7 @@ Autosave performs write, sync, close, and rename synchronously inside `Update`; 
 
 Perform I/O in `tea.Cmd` functions and serialize save results by revision so stale saves cannot complete after newer ones.
 
-References: `model.go:147-156`, `model.go:258-290`, `model.go:415-427`, `store.go:125-173`, `store.go:175-303`
+References: `model.go:147-156`, `model.go:258-290`, `model.go:415-426`, `store.go:93-141`, `store.go:143-263`
 
 ### 4. Transient autosave failures are not retried
 
@@ -44,7 +44,7 @@ Each process loads and replaces the complete session independently. An older pro
 
 Use an application-lifetime lock or conflict detection.
 
-References: `main.go:20-34`, `model.go:415-427`, `store.go:42-61`, `store.go:175-267`
+References: `main.go:20-34`, `model.go:415-426`, `store.go:39-58`, `store.go:143-227`
 
 ### 6. Some focus commands are discarded
 
@@ -56,9 +56,9 @@ References: `model.go:193-200`, `model.go:258-290`, `model.go:305-321`, `model.g
 
 ### 7. Persistence test gaps remain
 
-Persistence tests now cover pasted-content autosave, repeated replacement, failed writes, malformed JSON, migration, rollback, and recovery. Final shutdown saves, stale autosave timers, autosave retry, and preserving an existing export after failure remain untested. Current statement coverage is 83.7%.
+Persistence tests cover pasted-content autosave, repeated replacement, failed writes, malformed JSON, rollback, and recovery. Final shutdown saves, stale autosave timers, autosave retry, and preserving an existing export after failure remain untested. Current statement coverage is 82.8%.
 
-References: `main_test.go:10-20`, `model_test.go:52-87`, `model_test.go:263-283`, `store_test.go:13-555`
+References: `main_test.go:10-20`, `model_test.go:51-86`, `model_test.go:262-282`, `store_test.go:13-445`
 
 ## Low Severity
 
@@ -66,19 +66,19 @@ References: `main_test.go:10-20`, `model_test.go:52-87`, `model_test.go:263-283`
 
 Handle the exact `"~"` case separately and return home-directory lookup errors rather than silently using the original path.
 
-References: `model.go:589-597`
+References: `model.go:588-596`
 
 ### 9. Unicode tab titles can overflow terminal width
 
 `truncate` counts runes rather than display cells. CJK and other wide graphemes can exceed the calculated header space.
 
-References: `model.go:435-444`, `model.go:486-523`, `model.go:616-626`
+References: `model.go:434-443`, `model.go:485-522`, `model.go:615-625`
 
 ### 10. `Ctrl+C` behavior contradicts the help text
 
 In help and export modes, `Ctrl+C` dismisses the modal rather than saving and quitting. Either handle it globally or document the modal behavior.
 
-References: `model.go:157-170`, `model.go:185-192`, `model.go:258-265`, `model.go:554-566`
+References: `model.go:157-170`, `model.go:185-192`, `model.go:258-265`, `model.go:553-565`
 
 ### 11. Explicit `WithInput(os.Stdin)` disables Bubble Tea's controlling-TTY fallback
 
@@ -92,7 +92,7 @@ References: `main.go:11-16`, `main.go:19-33`
 
 All messages forwarded to the textarea now compare content before and after the update and schedule autosave when it changes. A regression test covers pasted Markdown followed by a mode change.
 
-References: `model.go:137-182`, `model.go:241-255`, `model.go:408-413`, `model_test.go:263-283`
+References: `model.go:137-182`, `model.go:241-255`, `model.go:408-413`, `model_test.go:262-282`
 
 ## Idiomatic Practices Already Present
 

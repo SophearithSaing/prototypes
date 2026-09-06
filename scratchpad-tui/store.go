@@ -7,19 +7,16 @@ import (
 	"path/filepath"
 )
 
-const sessionVersion = 2
-
 type savedTab struct {
 	ID      int    `json:"id"`
 	Title   string `json:"title"`
-	Content string `json:"content,omitempty"`
+	Content string `json:"-"`
 }
 
 type savedSession struct {
-	Version int        `json:"version"`
-	Active  int        `json:"active"`
-	NextID  int        `json:"next_id"`
-	Tabs    []savedTab `json:"tabs"`
+	Active int        `json:"active"`
+	NextID int        `json:"next_id"`
+	Tabs   []savedTab `json:"tabs"`
 }
 
 type sessionStore struct {
@@ -48,20 +45,18 @@ func (s sessionStore) load() (savedSession, error) {
 	if err != nil {
 		return savedSession{}, err
 	}
-	if session.Version == sessionVersion {
-		for i := range session.Tabs {
-			path := s.notePath(session.Tabs[i].ID)
-			data, err := os.ReadFile(path)
-			if err != nil {
-				return savedSession{}, fmt.Errorf("read note %s: %w", path, err)
-			}
-			session.Tabs[i].Content = string(data)
+	for i := range session.Tabs {
+		path := s.notePath(session.Tabs[i].ID)
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return savedSession{}, fmt.Errorf("read note %s: %w", path, err)
 		}
+		session.Tabs[i].Content = string(data)
 	}
 	return session, nil
 }
 
-// loadIndex reads, validates, and repairs supported session metadata.
+// loadIndex reads and validates session metadata.
 func (s sessionStore) loadIndex() (savedSession, error) {
 	data, err := os.ReadFile(s.path)
 	if err != nil {
@@ -71,33 +66,6 @@ func (s sessionStore) loadIndex() (savedSession, error) {
 	var session savedSession
 	if err := json.Unmarshal(data, &session); err != nil {
 		return savedSession{}, fmt.Errorf("decode %s: %w", s.path, err)
-	}
-	if session.Version != 1 && session.Version != sessionVersion {
-		return savedSession{}, fmt.Errorf("unsupported session version %d", session.Version)
-	}
-	if session.Version == 1 {
-		// Reserve valid IDs before repairing legacy IDs so no draft is overwritten.
-		used := make(map[int]bool, len(session.Tabs))
-		for _, tab := range session.Tabs {
-			if tab.ID > 0 {
-				used[tab.ID] = true
-			}
-		}
-		seen := make(map[int]bool, len(session.Tabs))
-		next := 1
-		for i, tab := range session.Tabs {
-			if tab.ID <= 0 || seen[tab.ID] {
-				for used[next] {
-					next++
-				}
-				session.Tabs[i].ID = next
-				used[next] = true
-			}
-			seen[session.Tabs[i].ID] = true
-			if session.Tabs[i].ID >= session.NextID {
-				session.NextID = session.Tabs[i].ID + 1
-			}
-		}
 	}
 	if err := validateTabIDs(session.Tabs); err != nil {
 		return savedSession{}, err
@@ -182,10 +150,8 @@ func (s sessionStore) save(session savedSession) error {
 		return fmt.Errorf("read previous index: %w", err)
 	}
 	owned := make(map[int]bool, len(previous.Tabs))
-	if previous.Version == sessionVersion {
-		for _, tab := range previous.Tabs {
-			owned[tab.ID] = true
-		}
+	for _, tab := range previous.Tabs {
+		owned[tab.ID] = true
 	}
 	current := make(map[int]bool, len(session.Tabs))
 	for _, tab := range session.Tabs {
@@ -210,19 +176,13 @@ func (s sessionStore) save(session savedSession) error {
 		return fmt.Errorf("create state directory: %w", err)
 	}
 
-	index := session
-	index.Version = sessionVersion
-	index.Tabs = make([]savedTab, len(session.Tabs))
-	for i, tab := range session.Tabs {
-		index.Tabs[i] = savedTab{ID: tab.ID, Title: tab.Title}
-	}
-	data, err := json.MarshalIndent(index, "", "  ")
+	data, err := json.MarshalIndent(session, "", "  ")
 	if err != nil {
 		return fmt.Errorf("encode session: %w", err)
 	}
 	data = append(data, '\n')
 
-	// Roll back new files on returned errors so a failed migration can be retried.
+	// Roll back new files on returned errors so the save can be retried.
 	var created []string
 	committed := false
 	defer func() {

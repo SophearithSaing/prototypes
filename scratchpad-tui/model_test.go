@@ -14,9 +14,8 @@ import (
 // TestNewModelRestoresSession verifies restoration of tabs and focus.
 func TestNewModelRestoresSession(t *testing.T) {
 	session := savedSession{
-		Version: sessionVersion,
-		Active:  1,
-		NextID:  8,
+		Active: 1,
+		NextID: 8,
 		Tabs: []savedTab{
 			{ID: 2, Title: "One", Content: "alpha"},
 			{ID: 7, Title: "Two", Content: "beta"},

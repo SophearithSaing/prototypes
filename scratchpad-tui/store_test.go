@@ -14,9 +14,8 @@ import (
 func TestSessionStoreRoundTrip(t *testing.T) {
 	store := sessionStore{path: filepath.Join(t.TempDir(), "nested", "session.json")}
 	want := savedSession{
-		Version: sessionVersion,
-		Active:  1,
-		NextID:  5,
+		Active: 1,
+		NextID: 5,
 		Tabs: []savedTab{
 			{ID: 3, Title: "../First", Content: "# an idea\r\n\n- draft\t\x00\xff"},
 			{ID: 1, Title: "Second", Content: "another idea\n"},
@@ -48,13 +47,12 @@ func TestSessionStoreRoundTrip(t *testing.T) {
 		t.Fatal(err)
 	}
 	var index struct {
-		Version int                          `json:"version"`
-		Tabs    []map[string]json.RawMessage `json:"tabs"`
+		Tabs []map[string]json.RawMessage `json:"tabs"`
 	}
 	if err := json.Unmarshal(data, &index); err != nil {
 		t.Fatal(err)
 	}
-	if index.Version != 2 || len(index.Tabs) != len(want.Tabs) {
+	if len(index.Tabs) != len(want.Tabs) || strings.Contains(string(data), `"version"`) {
 		t.Fatalf("unexpected index: %s", data)
 	}
 	for _, tab := range index.Tabs {
@@ -76,88 +74,6 @@ func TestSessionStoreRoundTrip(t *testing.T) {
 	}
 }
 
-// TestSessionStoreRejectsUnknownVersion verifies schema validation.
-func TestSessionStoreRejectsUnknownVersion(t *testing.T) {
-	path := filepath.Join(t.TempDir(), "session.json")
-	if err := os.WriteFile(path, []byte(`{"version":99}`), 0o600); err != nil {
-		t.Fatal(err)
-	}
-
-	_, err := (sessionStore{path: path}).load()
-	if err == nil {
-		t.Fatal("load() error = nil, want unsupported version error")
-	}
-}
-
-// TestSessionStoreLegacyMigration verifies legacy sessions receive safe IDs and split draft files.
-func TestSessionStoreLegacyMigration(t *testing.T) {
-	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
-	legacy := `{"version":1,"active":2,"next_id":8,"tabs":[{"id":3,"title":"First","content":"first\n"},{"id":3,"title":"Duplicate","content":"second"},{"id":0,"title":"Zero","content":"third"},{"id":-2,"title":"Negative","content":"fourth"},{"id":1,"title":"Reserved","content":""}]}`
-	writeStoreFile(t, store.path, legacy)
-	session, err := store.load()
-	if err != nil {
-		t.Fatal(err)
-	}
-	want := savedSession{Version: 1, Active: 2, NextID: 8, Tabs: []savedTab{
-		{ID: 3, Title: "First", Content: "first\n"},
-		{ID: 2, Title: "Duplicate", Content: "second"},
-		{ID: 4, Title: "Zero", Content: "third"},
-		{ID: 5, Title: "Negative", Content: "fourth"},
-		{ID: 1, Title: "Reserved"},
-	}}
-	if !reflect.DeepEqual(session, want) {
-		t.Fatalf("legacy load = %#v, want %#v", session, want)
-	}
-	assertStoreFile(t, store.path, legacy)
-	entries, err := os.ReadDir(filepath.Dir(store.path))
-	if err != nil || len(entries) != 1 {
-		t.Fatalf("load changed directory: %v, %v", entries, err)
-	}
-	if err := store.save(session); err != nil {
-		t.Fatal(err)
-	}
-	want.Version = sessionVersion
-	got, err := store.load()
-	if err != nil || !reflect.DeepEqual(got, want) {
-		t.Fatalf("migrated load = %#v, %v; want %#v", got, err, want)
-	}
-	for _, tab := range want.Tabs {
-		assertStoreFile(t, store.notePath(tab.ID), tab.Content)
-	}
-	data, err := os.ReadFile(store.path)
-	if err != nil || strings.Contains(string(data), `"content"`) {
-		t.Fatalf("migrated index contains content or cannot be read: %s, %v", data, err)
-	}
-}
-
-// TestSessionStoreCollisionPreservesLegacy verifies migration does not overwrite unrelated files.
-func TestSessionStoreCollisionPreservesLegacy(t *testing.T) {
-	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
-	legacy := `{"version":1,"tabs":[{"id":1,"content":"draft one"},{"id":2,"content":"draft two"}]}`
-	writeStoreFile(t, store.path, legacy)
-	writeStoreFile(t, store.notePath(2), "unrelated markdown")
-	session, err := store.load()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := store.save(session); err == nil {
-		t.Fatal("save overwrote a migration collision")
-	}
-	assertStoreFile(t, store.path, legacy)
-	assertStoreFile(t, store.notePath(2), "unrelated markdown")
-	if _, err := os.Stat(store.notePath(1)); !os.IsNotExist(err) {
-		t.Fatalf("preflight wrote note 1: %v", err)
-	}
-	if err := os.Remove(store.notePath(2)); err != nil {
-		t.Fatal(err)
-	}
-	if err := store.save(session); err != nil {
-		t.Fatalf("retry migration: %v", err)
-	}
-	assertStoreFile(t, store.notePath(1), "draft one")
-	assertStoreFile(t, store.notePath(2), "draft two")
-}
-
 // TestSessionStoreInterruptedSaveRestart verifies interrupted draft publication can be recovered.
 func TestSessionStoreInterruptedSaveRestart(t *testing.T) {
 	for _, tc := range []struct {
@@ -166,8 +82,7 @@ func TestSessionStoreInterruptedSaveRestart(t *testing.T) {
 		id    int
 	}{
 		{name: "first save", id: 1},
-		{name: "migration", index: `{"version":1,"next_id":3,"tabs":[{"id":1,"content":"legacy one"},{"id":2,"content":"legacy two"}]}`, id: 1},
-		{name: "new tab", index: `{"version":2,"next_id":2,"tabs":[{"id":1}]}`, id: 2},
+		{name: "new tab", index: `{"next_id":2,"tabs":[{"id":1}]}`, id: 2},
 	} {
 		for _, published := range []bool{false, true} {
 			t.Run(fmt.Sprintf("%s/published=%t", tc.name, published), func(t *testing.T) {
@@ -210,11 +125,8 @@ func TestSessionStoreInterruptedSaveRestart(t *testing.T) {
 				if err != nil || !reflect.DeepEqual(want, original) {
 					t.Fatalf("restart load = %#v, %v; want %#v", want, err, original)
 				}
-				if tc.name != "migration" {
-					want.Tabs = append(want.Tabs, savedTab{ID: tc.id, Content: "reused ID content"})
-					want.NextID = tc.id + 1
-				}
-				want.Version = sessionVersion
+				want.Tabs = append(want.Tabs, savedTab{ID: tc.id, Content: "reused ID content"})
+				want.NextID = tc.id + 1
 				if err := restarted.save(want); err != nil {
 					t.Fatalf("save after restart: %v", err)
 				}
@@ -239,7 +151,7 @@ func TestSessionStorePendingMarkerAfterIndexCommit(t *testing.T) {
 			if err := writePendingNote(store.notePath(1), []byte("committed")); err != nil {
 				t.Fatal(err)
 			}
-			writeStoreFile(t, store.path, `{"version":2,"next_id":2,"tabs":[{"id":1}]}`)
+			writeStoreFile(t, store.path, `{"next_id":2,"tabs":[{"id":1}]}`)
 			restarted := sessionStore{path: store.path}
 			session, err := restarted.load()
 			if err != nil || len(session.Tabs) != 1 || session.Tabs[0].Content != "committed" {
@@ -270,8 +182,6 @@ func TestSessionStoreRecoveryRejectsUnrelatedNotes(t *testing.T) {
 	for _, kind := range []string{"no marker", "different inode", "symlink marker", "symlink note"} {
 		t.Run(kind, func(t *testing.T) {
 			store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
-			legacy := `{"version":1,"tabs":[{"id":1,"content":"same content"}]}`
-			writeStoreFile(t, store.path, legacy)
 			path := store.notePath(1)
 			marker := pendingNotePath(path)
 			if kind == "symlink note" {
@@ -289,14 +199,12 @@ func TestSessionStoreRecoveryRejectsUnrelatedNotes(t *testing.T) {
 					}
 				}
 			}
-			session, err := store.load()
-			if err != nil {
-				t.Fatal(err)
-			}
-			if err := store.save(session); err == nil {
+			if err := store.save(savedSession{Tabs: []savedTab{{ID: 1, Content: "same content"}}}); err == nil {
 				t.Fatal("recovery adopted an unrelated file")
 			}
-			assertStoreFile(t, store.path, legacy)
+			if _, err := os.Stat(store.path); !os.IsNotExist(err) {
+				t.Fatalf("failed recovery wrote an index: %v", err)
+			}
 			assertStoreFile(t, path, "same content")
 			if kind != "no marker" {
 				assertStoreFile(t, marker, "same content")
@@ -348,7 +256,7 @@ func TestSessionStoreCleanup(t *testing.T) {
 // TestSessionStoreFailedSaveKeepsClosedNotes verifies cleanup waits for a successful commit.
 func TestSessionStoreFailedSaveKeepsClosedNotes(t *testing.T) {
 	store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
-	original := savedSession{Version: sessionVersion, Tabs: []savedTab{{ID: 1, Content: "keep"}}}
+	original := savedSession{Tabs: []savedTab{{ID: 1, Content: "keep"}}}
 	if err := store.save(original); err != nil {
 		t.Fatal(err)
 	}
@@ -369,7 +277,7 @@ func TestSessionStoreInvalidIDs(t *testing.T) {
 	for _, ids := range [][]int{{0}, {-1}, {1, 1}} {
 		t.Run(fmt.Sprint(ids), func(t *testing.T) {
 			store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
-			session := savedSession{Version: sessionVersion}
+			session := savedSession{}
 			for _, id := range ids {
 				session.Tabs = append(session.Tabs, savedTab{ID: id, Content: "draft"})
 			}
@@ -385,7 +293,7 @@ func TestSessionStoreInvalidIDs(t *testing.T) {
 			}
 			writeStoreFile(t, store.path, string(data))
 			if _, err := store.load(); err == nil {
-				t.Fatal("load accepted invalid v2 IDs")
+				t.Fatal("load accepted invalid IDs")
 			}
 		})
 	}
@@ -421,7 +329,7 @@ func TestSessionStoreCleanupFailureCommitsIndex(t *testing.T) {
 	}
 	unrelated := filepath.Join(store.notePath(1), "unrelated.md")
 	writeStoreFile(t, unrelated, "keep")
-	want := savedSession{Version: sessionVersion, Tabs: []savedTab{{ID: 2, Content: "two"}}}
+	want := savedSession{Tabs: []savedTab{{ID: 2, Content: "two"}}}
 	if err := store.save(want); err == nil || !strings.Contains(err.Error(), "index saved") {
 		t.Fatalf("save error = %v, want cleanup error after commit", err)
 	}
@@ -464,7 +372,7 @@ func TestSessionStoreErrors(t *testing.T) {
 			t.Fatalf("load = %#v, %v, want empty session", session, err)
 		}
 	})
-	for _, data := range []string{"{", `{"version":99}`, `{"version":2,"tabs":[{"id":1},{"id":1}]}`} {
+	for _, data := range []string{"{", `{"tabs":[{"id":1},{"id":1}]}`} {
 		t.Run(data, func(t *testing.T) {
 			store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
 			writeStoreFile(t, store.path, data)
@@ -479,7 +387,7 @@ func TestSessionStoreErrors(t *testing.T) {
 	}
 	t.Run("missing or unreadable note", func(t *testing.T) {
 		store := sessionStore{path: filepath.Join(t.TempDir(), "session.json")}
-		writeStoreFile(t, store.path, `{"version":2,"tabs":[{"id":1,"content":"must not fall back"}]}`)
+		writeStoreFile(t, store.path, `{"tabs":[{"id":1,"content":"must not fall back"}]}`)
 		if _, err := store.load(); err == nil || !strings.Contains(err.Error(), "note-1.md") {
 			t.Fatalf("load error = %v, want missing note", err)
 		}

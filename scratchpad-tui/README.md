@@ -39,7 +39,6 @@ Drafts are stored in the operating system's user config directory under `scratch
 
 - `note-1.md`, `note-2.md`, etc. contain each tab's plain Markdown text, with stable filenames based on tab IDs.
 - `session.json` is a small metadata index for tab order, titles, the active tab, and the next ID. It does not contain note text.
-- Existing JSON-only sessions are converted on the next successful save, including normal editor quit.
 - Closing a tab removes its draft file on the next save. Export it first if you want a separate permanent copy.
 - Files are private (`0600`) and each file is replaced atomically. A save across multiple files is not a single atomic transaction.
 

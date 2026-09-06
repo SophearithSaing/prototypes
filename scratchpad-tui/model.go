@@ -419,10 +419,9 @@ func (m *model) saveSession() error {
 		tabs = append(tabs, savedTab{ID: tab.id, Title: tab.fallback, Content: tab.editor.Value()})
 	}
 	return m.store.save(savedSession{
-		Version: sessionVersion,
-		Active:  m.active,
-		NextID:  m.nextID,
-		Tabs:    tabs,
+		Active: m.active,
+		NextID: m.nextID,
+		Tabs:   tabs,
 	})
 }
 
