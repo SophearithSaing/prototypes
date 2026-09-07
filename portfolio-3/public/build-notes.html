@@ -1,0 +1,2367 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0e14" />
+    <meta
+      name="description"
+      content="The build journal for Sophearith's Three.js portfolio: architecture, rendering decisions, code excerpts, debugging notes, and lessons from the implementation."
+    />
+    <title>Behind the Glow / Sophearith Build Journal</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0e14'/%3E%3Cpath d='M32 10v44M10 32h44M17 17l30 30M17 47l30-30' stroke='%23ddbd8b' stroke-width='2'/%3E%3Ccircle cx='32' cy='32' r='9' fill='none' stroke='%23ddbd8b' stroke-width='2'/%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0a0e14;
+        --panel: #10161e;
+        --ink: #ece8df;
+        --muted: #a0aab8;
+        --quiet: #8591a2;
+        --gold: #ddbd8b;
+        --line: #28313d;
+        --teal: #a4ccc3;
+        --serif: Georgia, "Times New Roman", serif;
+        --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 32px;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-size: 15px;
+        line-height: 1.85;
+      }
+      ::selection {
+        background: var(--gold);
+        color: var(--bg);
+      }
+      a {
+        color: inherit;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 5px;
+      }
+      a:hover {
+        color: var(--gold);
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
+      button,
+      a,
+      summary {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+      :focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 5px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      h1,
+      h2,
+      h3,
+      p,
+      figure {
+        margin: 0;
+      }
+      h1,
+      h2 {
+        font-family: var(--serif);
+        font-weight: 400;
+      }
+      em {
+        color: var(--gold);
+        font-weight: 400;
+      }
+      .wrap {
+        width: min(1200px, calc(100% - 96px));
+        margin-inline: auto;
+      }
+      .skip {
+        position: fixed;
+        top: -80px;
+        left: 20px;
+        padding: 10px 18px;
+        background: var(--gold);
+        color: var(--bg);
+        z-index: 30;
+      }
+      .skip:focus {
+        top: 16px;
+      }
+      .site-header {
+        min-height: 98px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        border-bottom: 1px solid var(--line);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        text-decoration: none;
+      }
+      .spark {
+        width: 34px;
+        height: 34px;
+        color: var(--gold);
+        flex-shrink: 0;
+      }
+      .brand-name {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 2.4px;
+        line-height: 1.6;
+      }
+      .brand-name small {
+        display: block;
+        font: 9px/1.8 var(--mono);
+        color: var(--quiet);
+        letter-spacing: 1.4px;
+      }
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        font: 10px/1.5 var(--mono);
+        color: var(--quiet);
+      }
+      .print-button {
+        min-height: 40px;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: none;
+        color: var(--muted);
+        font: 10px/1.5 var(--mono);
+      }
+      .print-button:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+      .hero {
+        padding: 79px 0 47px;
+        border-bottom: 1px solid var(--line);
+      }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap: 60px;
+        align-items: center;
+      }
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        color: var(--gold);
+        font: 10px/1.6 var(--mono);
+        letter-spacing: 1.8px;
+        text-transform: uppercase;
+      }
+      .eyebrow::before {
+        content: "";
+        width: 23px;
+        height: 1px;
+        background: var(--gold);
+        flex-shrink: 0;
+      }
+      h1 {
+        font-size: clamp(66px, 6.8vw, 92px);
+        line-height: 1.03;
+        letter-spacing: -4px;
+        margin-top: 23px;
+      }
+      .hero-description {
+        max-width: 460px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.8;
+        margin-top: 25px;
+      }
+      .hero-description strong {
+        color: var(--ink);
+        font-weight: 400;
+      }
+      .hero-sketch {
+        position: relative;
+        min-width: 0;
+      }
+      .hero-sketch svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .hero-sketch figcaption {
+        margin-top: 9px;
+        color: var(--quiet);
+        font: 9px/1.8 var(--mono);
+        letter-spacing: 0.8px;
+        text-align: center;
+      }
+      .hero-meta {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px 30px;
+        margin-top: 51px;
+        font: 10px/1.7 var(--mono);
+        color: var(--quiet);
+      }
+      .hero-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .hero-meta b {
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .meta-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--teal);
+      }
+      .journal-layout {
+        display: grid;
+        grid-template-columns: 216px minmax(0, 1fr);
+        gap: 76px;
+        align-items: start;
+        padding-top: 58px;
+      }
+      .sidebar {
+        position: sticky;
+        top: 34px;
+        padding-bottom: 32px;
+      }
+      .contents > summary {
+        font: 10px/1.6 var(--mono);
+        letter-spacing: 1.6px;
+        color: var(--quiet);
+        padding: 0 0 20px;
+        cursor: pointer;
+      }
+      .contents nav {
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid var(--line);
+      }
+      .contents a {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        padding: 10px 0 10px 15px;
+        border-left: 2px solid transparent;
+        margin-left: -1px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.8;
+        text-decoration: none;
+      }
+      .contents a span {
+        color: var(--quiet);
+        font: 9px/1.8 var(--mono);
+      }
+      .contents a:hover,
+      .contents a[aria-current] {
+        border-left-color: var(--gold);
+        color: var(--gold);
+      }
+      .sidebar-note {
+        border-top: 1px solid var(--line);
+        margin-top: 33px;
+        padding-top: 18px;
+        font-size: 11px;
+        color: var(--quiet);
+        line-height: 1.85;
+      }
+      .sidebar-note strong {
+        display: block;
+        font: 9px/1.6 var(--mono);
+        color: var(--gold);
+        letter-spacing: 1px;
+        margin-bottom: 9px;
+      }
+      .sidebar-note code {
+        font-size: 10px;
+      }
+      .journal {
+        min-width: 0;
+      }
+      .entry {
+        padding-bottom: 54px;
+        margin-bottom: 48px;
+        border-bottom: 1px solid var(--line);
+        scroll-margin-top: 32px;
+      }
+      .entry:last-child {
+        border-bottom: 0;
+        margin-bottom: 0;
+      }
+      .entry-label {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        font: 10px/1.6 var(--mono);
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+        color: var(--quiet);
+        margin-bottom: 19px;
+      }
+      .entry-label span {
+        color: var(--gold);
+      }
+      h2 {
+        font-size: clamp(31px, 3vw, 40px);
+        letter-spacing: -1.2px;
+        line-height: 1.23;
+        margin-bottom: 23px;
+        text-wrap: balance;
+      }
+      h3 {
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 1.5;
+        margin: 32px 0 13px;
+      }
+      .entry p {
+        color: var(--muted);
+        margin-top: 17px;
+      }
+      .entry p:first-of-type {
+        margin-top: 0;
+      }
+      .entry strong {
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .entry a {
+        color: var(--gold);
+      }
+      code {
+        font-family: var(--mono);
+        font-size: 0.84em;
+      }
+      p code,
+      li code,
+      dd code,
+      td code,
+      .sidebar-note code {
+        color: #c9d3de;
+        background: #151d27;
+        border: 1px solid #25303d;
+        border-radius: 3px;
+        padding: 2px 5px;
+        overflow-wrap: anywhere;
+      }
+      .lead {
+        font-size: 17px;
+      }
+      .decision {
+        margin: 26px 0;
+        padding: 18px 23px;
+        border-left: 2px solid var(--gold);
+        background: linear-gradient(90deg, #ddbd8b09, transparent);
+      }
+      .decision .decision-label {
+        color: var(--gold);
+        font: 9px/1.6 var(--mono);
+        letter-spacing: 1.4px;
+        margin: 0 0 7px;
+      }
+      .decision p:last-child {
+        margin: 0;
+        font-size: 14px;
+      }
+      .file-map {
+        margin: 26px 0 0;
+        border-top: 1px solid var(--line);
+      }
+      .file-map > div {
+        display: grid;
+        grid-template-columns: 158px 1fr;
+        gap: 23px;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .file-map dt {
+        color: var(--gold);
+        font: 11px/1.8 var(--mono);
+      }
+      .file-map dd {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.75;
+      }
+      .code-block {
+        margin: 27px 0;
+        border: 1px solid #2d3847;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #0c121a;
+      }
+      .code-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        min-height: 46px;
+        padding: 8px 17px;
+        border-bottom: 1px solid #26303c;
+        background: #141b24;
+      }
+      .code-caption {
+        font: 10px/1.8 var(--mono);
+        color: #b6c2d2;
+        overflow-wrap: anywhere;
+      }
+      .code-caption > span {
+        color: var(--quiet);
+        margin-left: 9px;
+      }
+      .copy-button {
+        background: none;
+        border: 1px solid #354151;
+        border-radius: 3px;
+        padding: 5px 9px;
+        min-height: 30px;
+        color: #b6c2d2;
+        font: 10px/1.4 var(--mono);
+        flex-shrink: 0;
+      }
+      .copy-button:hover {
+        color: var(--gold);
+        border-color: var(--gold);
+      }
+      pre {
+        margin: 0;
+        padding: 22px;
+        max-width: 100%;
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #536078 #0c121a;
+        tab-size: 2;
+      }
+      pre:focus-visible {
+        outline-offset: -3px;
+      }
+      pre code {
+        font: 12px/1.85 var(--mono);
+        color: #d0dae6;
+        white-space: pre;
+      }
+      .code-key {
+        color: #c2b6e0;
+      }
+      .code-string {
+        color: #d8bb8d;
+      }
+      .code-number {
+        color: #a4ccc3;
+      }
+      .code-comment {
+        color: #91a0b5;
+      }
+      .caption {
+        color: var(--quiet) !important;
+        font-size: 12px;
+        line-height: 1.8;
+      }
+      .layers {
+        margin: 27px 0;
+        padding: 25px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: radial-gradient(
+          ellipse at 85% 50%,
+          #28334b38,
+          transparent 70%
+        );
+      }
+      .layer-row {
+        display: flex;
+        align-items: center;
+        gap: 19px;
+        padding: 16px 18px;
+        border: 1px solid #374353;
+        background: #10161ee6;
+        border-radius: 4px;
+      }
+      .layer-row:first-child {
+        border-color: #ddbd8b66;
+      }
+      .layer-index {
+        font: 11px/1.5 var(--mono);
+        color: var(--gold);
+      }
+      .layer-row strong {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .layer-row small {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.6;
+        display: block;
+        margin-top: 3px;
+      }
+      .layer-bridge {
+        padding: 12px 0 12px 30px;
+        color: var(--quiet);
+        font: 10px/1.6 var(--mono);
+      }
+      .layers figcaption {
+        margin-top: 16px;
+        color: var(--quiet);
+        font-size: 11px;
+        line-height: 1.7;
+      }
+      .pipeline {
+        display: flex;
+        align-items: stretch;
+        gap: 10px;
+        margin: 26px 0;
+      }
+      .pipeline > div {
+        flex: 1;
+        border-top: 1px solid #566171;
+        padding-top: 12px;
+        min-width: 0;
+      }
+      .pipeline > div:nth-child(2) {
+        border-color: var(--gold);
+      }
+      .pipeline b {
+        display: block;
+        font: 10px/1.8 var(--mono);
+        font-weight: 400;
+        color: var(--ink);
+      }
+      .pipeline span {
+        display: block;
+        font-size: 11px;
+        color: var(--quiet);
+        line-height: 1.7;
+        margin-top: 4px;
+      }
+      .notes-list {
+        margin: 21px 0;
+        padding-left: 19px;
+        color: var(--muted);
+      }
+      .notes-list li {
+        padding-left: 5px;
+        margin-bottom: 11px;
+      }
+      .notes-list li::marker {
+        color: var(--gold);
+      }
+      .table-scroll {
+        overflow-x: auto;
+        margin: 25px 0 15px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 12px;
+      }
+      th {
+        font: 9px/1.8 var(--mono);
+        font-weight: 400;
+        letter-spacing: 0.8px;
+        color: var(--gold);
+        background: var(--panel);
+      }
+      th,
+      td {
+        padding: 13px 16px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      td {
+        color: var(--muted);
+      }
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+      .size {
+        white-space: nowrap;
+        color: var(--ink);
+        font-family: var(--mono);
+        font-size: 11px;
+      }
+      .debug-note {
+        border-top: 1px solid var(--line);
+        padding: 22px 0;
+      }
+      .debug-note:last-of-type {
+        border-bottom: 1px solid var(--line);
+      }
+      .debug-note summary {
+        display: flex;
+        align-items: baseline;
+        gap: 17px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        list-style: none;
+      }
+      .debug-note summary::-webkit-details-marker {
+        display: none;
+      }
+      .debug-note summary::after {
+        content: "+";
+        color: var(--gold);
+        margin-left: auto;
+        padding-left: 12px;
+        font: 19px/1 var(--mono);
+      }
+      .debug-note[open] summary::after {
+        content: "-";
+      }
+      .debug-note summary span {
+        font: 9px/1.8 var(--mono);
+        color: var(--gold);
+        flex-shrink: 0;
+      }
+      .debug-note p {
+        font-size: 14px;
+        padding-left: 53px;
+      }
+      .debug-note .code-block {
+        margin-bottom: 0;
+      }
+      .verification {
+        margin-top: 26px;
+        padding: 0;
+        list-style: none;
+      }
+      .verification li {
+        display: grid;
+        grid-template-columns: 46px 1fr;
+        gap: 16px;
+        padding: 16px 0;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .verification li > span {
+        font: 9px/1.8 var(--mono);
+        letter-spacing: 1px;
+        color: var(--teal);
+        padding-top: 4px;
+      }
+      .verification strong {
+        display: block;
+        margin-bottom: 3px;
+      }
+      .limitations {
+        padding: 22px 24px;
+        background: #ddbd8b06;
+        border: 1px solid #ddbd8b38;
+        border-radius: 5px;
+        margin-top: 29px;
+      }
+      .limitations h3 {
+        margin: 0 0 13px;
+        font-size: 15px;
+      }
+      .limitations ul {
+        margin: 0;
+        font-size: 13px;
+      }
+      .signoff {
+        margin-top: 30px;
+        font-family: var(--serif);
+        font-size: 26px;
+        color: var(--ink) !important;
+        line-height: 1.5;
+      }
+      .site-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+        border-top: 1px solid var(--line);
+        padding-block: 29px;
+        color: var(--quiet);
+        font: 10px/1.8 var(--mono);
+      }
+      .site-footer a {
+        color: var(--gold);
+        white-space: nowrap;
+      }
+      #reading-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        appearance: none;
+        border: 0;
+        background: transparent;
+        color: var(--gold);
+        z-index: 20;
+      }
+      #reading-progress::-webkit-progress-bar {
+        background: transparent;
+      }
+      #reading-progress::-webkit-progress-value {
+        background: var(--gold);
+      }
+      #reading-progress::-moz-progress-bar {
+        background: var(--gold);
+      }
+      .status {
+        position: fixed;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: max-content;
+        max-width: calc(100% - 32px);
+        padding: 11px 18px;
+        border: 1px solid #ddbd8b66;
+        border-radius: 5px;
+        background: #17202b;
+        color: var(--ink);
+        font-size: 12px;
+        line-height: 1.7;
+        box-shadow: 0 8px 30px #0005;
+        z-index: 25;
+      }
+      .status:empty {
+        display: none;
+      }
+      @media (max-width: 1050px) {
+        .wrap {
+          width: calc(100% - 64px);
+        }
+        .journal-layout {
+          grid-template-columns: 178px minmax(0, 1fr);
+          gap: 42px;
+        }
+        .hero-grid {
+          gap: 30px;
+        }
+        h1 {
+          font-size: 76px;
+        }
+        .hero-description {
+          font-size: 15px;
+        }
+        .file-map > div {
+          grid-template-columns: 135px 1fr;
+          gap: 17px;
+        }
+        .code-caption > span {
+          display: block;
+          margin-left: 0;
+        }
+      }
+      @media (max-width: 760px) {
+        .wrap {
+          width: calc(100% - 42px);
+        }
+        .site-header {
+          min-height: 83px;
+          gap: 15px;
+        }
+        .brand {
+          gap: 10px;
+        }
+        .brand-name {
+          font-size: 10px;
+          letter-spacing: 1.7px;
+        }
+        .brand-name small {
+          font-size: 8px;
+        }
+        .spark {
+          width: 28px;
+          height: 28px;
+        }
+        .header-right > span {
+          display: none;
+        }
+        .print-button {
+          font-size: 9px;
+          padding: 7px 10px;
+        }
+        .hero {
+          padding-top: 49px;
+          padding-bottom: 30px;
+        }
+        .hero-grid {
+          grid-template-columns: 1fr;
+          gap: 30px;
+        }
+        .eyebrow {
+          font-size: 9px;
+          letter-spacing: 1.5px;
+        }
+        h1 {
+          font-size: 77px;
+          letter-spacing: -3.5px;
+          margin-top: 22px;
+        }
+        .hero-description {
+          font-size: 15px;
+          max-width: 500px;
+          margin-top: 24px;
+        }
+        .hero-sketch {
+          width: min(100%, 470px);
+          margin: 0 auto;
+        }
+        .hero-sketch figcaption {
+          font-size: 8px;
+        }
+        .hero-meta {
+          margin-top: 31px;
+          gap: 13px;
+          font-size: 9px;
+        }
+        .journal-layout {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 33px;
+          padding-top: 30px;
+        }
+        .sidebar {
+          position: static;
+          padding-bottom: 22px;
+          border-bottom: 1px solid var(--line);
+        }
+        .contents > summary {
+          padding-bottom: 16px;
+        }
+        .contents nav {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          border-left: 0;
+          gap: 0 12px;
+        }
+        .contents a {
+          padding-left: 10px;
+          min-height: 44px;
+          font-size: 12px;
+          gap: 10px;
+        }
+        .sidebar-note {
+          display: none;
+        }
+        .entry {
+          padding-bottom: 36px;
+          margin-bottom: 33px;
+        }
+        .entry-label {
+          font-size: 9px;
+          margin-bottom: 16px;
+        }
+        h2 {
+          font-size: 34px;
+          letter-spacing: -1px;
+          margin-bottom: 20px;
+        }
+        .entry p,
+        .notes-list {
+          font-size: 14px;
+          line-height: 1.85;
+        }
+        .entry .lead {
+          font-size: 16px;
+        }
+        h3 {
+          font-size: 16px;
+          margin-top: 28px;
+        }
+        .file-map > div {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 5px;
+          padding: 13px 0;
+        }
+        .file-map dd {
+          font-size: 13px;
+        }
+        .decision {
+          padding: 16px 18px;
+        }
+        .decision .decision-label {
+          font-size: 9px;
+        }
+        .decision p:last-child {
+          font-size: 13px;
+        }
+        .code-header {
+          padding: 9px 12px;
+        }
+        .code-caption {
+          font-size: 9px;
+        }
+        .copy-button {
+          font-size: 9px;
+          min-height: 32px;
+        }
+        pre {
+          padding: 18px 15px;
+        }
+        pre code {
+          font-size: 11px;
+        }
+        .layers {
+          padding: 18px;
+        }
+        .layer-row {
+          padding: 13px;
+          gap: 13px;
+        }
+        .layer-row small {
+          font-size: 10px;
+        }
+        .layer-bridge {
+          padding-left: 16px;
+          font-size: 9px;
+        }
+        .pipeline {
+          gap: 14px;
+        }
+        .pipeline b {
+          font-size: 9px;
+        }
+        .pipeline span {
+          font-size: 10px;
+        }
+        th,
+        td {
+          padding: 11px 12px;
+        }
+        .debug-note {
+          padding-block: 19px;
+        }
+        .debug-note summary {
+          gap: 12px;
+          font-size: 14px;
+        }
+        .debug-note p {
+          padding-left: 0;
+          font-size: 13px;
+        }
+        .verification li {
+          grid-template-columns: 36px 1fr;
+          gap: 12px;
+          font-size: 13px;
+        }
+        .limitations {
+          padding: 20px;
+        }
+        .limitations ul {
+          font-size: 13px;
+        }
+        .entry .caption {
+          font-size: 12px;
+        }
+        .entry .signoff {
+          font-size: 25px;
+          line-height: 1.5;
+        }
+        .site-footer {
+          align-items: flex-start;
+          font-size: 9px;
+          padding-block: 24px;
+        }
+        .site-footer p {
+          max-width: 225px;
+        }
+      }
+      @media (max-width: 370px) {
+        .wrap {
+          width: calc(100% - 36px);
+        }
+        h1 {
+          font-size: 68px;
+        }
+        .brand-name {
+          font-size: 9px;
+        }
+        .brand-name small {
+          font-size: 7px;
+        }
+        .hero-description {
+          font-size: 14px;
+        }
+        .contents a {
+          font-size: 11px;
+          padding-left: 8px;
+          gap: 8px;
+        }
+        .pipeline {
+          flex-direction: column;
+          gap: 17px;
+        }
+        .pipeline > div {
+          padding-top: 9px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+      @media print {
+        :root {
+          color-scheme: light;
+          --bg: #fff;
+          --panel: #f5f5f5;
+          --ink: #111;
+          --muted: #333;
+          --quiet: #555;
+          --gold: #6b4c1c;
+          --line: #ccc;
+          --teal: #315950;
+        }
+        @page {
+          margin: 18mm;
+        }
+        body {
+          font-size: 10pt;
+          background: white;
+          color: black;
+        }
+        .wrap {
+          width: 100%;
+        }
+        .site-header {
+          min-height: auto;
+          padding-bottom: 16px;
+        }
+        .header-right,
+        .sidebar,
+        .copy-button,
+        #reading-progress,
+        .status,
+        .skip {
+          display: none !important;
+        }
+        .hero {
+          padding: 28px 0 22px;
+        }
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+        .hero-sketch {
+          display: none;
+        }
+        h1 {
+          font-size: 44pt;
+          margin-top: 14px;
+          letter-spacing: -2px;
+        }
+        .hero-description {
+          max-width: none;
+          font-size: 11pt;
+        }
+        .hero-meta {
+          margin-top: 23px;
+        }
+        .journal-layout {
+          display: block;
+          padding-top: 30px;
+        }
+        .entry {
+          margin-bottom: 26px;
+          padding-bottom: 26px;
+        }
+        h2 {
+          font-size: 24pt;
+        }
+        h3 {
+          font-size: 12pt;
+        }
+        h2,
+        h3,
+        .entry-label,
+        summary {
+          break-after: avoid;
+        }
+        p {
+          orphans: 3;
+          widows: 3;
+        }
+        .code-block,
+        .decision,
+        .layers,
+        .table-scroll,
+        .verification li {
+          break-inside: avoid;
+        }
+        .code-block,
+        .code-header,
+        .layers,
+        .layer-row,
+        .decision,
+        .limitations {
+          background: #fff;
+          border-color: #bbb;
+        }
+        .code-caption,
+        pre code,
+        .code-key,
+        .code-string,
+        .code-number,
+        .code-comment,
+        .layer-index {
+          color: #222;
+        }
+        pre {
+          overflow: visible;
+          padding: 12px;
+        }
+        pre code {
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+          font-size: 8pt;
+        }
+        p code,
+        li code,
+        dd code,
+        td code {
+          color: #222;
+          background: #f5f5f5;
+          border-color: #ddd;
+        }
+        .debug-note::details-content {
+          content-visibility: visible;
+        }
+        .debug-note summary::after {
+          display: none;
+        }
+        .table-scroll {
+          overflow: visible;
+        }
+        th {
+          background: #f5f5f5;
+        }
+        .site-footer {
+          font-size: 8pt;
+        }
+        .site-footer a {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body id="top">
+    <a class="skip" href="#journal">Skip to the build notes</a>
+    <progress
+      id="reading-progress"
+      max="100"
+      value="0"
+      aria-label="Reading progress"
+      hidden
+    ></progress>
+    <header class="site-header wrap">
+      <a
+        class="brand"
+        href="#top"
+        aria-label="Sophearith build journal, back to top"
+      >
+        <svg class="spark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <path
+            d="M20 2v36M2 20h36M7.3 7.3l25.4 25.4M7.3 32.7 32.7 7.3"
+            stroke="currentColor"
+            stroke-width="1.3"
+          />
+          <circle
+            cx="20"
+            cy="20"
+            r="7"
+            stroke="currentColor"
+            stroke-width="1.3"
+          />
+          <circle cx="20" cy="20" r="2.2" fill="currentColor" />
+        </svg>
+        <span class="brand-name"
+          >SOPHEARITH<small>ENGINEERING FIELD NOTES</small></span
+        >
+      </a>
+      <div class="header-right">
+        <span>BUILD JOURNAL / 001</span
+        ><button class="print-button" id="print-notes" type="button" hidden>
+          Print / PDF <span aria-hidden="true">&#8599;</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-grid">
+          <div>
+            <p class="eyebrow">A story in motion / Behind the scenes</p>
+            <h1 id="page-title">Behind<br />the <em>glow.</em></h1>
+            <p class="hero-description">
+              How a single reference image became an interactive Three.js
+              portfolio.
+              <strong
+                >The decisions, the code, and the things that needed a second
+                pass.</strong
+              >
+            </p>
+          </div>
+          <figure class="hero-sketch">
+            <svg
+              viewBox="0 0 470 335"
+              role="img"
+              aria-labelledby="sketch-title sketch-description"
+            >
+              <title id="sketch-title">Anatomy of the luminous timeline</title>
+              <desc id="sketch-description">
+                A gold path rises through blue branching curves. HTML milestone
+                cards sit beside its nodes, while a glowing circular base
+                anchors the Three.js scene.
+              </desc>
+              <defs>
+                <radialGradient id="sketch-haze">
+                  <stop stop-color="#526a94" stop-opacity=".3" />
+                  <stop offset="1" stop-color="#0a0e14" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="sketch-gold">
+                  <stop stop-color="#eacb9b" stop-opacity=".25" />
+                  <stop offset="1" stop-color="#eacb9b" stop-opacity="0" />
+                </radialGradient>
+                <filter
+                  id="sketch-bloom"
+                  x="-100%"
+                  y="-100%"
+                  width="300%"
+                  height="300%"
+                >
+                  <feGaussianBlur stdDeviation="4" />
+                </filter>
+                <path
+                  id="sketch-path"
+                  d="M208 279C209 245 243 255 265 231S187 204 229 179 296 152 249 135 211 105 246 88 265 65 251 49"
+                />
+              </defs>
+              <ellipse
+                cx="251"
+                cy="78"
+                rx="180"
+                ry="94"
+                fill="url(#sketch-haze)"
+              />
+              <ellipse
+                cx="226"
+                cy="213"
+                rx="89"
+                ry="111"
+                fill="url(#sketch-gold)"
+              />
+              <g fill="none" stroke="#7184a8" stroke-width=".7" opacity=".38">
+                <path
+                  d="M44 302C142 259 34 250 88 209S192 180 139 142 180 76 249 49"
+                />
+                <path
+                  d="M115 315C214 274 96 250 155 222S92 167 167 146 210 109 249 49"
+                />
+                <path
+                  d="M296 313C351 282 276 270 338 230S272 192 326 152 307 97 249 49"
+                />
+                <path
+                  d="M405 306C336 270 435 251 385 214S324 192 382 151 298 84 249 49"
+                />
+                <path
+                  d="M31 249C91 204 251 252 189 191S97 130 204 111 301 83 251 49"
+                />
+                <path
+                  d="M447 252C364 211 219 233 297 187S397 140 317 117 224 84 251 49"
+                />
+              </g>
+              <g fill="none" stroke="#a88b60" stroke-width=".7" opacity=".52">
+                <ellipse cx="208" cy="279" rx="66" ry="19" />
+                <ellipse cx="208" cy="279" rx="84" ry="26" />
+                <ellipse cx="208" cy="279" rx="106" ry="33" />
+              </g>
+              <g fill="none" stroke="#6882a9" stroke-width=".6" opacity=".42">
+                <ellipse cx="208" cy="279" rx="119" ry="39" />
+                <ellipse cx="208" cy="279" rx="43" ry="12" />
+              </g>
+              <use
+                href="#sketch-path"
+                fill="none"
+                stroke="#e8bd83"
+                stroke-width="7"
+                opacity=".58"
+                filter="url(#sketch-bloom)"
+              />
+              <use
+                href="#sketch-path"
+                fill="none"
+                stroke="#f0d3a6"
+                stroke-width="1.8"
+              />
+              <g fill="#e8cd9c">
+                <circle cx="208" cy="279" r="4" />
+                <circle cx="257" cy="237" r="3" />
+                <circle cx="224" cy="182" r="3" />
+                <circle cx="250" cy="135" r="3" />
+                <circle cx="251" cy="49" r="3" />
+              </g>
+              <g fill="#a2b9da" opacity=".75">
+                <circle cx="88" cy="209" r="1.5" />
+                <circle cx="326" cy="152" r="1.5" />
+                <circle cx="189" cy="191" r="1.2" />
+                <circle cx="338" cy="230" r="1.5" />
+                <circle cx="143" cy="73" r="1" />
+                <circle cx="312" cy="35" r="1" />
+                <circle cx="396" cy="93" r="1" />
+                <circle cx="72" cy="144" r="1" />
+                <circle cx="179" cy="37" r=".8" />
+                <circle cx="413" cy="274" r="1" />
+              </g>
+              <g fill="#111822" stroke="#897455" stroke-width=".8">
+                <rect x="269" y="42" width="134" height="42" rx="5" />
+                <rect x="78" y="161" width="129" height="42" rx="5" />
+              </g>
+              <g font-family="monospace" font-size="9">
+                <text x="281" y="59" fill="#ddbd8b">HTML MILESTONE</text>
+                <text x="281" y="73" fill="#a0aab8">Readable. Focusable.</text>
+                <text x="90" y="178" fill="#ddbd8b">WORLD POSITION</text>
+                <text x="90" y="192" fill="#a0aab8">Projected each frame.</text>
+                <text x="313" y="288" fill="#a0aab8">WEBGL / LIGHT</text>
+              </g>
+              <path
+                d="M310 282h-28M210 181h10"
+                stroke="#a28c68"
+                stroke-width=".7"
+                fill="none"
+              />
+            </svg>
+            <figcaption>
+              FIG. 01 &nbsp; / &nbsp; THE TIMELINE, REDUCED TO ITS PARTS
+            </figcaption>
+          </figure>
+        </div>
+        <div class="hero-meta">
+          <span><b>VITE + TYPESCRIPT + THREE.JS</b></span
+          ><span>REFERENCE <b>reference.png</b></span
+          ><span
+            ><i class="meta-dot" aria-hidden="true"></i>AN IMPLEMENTATION
+            RETROSPECTIVE</span
+          >
+        </div>
+      </section>
+
+      <div class="journal-layout">
+        <aside class="sidebar" aria-label="Journal navigation">
+          <details class="contents" open>
+            <summary>IN THIS JOURNAL</summary>
+            <nav aria-label="Table of contents">
+              <a href="#starting-point"><span>01</span>The starting point</a>
+              <a href="#two-layers"><span>02</span>Two layers, one scene</a>
+              <a href="#geometry-light"><span>03</span>Geometry &amp; light</a>
+              <a href="#rendering-budget"
+                ><span>04</span>The rendering budget</a
+              >
+              <a href="#responsive"><span>05</span>Room to reflow</a>
+              <a href="#interaction"><span>06</span>Human interactions</a>
+              <a href="#second-pass"><span>07</span>The second pass</a>
+              <a href="#verification"><span>08</span>Checks &amp; loose ends</a>
+            </nav>
+          </details>
+          <div class="sidebar-note">
+            <strong>A NOTE ON THE NOTES</strong>Excerpts are from the
+            implemented portfolio. Condensed examples are labeled. File names
+            refer to the repository, not external dependencies.
+          </div>
+          <div class="sidebar-note">
+            <strong>THIS PAGE IS DIFFERENT</strong>One HTML file. Inline styles.
+            Optional JavaScript. No WebGL, font downloads, or build step needed
+            to read it.
+          </div>
+        </aside>
+
+        <article
+          class="journal"
+          id="journal"
+          aria-label="Portfolio development journal"
+        >
+          <section
+            class="entry"
+            id="starting-point"
+            aria-labelledby="starting-title"
+          >
+            <div class="entry-label">
+              <span>01 /</span> Brief &amp; foundation
+            </div>
+            <h2 id="starting-title">
+              Start with the story,<br />not the stack.
+            </h2>
+            <p class="lead">
+              The project began with a single file: <code>reference.png</code>.
+              A luminous career path rose out of a circular platform, surrounded
+              by dimmer paths that could have been.
+            </p>
+            <p>
+              The goal was to translate that visual idea into a portfolio, not
+              place the image behind some text. The gold path became the chosen
+              journey; blue branches became alternative possibilities. Real
+              content needed a quieter space alongside it.
+            </p>
+            <div class="decision">
+              <p class="decision-label">THE FIRST DECISION</p>
+              <p>
+                <strong
+                  >Make the atmosphere extraordinary. Keep the interface
+                  ordinary enough to understand.</strong
+                >
+                The result is a conventional, scrollable portfolio with an
+                unconventional hero.
+              </p>
+            </div>
+            <h3>Why Vite, TypeScript, and vanilla Three.js?</h3>
+            <p>
+              This is a single page with a small amount of shared state:
+              selected chapter, open dialog, animation preference, and sound. A
+              component framework, router, and state library would add machinery
+              without solving a pressing problem. Vite handles development and
+              bundling; TypeScript checks the browser and Three.js interfaces.
+            </p>
+            <p>
+              The project uses Three.js 0.180, TypeScript 5.9, and Vite 7.
+              Three.js is the only runtime package dependency. React and Next.js
+              appear in the <em>sample project descriptions</em>, not in this
+              site's implementation.
+            </p>
+            <dl class="file-map">
+              <div>
+                <dt>index.html</dt>
+                <dd>
+                  Page metadata, font requests, the app mount, and the module
+                  entry point.
+                </dd>
+              </div>
+              <div>
+                <dt>src/main.ts</dt>
+                <dd>
+                  Portfolio data, HTML, dialogs, navigation, contact, audio, and
+                  scene initialization.
+                </dd>
+              </div>
+              <div>
+                <dt>src/scene.ts</dt>
+                <dd>
+                  The camera, curves, particles, postprocessing, interaction,
+                  and GPU lifecycle.
+                </dd>
+              </div>
+              <div>
+                <dt>src/style.css</dt>
+                <dd>
+                  The visual system, responsive layout, HTML overlays, and
+                  project illustrations.
+                </dd>
+              </div>
+              <div>
+                <dt>vite.config.ts</dt>
+                <dd>
+                  The production chunk boundary between Three.js and its
+                  effects.
+                </dd>
+              </div>
+            </dl>
+            <p class="caption">
+              The reference image is not loaded by the portfolio. The scene is
+              procedural; Orbit, Forma, and Still are CSS/SVG concept
+              illustrations rather than screenshots of shipped products.
+            </p>
+          </section>
+
+          <section class="entry" id="two-layers" aria-labelledby="layers-title">
+            <div class="entry-label"><span>02 /</span> Architecture</div>
+            <h2 id="layers-title">Let WebGL draw.<br />Let HTML speak.</h2>
+            <p>
+              Rendering the milestone text as 3D geometry would make the whole
+              composition self-contained, but it would also mean rebuilding
+              basic browser behavior: readable text, focus, keyboard activation,
+              and accessible names.
+            </p>
+            <p>
+              Instead,
+              <strong
+                >the canvas is decorative and the cards are real buttons</strong
+              >. The two systems share positions, not responsibilities. Three.js
+              moves the camera; the browser renders the content.
+            </p>
+            <figure class="layers">
+              <div class="layer-row">
+                <span class="layer-index">01</span>
+                <div>
+                  <strong>The HTML layer</strong
+                  ><small
+                    >Milestone buttons, project cards, native dialogs,
+                    navigation</small
+                  >
+                </div>
+              </div>
+              <div class="layer-bridge">
+                &#8593; &nbsp; world position &rarr; camera projection &rarr;
+                CSS pixels
+              </div>
+              <div class="layer-row">
+                <span class="layer-index">02</span>
+                <div>
+                  <strong>The Three.js layer</strong
+                  ><small
+                    >Curves, spheres, portal rings, particles, atmosphere,
+                    bloom</small
+                  >
+                </div>
+              </div>
+              <figcaption>
+                The canvas has <code>aria-hidden="true"</code>. The timeline's
+                named button group remains the interactive surface.
+              </figcaption>
+            </figure>
+            <h3>One coordinate system at the boundary</h3>
+            <p>
+              Each frame, a node's world position is projected through the
+              current camera. Normalized device coordinates run from &minus;1 to
+              1; CSS positions run from the top-left corner of the stage. The
+              conversion is small, but it is what makes the labels feel
+              attached.
+            </p>
+            <figure class="code-block">
+              <figcaption class="code-header">
+                <span class="code-caption">
+                  src/scene.ts
+                  <span>Condensed render excerpt / TypeScript</span>
+                </span>
+                <button class="copy-button" type="button" hidden>Copy</button>
+              </figcaption>
+              <pre
+                tabindex="0"
+                aria-label="Code: projecting a milestone into CSS coordinates"
+              ><code>nodes[index].group.getWorldPosition(projected);
+projected.project(camera);
+
+<span class="code-key">const</span> x = (projected.x * <span class="code-number">0.5</span> + <span class="code-number">0.5</span>) * width;
+<span class="code-key">const</span> y = (-projected.y * <span class="code-number">0.5</span> + <span class="code-number">0.5</span>) * height;
+
+milestoneElements[index].style.left = `${x.toFixed(2)}px`;
+milestoneElements[index].style.top = `${y.toFixed(2)}px`;</code></pre>
+            </figure>
+            <p>
+              The actual loop avoids writing styles unless a coordinate changes
+              by more than 0.05 pixels. A small controller API keeps the
+              application out of the renderer's internals:
+            </p>
+            <figure class="code-block">
+              <figcaption class="code-header">
+                <span class="code-caption">
+                  src/scene.ts <span>Controller return type / TypeScript</span>
+                </span>
+                <button class="copy-button" type="button" hidden>Copy</button>
+              </figcaption>
+              <pre
+                tabindex="0"
+                aria-label="Code: the scene controller interface"
+              ><code>{
+  dispose(): <span class="code-key">void</span>;
+  setPaused(paused: <span class="code-key">boolean</span>): <span class="code-key">void</span>;
+  setFocusedMilestone(index: <span class="code-key">number</span> | <span class="code-key">null</span>): <span class="code-key">void</span>;
+}</code></pre>
+            </figure>
+          </section>
+
+          <section
+            class="entry"
+            id="geometry-light"
+            aria-labelledby="geometry-title"
+          >
+            <div class="entry-label">
+              <span>03 /</span> The visual construction
+            </div>
+            <h2 id="geometry-title">Author the layout in screen space.</h2>
+            <p>
+              Purely world-space placement made a poor design contract for
+              readable cards. Perspective changes how much space a world unit
+              occupies. The solution was to start with the desired on-screen
+              layout, then work backward into the scene.
+            </p>
+            <p>
+              A fixed layout camera has a 40-degree vertical field of view. Rays
+              from normalized screen positions intersect a plane at
+              <code>y = 0.16</code>. A cloned camera handles the subtle pointer
+              movement and dragging without changing the layout camera.
+            </p>
+            <figure class="code-block">
+              <figcaption class="code-header">
+                <span class="code-caption">
+                  src/scene.ts
+                  <span>Projection helper excerpt / TypeScript</span>
+                </span>
+                <button class="copy-button" type="button" hidden>Copy</button>
+              </figcaption>
+              <pre
+                tabindex="0"
+                aria-label="Code: projecting a screen point onto the perspective floor"
+              ><code><span class="code-key">const</span> ground = <span class="code-key">new</span> THREE.Plane(
+  <span class="code-key">new</span> THREE.Vector3(<span class="code-number">0</span>, <span class="code-number">1</span>, <span class="code-number">0</span>), -<span class="code-number">0.16</span>
+);
+
+<span class="code-key">function</span> floorPoint(x: <span class="code-key">number</span>, y: <span class="code-key">number</span>): THREE.Vector3 {
+  screen.set(x * <span class="code-number">2</span> - <span class="code-number">1</span>, <span class="code-number">1</span> - y * <span class="code-number">2</span>);
+  raycaster.setFromCamera(screen, layoutCamera);
+  <span class="code-key">return</span> raycaster.ray.intersectPlane(
+    ground, <span class="code-key">new</span> THREE.Vector3()
+  )!;
+}</code></pre>
+            </figure>
+            <p>
+              Five vertical anchors sit at 75%, 60%, 45%, 30%, and 15% of the
+              stage. Horizontal positions account for the measured card widths
+              and a clearance allowance. The path keeps its perspective, while
+              the labels get predictable breathing room.
+            </p>
+            <h3>The glow is several small tricks, together</h3>
+            <p>
+              A centripetal Catmull&ndash;Rom curve supplies the main path. It
+              becomes two tubes: a narrow bright core with a radius of 0.026,
+              and an additive gold layer with a radius of 0.059. Both use 440
+              tubular segments and seven radial segments.
+            </p>
+            <figure class="code-block">
+              <figcaption class="code-header">
+                <span class="code-caption">
+                  src/scene.ts <span>Curve and core excerpt / TypeScript</span>
+                </span>
+                <button class="copy-button" type="button" hidden>Copy</button>
+              </figcaption>
+              <pre
+                tabindex="0"
+                aria-label="Code: constructing the central luminous curve"
+              ><code>mainCurve = <span class="code-key">new</span> THREE.CatmullRomCurve3(
+  controls, <span class="code-key">false</span>, <span class="code-string">"centripetal"</span>
+);
+mainCurve.arcLengthDivisions = <span class="code-number">600</span>;
+
+replaceGeometry(
+  mainCore,
+  <span class="code-key">new</span> THREE.TubeGeometry(mainCurve, <span class="code-number">440</span>, <span class="code-number">0.026</span>, <span class="code-number">7</span>, <span class="code-key">false</span>)
+);</code></pre>
+            </figure>
+            <p>
+              The core's material color is deliberately above the usual
+              0&ndash;1 range: <code>new THREE.Color(3.4, 2.3, 1.3)</code>.
+              Bloom can pick out these bright values before ACES filmic tone
+              mapping and sRGB output bring the image back to the display.
+            </p>
+            <div class="pipeline" aria-label="Postprocessing pipeline">
+              <div>
+                <b>01 / RenderPass</b
+                ><span>Render the scene and its HDR-valued materials.</span>
+              </div>
+              <div>
+                <b>02 / UnrealBloomPass</b
+                ><span>Strength 0.43, radius 0.6, threshold 1.1.</span>
+              </div>
+              <div>
+                <b>03 / ShaderPass</b
+                ><span
+                  >Tone mapping, color conversion, and feathered alpha.</span
+                >
+              </div>
+            </div>
+            <p>
+              The final pass matters: bloom's output alpha is opaque. A custom
+              shader restores a feathered stage edge so the canvas blends into
+              the page instead of looking like a rectangular image pasted on
+              top.
+            </p>
+            <p>
+              Thirty blue-violet curves, 1,150 stars, and 116 moving particles
+              add depth. A generated radial texture supplies the sprite halos.
+              Portal rings and a noise-based atmosphere complete the illusion.
+              <strong
+                >There are no scene texture downloads and no physically lit
+                shadow system.</strong
+              >
+            </p>
+          </section>
+
+          <section
+            class="entry"
+            id="rendering-budget"
+            aria-labelledby="budget-title"
+          >
+            <div class="entry-label">
+              <span>04 /</span> Loading &amp; lifecycle
+            </div>
+            <h2 id="budget-title">
+              The best frame is the one<br />you don't render.
+            </h2>
+            <p>
+              A portfolio should not keep spending GPU time after its hero has
+              scrolled away. The render loop checks document visibility,
+              intersection with the viewport, usable dimensions, context health,
+              and disposal state before requesting work.
+            </p>
+            <figure class="code-block">
+              <figcaption class="code-header">
+                <span class="code-caption">
+                  src/scene.ts
+                  <span>Render scheduling excerpt / TypeScript</span>
+                </span>
+                <button class="copy-button" type="button" hidden>Copy</button>
+              </figcaption>
+              <pre
+                tabindex="0"
+                aria-label="Code: rendering only when the scene can be seen"
+              ><code><span class="code-key">function</span> canRender(): <span class="code-key">boolean</span> {
+  <span class="code-key">return</span> (
+    !disposed &amp;&amp;
+    !contextLost &amp;&amp;
+    !document.hidden &amp;&amp;
+    inViewport &amp;&amp;
+    width &gt; <span class="code-number">0</span> &amp;&amp;
+    height &gt; <span class="code-number">0</span>
+  );
+}
+
+<span class="code-key">function</span> requestRender(): <span class="code-key">void</span> {
+  <span class="code-key">if</span> (!frame &amp;&amp; canRender()) {
+    frame = window.requestAnimationFrame(render);
+  }
+}</code></pre>
+            </figure>
+            <p>
+              Paused does not mean incapable of drawing. A paused scene can
+              render once after a resize or focus change, but the frame does not
+              continuously reschedule itself. Opening a dialog also pauses the
+              scene; closing it restores the visitor's motion preference.
+            </p>
+            <ul class="notes-list">
+              <li>
+                <strong>Cap pixel density at 1.5.</strong> High-DPI screens
+                otherwise multiply the number of pixels being shaded.
+              </li>
+              <li>
+                <strong>Soften bloom at a smaller resolution.</strong> Its
+                dimensions are 0.72 of the composer's physical dimensions; the
+                main image stays sharper.
+              </li>
+              <li>
+                <strong>Batch the small things.</strong> Alternative threads
+                share a <code>LineSegments</code> object; stars and moving
+                particles use <code>Points</code> objects.
+              </li>
+              <li>
+                <strong>Own the lifecycle.</strong> Resize replaces and disposes
+                geometry. Teardown cancels RAF, disconnects observers, removes
+                listeners, and disposes GPU resources.
+              </li>
+            </ul>
+            <h3>Let the content arrive before the renderer</h3>
+            <p>
+              The first production build put roughly 554 kB of minified
+              JavaScript into one bundle. The page now creates its HTML before
+              dynamically importing the scene. A failed import or synchronous
+              scene initialization switches the already-created buttons into a
+              CSS timeline.
+            </p>
+            <figure class="code-block">
+              <figcaption class="code-header">
+                <span class="code-caption">
+                  src/main.ts <span>Condensed initialization / TypeScript</span>
+                </span>
+                <button class="copy-button" type="button" hidden>Copy</button>
+              </figcaption>
+              <pre
+                tabindex="0"
+                aria-label="Code: loading the scene after the page content"
+              ><code><span class="code-key">void</span> <span class="code-key">import</span>(<span class="code-string">"./scene"</span>)
+  .then(({ createJourneyScene }) =&gt; {
+    journey = createJourneyScene(stage, milestoneElements);
+    journey.setPaused(isPaused || dialog.open);
+    motionButton.disabled = <span class="code-key">false</span>;
+  })
+  .catch(() =&gt; {
+    stage.querySelector(<span class="code-string">"canvas"</span>)?.remove();
+    stage.classList.add(<span class="code-string">"scene-fallback"</span>, <span class="code-string">"is-ready"</span>);
+    motionButton.hidden = <span class="code-key">true</span>;
+  });</code></pre>
+            </figure>
+            <div
+              class="table-scroll"
+              role="region"
+              aria-label="Observed production bundle sizes"
+              tabindex="0"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Chunk</th>
+                    <th scope="col">Minified size</th>
+                    <th scope="col">Responsibility</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Application</td>
+                    <td class="size">~24.9 kB</td>
+                    <td>Content and browser interactions</td>
+                  </tr>
+                  <tr>
+                    <td>Scene</td>
+                    <td class="size">~16.1 kB</td>
+                    <td>Portfolio-specific 3D implementation</td>
+                  </tr>
+                  <tr>
+                    <td>Three.js effects</td>
+                    <td class="size">~15.5 kB</td>
+                    <td>Postprocessing infrastructure</td>
+                  </tr>
+                  <tr>
+                    <td>Three.js core</td>
+                    <td class="size">~499.1 kB</td>
+                    <td>The renderer and graphics library</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="caption">
+              Observed build output, rounded and uncompressed. These are not
+              transfer-time or frame-rate measurements. Splitting changes when
+              code loads; it does not make Three.js disappear from the total
+              cost.
+            </p>
+            <p>
+              The chunk rule distinguishes the library's examples/effects from
+              its core. It checks <code>node_modules/three/</code>, not just
+              <code>three/src/</code>, because the package also resolves through
+              its built modules.
+            </p>
+          </section>
+
+          <section
+            class="entry"
+            id="responsive"
+            aria-labelledby="responsive-title"
+          >
+            <div class="entry-label"><span>05 /</span> Responsive design</div>
+            <h2 id="responsive-title">Give the words room to reflow.</h2>
+            <p>
+              The desktop hero is an art-directed composition: introduction on
+              the left, timeline on the right. That layout works at a wide
+              aspect ratio. Shrinking the entire scene into a phone-shaped
+              rectangle does not.
+            </p>
+            <p>
+              At 700 pixels and below, the hero becomes a normal-flow column.
+              Introduction first, then a full-width scene, then the controls.
+              Decorative alternative-path cards disappear; the real milestones
+              stay.
+            </p>
+            <figure class="code-block">
+              <figcaption class="code-header">
+                <span class="code-caption">
+                  src/style.css <span>Condensed mobile rules / CSS</span>
+                </span>
+                <button class="copy-button" type="button" hidden>Copy</button>
+              </figcaption>
+              <pre
+                tabindex="0"
+                aria-label="Code: allowing the mobile hero to follow its content"
+              ><code><span class="code-key">@media</span> (max-width: <span class="code-number">700px</span>) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: <span class="code-number">0</span>;
+    max-height: none;
+  }
+
+  .hero-intro, .scene-stage, .hero-bottom {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+  }
+}</code></pre>
+            </figure>
+            <div class="decision">
+              <p class="decision-label">THE BUG THAT CHANGED THE LAYOUT</p>
+              <p>
+                With external fonts blocked, fallback type wrapped differently
+                at 320px. A fixed scene offset let the text collide with the
+                timeline.
+                <strong
+                  >Moving the sections into document flow fixed the assumption,
+                  not just the symptom.</strong
+                >
+              </p>
+            </div>
+            <p>
+              The mobile scene is still a deliberately sized composition: 600px
+              tall, or 595px on the smallest breakpoint. Card widths reduce to
+              150px and then 130px. The renderer measures those widths when
+              rebuilding positions.
+            </p>
+            <p>
+              This is responsive, but it is not a general-purpose timeline
+              layout engine. The five anchors and their spacing are authored.
+              Adding a sixth milestone requires changes to the scene and CSS
+              fallback, not only another object in the content array.
+            </p>
+          </section>
+
+          <section
+            class="entry"
+            id="interaction"
+            aria-labelledby="interaction-title"
+          >
+            <div class="entry-label">
+              <span>06 /</span> Browser-native interactions
+            </div>
+            <h2 id="interaction-title">
+              Human interactions.<br />Honest promises.
+            </h2>
+            <h3>Use a real dialog</h3>
+            <p>
+              Chapter notes, project descriptions, and contact share a native
+              <code>&lt;dialog&gt;</code>. Calling
+              <code>showModal()</code> provides modal behavior and Escape
+              dismissal. The application manages body scroll, focuses the new
+              title, and updates the scene's pause state.
+            </p>
+            <figure class="code-block">
+              <figcaption class="code-header">
+                <span class="code-caption">
+                  src/main.ts <span>Dialog function excerpt / TypeScript</span>
+                </span>
+                <button class="copy-button" type="button" hidden>Copy</button>
+              </figcaption>
+              <pre
+                tabindex="0"
+                aria-label="Code: opening an accessible portfolio dialog"
+              ><code><span class="code-key">function</span> openDialog(content: <span class="code-key">string</span>, kind: <span class="code-key">string</span>) {
+  journey?.setPaused(<span class="code-key">true</span>);
+  dialogContent.innerHTML = content;
+  dialog.dataset.kind = kind;
+  <span class="code-key">if</span> (!dialog.open) dialog.showModal();
+  document.body.classList.add(<span class="code-string">"dialog-open"</span>);
+  dialog.scrollTop = <span class="code-number">0</span>;
+  <span class="code-key">const</span> title = dialogContent.querySelector&lt;HTMLElement&gt;(
+    <span class="code-string">"#dialog-title"</span>
+  )!;
+  title.tabIndex = -<span class="code-number">1</span>;
+  title.focus({ preventScroll: <span class="code-key">true</span> });
+}</code></pre>
+            </figure>
+            <p class="caption">
+              Template HTML is authored locally. This is not a safe rendering
+              pattern for arbitrary remote content. The visitor's form data is
+              used in an encoded email URL, not inserted into these HTML
+              templates.
+            </p>
+            <h3>Contact without pretending there is a backend</h3>
+            <p>
+              The form uses native required-field and email validation, then
+              opens a prefilled <code>mailto:</code> draft. Both subject and
+              body are passed through <code>encodeURIComponent</code>, so
+              characters such as <code>&amp;</code>, <code>?</code>, and
+              <code>#</code> do not change the URL's structure.
+            </p>
+            <p>
+              The button says
+              <strong
+                >&ldquo;Open email draft,&rdquo; not &ldquo;Send
+                message.&rdquo;</strong
+              >
+              A mail client must still be configured, and the visitor must send
+              the email. Copy-email is the alternative. There is no server
+              submission, delivery confirmation, or claim that a message has
+              been received.
+            </p>
+            <h3>Sound is an invitation, not an entrance fee</h3>
+            <p>
+              Ambient sound is created on request with the Web Audio API. Four
+              sine oscillators at 110, 164.81, 220, and 277.18 Hz pass through a
+              380 Hz low-pass filter. Slow oscillators modulate the individual
+              gains to give the tone a gentle breathing quality.
+            </p>
+            <p>
+              No audio starts on page load. Sound suspends in a hidden tab.
+              System reduced-motion preferences default the scene to paused,
+              while the visitor can explicitly resume it. Pointer dragging
+              ignores interactive HTML targets, and the canvas allows vertical
+              touch panning.
+            </p>
+          </section>
+
+          <section
+            class="entry"
+            id="second-pass"
+            aria-labelledby="second-title"
+          >
+            <div class="entry-label"><span>07 /</span> Debugging notes</div>
+            <h2 id="second-title">
+              The parts the screenshot<br />didn't show.
+            </h2>
+            <p>
+              The first good-looking frame was not the finish line. These fixes
+              came from using the controls, changing viewport sizes, and
+              deliberately removing browser capabilities.
+            </p>
+            <details class="debug-note" open>
+              <summary>
+                <span>FIX 01</span>Pausing the scene hid the dialog.
+              </summary>
+              <p>
+                An early global animation-pause rule also stopped the dialog's
+                entry animation at opacity zero. It could freeze the header
+                offscreen too. The final version pauses the
+                <strong>Three.js controller</strong>, not every CSS animation in
+                the document. Dialogs and navigation remain usable.
+              </p>
+            </details>
+            <details class="debug-note" open>
+              <summary>
+                <span>FIX 02</span>The mobile contact icon had no name.
+              </summary>
+              <p>
+                The visible &ldquo;Let's talk&rdquo; label is hidden on narrow
+                screens, and the arrow SVG is decorative. An explicit
+                <code>aria-label</code> gives the remaining icon-only button its
+                accessible name. Decorative visuals cannot be the only way to
+                understand a control.
+              </p>
+            </details>
+            <details class="debug-note" open>
+              <summary>
+                <span>FIX 03</span>Feedback belonged inside the dialog.
+              </summary>
+              <p>
+                A normal page toast cannot outrank a native modal's top layer,
+                regardless of its z-index. Copy-email feedback now updates the
+                contact form's own status text, where it is visible and
+                announced.
+              </p>
+            </details>
+            <details class="debug-note" open>
+              <summary>
+                <span>FIX 04</span>A fixed delay was not a reliable assertion.
+              </summary>
+              <p>
+                In headless Chrome with software WebGL, a screenshot could catch
+                a dialog mid-animation. A 400ms sleep was occasionally too short
+                under load. The check now waits for the actual visual state
+                instead of guessing when it will arrive.
+              </p>
+              <figure class="code-block">
+                <figcaption class="code-header">
+                  <span class="code-caption">
+                    Verification harness
+                    <span>Temporary Playwright check / JavaScript</span>
+                  </span>
+                  <button class="copy-button" type="button" hidden>Copy</button>
+                </figcaption>
+                <pre
+                  tabindex="0"
+                  aria-label="Code: waiting for the dialog's completed entry animation"
+                ><code><span class="code-key">await</span> page.waitForFunction(() =&gt;
+  getComputedStyle(document.querySelector(<span class="code-string">"dialog"</span>))
+    .opacity === <span class="code-string">"1"</span>
+);</code></pre>
+              </figure>
+            </details>
+            <p class="caption">
+              Other second-pass fixes included shortening milestone subtitles,
+              increasing muted-text contrast, giving duplicated SVG gradients
+              unique IDs in project dialogs, and keeping the mobile artwork
+              inside its frames.
+            </p>
+          </section>
+
+          <section
+            class="entry"
+            id="verification"
+            aria-labelledby="verification-title"
+          >
+            <div class="entry-label">
+              <span>08 /</span> Verification &amp; handoff
+            </div>
+            <h2 id="verification-title">Checked, not assumed.</h2>
+            <p>
+              Verification covered both the development page and the built
+              output. The following records checks performed during the
+              portfolio build, not a promise of universal browser or device
+              coverage.
+            </p>
+            <ul class="verification">
+              <li>
+                <span>BUILD</span>
+                <div>
+                  <strong>Type checking and production output</strong
+                  ><code>npm run build</code> runs
+                  <code>tsc --noEmit</code> before Vite. The final build
+                  completed without errors or chunk-size warnings.
+                </div>
+              </li>
+              <li>
+                <span>LAYOUT</span>
+                <div>
+                  <strong>320, 360, 390, 700, 768, 1024, and 1440px</strong
+                  >Browser checks verified no horizontal page overflow and that
+                  milestone cards stayed within the viewport.
+                </div>
+              </li>
+              <li>
+                <span>INPUT</span>
+                <div>
+                  <strong>Interactions, not just screenshots</strong>Chapter
+                  navigation, project dialogs, Escape, focus restoration, sound
+                  and pause toggles, clipboard copying, form validation, and
+                  encoded email drafts were exercised.
+                </div>
+              </li>
+              <li>
+                <span>A11Y</span>
+                <div>
+                  <strong>Automated accessibility checks</strong>Axe scans
+                  reported no violations under the tested WCAG 2 A/AA and 2.1 AA
+                  rule tags in desktop, mobile, milestone, and contact views.
+                  This is not a complete accessibility audit.
+                </div>
+              </li>
+              <li>
+                <span>EDGES</span>
+                <div>
+                  <strong>Remove the happy-path assumptions</strong>Checks
+                  covered WebGL initialization failure, blocked external fonts,
+                  reduced motion, an explicit motion override, and dialogs
+                  opened while the scene was manually paused.
+                </div>
+              </li>
+            </ul>
+            <p class="caption">
+              These browser checks used Chrome, including a software WebGL
+              configuration. The ad hoc Playwright and axe scripts lived outside
+              the repository during development; a persistent automated test
+              suite is not included in the project.
+            </p>
+            <div class="limitations">
+              <h3>What remains intentionally unfinished</h3>
+              <ul class="notes-list">
+                <li>
+                  <strong>Personal content.</strong> Career entries, project
+                  concepts, email, and metadata are sample material. Replace
+                  them before publishing.
+                </li>
+                <li>
+                  <strong>A general timeline engine.</strong> Five graphical
+                  nodes are hard-coded. Card clearance is a heuristic, not an
+                  overlap solver.
+                </li>
+                <li>
+                  <strong>Full no-JavaScript content.</strong> The portfolio
+                  generates its interface in JavaScript. Its HTML has a
+                  no-script contact message, not a server-rendered portfolio.
+                  This journal, by contrast, is readable without JavaScript.
+                </li>
+                <li>
+                  <strong>Broader device testing.</strong> Desktop automation
+                  does not establish mobile GPU performance, battery impact,
+                  cross-browser compatibility, or Core Web Vitals.
+                </li>
+                <li>
+                  <strong>Transactional scene setup.</strong> Normal disposal is
+                  thorough, but a failure halfway through initialization can
+                  leave resources without a returned disposer. This is worth
+                  hardening before expanding the renderer.
+                </li>
+              </ul>
+            </div>
+            <h3>The small runbook</h3>
+            <figure class="code-block">
+              <figcaption class="code-header">
+                <span class="code-caption"
+                  >Project root <span>Shell</span></span
+                >
+                <button class="copy-button" type="button" hidden>Copy</button>
+              </figcaption>
+              <pre
+                tabindex="0"
+                aria-label="Code: installing and building the portfolio"
+              ><code><span class="code-comment"># Install the project dependencies.</span>
+npm install
+
+<span class="code-comment"># Type-check and produce the static dist/ directory.</span>
+npm run build
+
+<span class="code-comment"># Optional local server. Stop with Ctrl+C when finished.</span>
+npm run preview</code></pre>
+            </figure>
+            <p>
+              Deploy <code>dist/</code> to a static host. For source
+              development, use <code>npm run dev</code>. This journal lives at
+              <code>public/build-notes.html</code>; Vite copies it unchanged to
+              <code>dist/build-notes.html</code>.
+            </p>
+            <p class="caption">
+              No server is needed to open this journal directly. Its CSS,
+              diagram, and optional copy/navigation helpers are all in the HTML
+              file. The code excerpts are notes, not executable examples
+              embedded in the page.
+            </p>
+            <p class="signoff">
+              Build a little wonder.<br /><em
+                >Then make sure the buttons work.</em
+              >
+            </p>
+          </section>
+        </article>
+      </div>
+    </main>
+
+    <footer class="site-footer wrap">
+      <p>
+        SOPHEARITH / A STORY IN MOTION<br />Build notes, with the tradeoffs left
+        in.
+      </p>
+      <a href="#top">BACK TO TOP <span aria-hidden="true">&#8593;</span></a>
+    </footer>
+    <div
+      class="status"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+    <script>
+      (() => {
+        const status = document.querySelector(".status");
+        let statusTimer;
+        function announce(message) {
+          status.textContent = message;
+          clearTimeout(statusTimer);
+          statusTimer = setTimeout(() => {
+            status.textContent = "";
+          }, 4500);
+        }
+
+        document.querySelectorAll(".code-block").forEach((block) => {
+          const button = block.querySelector(".copy-button");
+          const code = block.querySelector("code");
+          const caption = block
+            .querySelector(".code-caption")
+            .textContent.trim();
+          button.hidden = false;
+          button.setAttribute("aria-label", `Copy code: ${caption}`);
+          button.addEventListener("click", async () => {
+            button.disabled = true;
+            try {
+              if (!navigator.clipboard)
+                throw new Error("Clipboard unavailable");
+              await navigator.clipboard.writeText(code.textContent);
+              button.textContent = "Copied";
+              announce("Code copied to your clipboard.");
+              setTimeout(() => {
+                button.textContent = "Copy";
+              }, 1800);
+            } catch {
+              const range = document.createRange();
+              range.selectNodeContents(code);
+              const selection = window.getSelection();
+              selection?.removeAllRanges();
+              selection?.addRange(range);
+              announce(
+                "Clipboard unavailable. Code selected; press Ctrl+C or Command+C to copy.",
+              );
+            } finally {
+              button.disabled = false;
+            }
+          });
+        });
+
+        const printButton = document.querySelector("#print-notes");
+        printButton.hidden = false;
+        printButton.addEventListener("click", () => window.print());
+        let foldedNotes = [];
+        window.addEventListener("beforeprint", () => {
+          foldedNotes = Array.from(
+            document.querySelectorAll(".debug-note:not([open])"),
+          );
+          foldedNotes.forEach((note) => {
+            note.open = true;
+          });
+        });
+        window.addEventListener("afterprint", () => {
+          foldedNotes.forEach((note) => {
+            note.open = false;
+          });
+          foldedNotes = [];
+        });
+
+        const progress = document.querySelector("#reading-progress");
+        const entries = Array.from(document.querySelectorAll(".entry"));
+        const links = Array.from(document.querySelectorAll(".contents a"));
+        progress.hidden = false;
+        let scheduled = false;
+        function updateReadingPosition() {
+          const available =
+            document.documentElement.scrollHeight - window.innerHeight;
+          progress.value =
+            available > 0
+              ? Math.min(100, Math.max(0, (window.scrollY / available) * 100))
+              : 100;
+          let current = "";
+          entries.forEach((entry) => {
+            if (entry.getBoundingClientRect().top <= 160) current = entry.id;
+          });
+          links.forEach((link) => {
+            if (link.hash === `#${current}`)
+              link.setAttribute("aria-current", "location");
+            else link.removeAttribute("aria-current");
+          });
+          scheduled = false;
+        }
+        function scheduleReadingUpdate() {
+          if (scheduled) return;
+          scheduled = true;
+          requestAnimationFrame(updateReadingPosition);
+        }
+        window.addEventListener("scroll", scheduleReadingUpdate, {
+          passive: true,
+        });
+        window.addEventListener("resize", scheduleReadingUpdate, {
+          passive: true,
+        });
+        document.querySelectorAll("details").forEach((note) => {
+          note.addEventListener("toggle", scheduleReadingUpdate);
+        });
+        updateReadingPosition();
+      })();
+    </script>
+  </body>
+</html>
