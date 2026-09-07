@@ -78,6 +78,7 @@ func newAppModel(store sessionStore, session savedSession) appModel {
 	m.preview.FillHeight = true
 	m.help.SoftWrap = true
 	m.help.FillHeight = true
+	// Keep new IDs above restored IDs, even if the saved next-ID counter is stale.
 	for _, saved := range session.Tabs {
 		m.tabs = append(m.tabs, newTab(saved.ID, saved.Title, saved.Content))
 		if saved.ID >= m.nextID {
@@ -87,6 +88,7 @@ func newAppModel(store sessionStore, session savedSession) appModel {
 	if session.NextID > m.nextID {
 		m.nextID = session.NextID
 	}
+	// Event handlers assume there is always a tab and that active indexes an existing one.
 	if len(m.tabs) == 0 {
 		m.addTab()
 	}
@@ -132,15 +134,18 @@ func (m appModel) Init() tea.Cmd {
 
 // Update handles terminal events and component messages.
 func (m appModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	// Resize and autosave are global events, so overlays must not block them.
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width, m.height = msg.Width, msg.Height
 		m.resizeEditors()
+		// Rewrap even a hidden preview so returning from export uses the new width.
 		if m.mode == viewMode || (m.mode == exportMode && m.returnMode == viewMode) {
 			m.refreshPreview()
 		}
 		return m, nil
 	case autosaveMsg:
+		// Debounce by ignoring old timers rather than cancelling them on each edit.
 		if uint64(msg) == m.revision && m.savedRev != m.revision {
 			if err := m.saveSession(); err != nil {
 				m.setStatus("Autosave failed: "+err.Error(), true)
@@ -151,6 +156,7 @@ func (m appModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, nil
 	case tea.KeyPressMsg:
+		// Modal input takes precedence over editor shortcuts, including Ctrl+C.
 		if m.showHelp {
 			if msg.String() == "f1" || msg.String() == "esc" || msg.String() == "ctrl+c" {
 				m.showHelp = false
@@ -163,7 +169,7 @@ func (m appModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.mode == exportMode {
 			return m.updateExport(msg)
 		}
-		return m.updateEditorKey(msg)
+		return m.handleMainKey(msg)
 	}
 
 	if m.showHelp {
@@ -177,10 +183,12 @@ func (m appModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m.updateContent(msg)
 }
 
-// updateEditorKey handles shortcuts and editor input.
-func (m appModel) updateEditorKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
+// handleMainKey handles shortcuts and input in edit and preview modes.
+// Help and export input are routed separately by Update.
+func (m appModel) handleMainKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "ctrl+c":
+		// Keep the UI open on failure so the user does not lose the in-memory draft.
 		if err := m.saveSession(); err != nil {
 			m.setStatus("Autosave failed: "+err.Error(), true)
 			return m, nil
@@ -241,11 +249,14 @@ func (m appModel) updateContent(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.preview, cmd = m.preview.Update(msg)
 		return m, cmd
 	}
+	// Paste arrives as a non-key message. Compare content for every editor update
+	// so it autosaves too, while cursor movement and blinking do not mark a draft dirty.
 	before := m.tabs[m.active].editor.Value()
 	m.tabs[m.active].editor, cmd = m.tabs[m.active].editor.Update(msg)
 	if m.tabs[m.active].editor.Value() != before {
 		updated, saveCmd := m.changed()
 		m = updated.(appModel)
+		// Preserve the editor's command while also scheduling persistence.
 		return m, tea.Batch(cmd, saveCmd)
 	}
 	return m, cmd
@@ -274,10 +285,12 @@ func (m appModel) updateExport(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 			}
 			path = absolute
 		}
+		// Export source Markdown, not the rendered preview, regardless of the originating mode.
 		if err := writeExport(path, m.tabs[m.active].editor.Value()); err != nil {
 			m.setStatus("Export failed: "+err.Error(), true)
 			return m, nil
 		}
+		// The new fallback title is session metadata and needs autosaving even without an edit.
 		m.tabs[m.active].fallback = filepath.Base(path)
 		m.mode = m.returnMode
 		m.pathInput.Blur()
@@ -302,6 +315,7 @@ func (m *appModel) addTab() {
 func (m *appModel) closeActive() {
 	m.blurActive()
 	if len(m.tabs) == 1 {
+		// Preserve the nonempty-tab invariant; a fresh ID lets the store retire the old draft.
 		m.tabs[0] = newTab(m.nextID, "", "")
 		m.nextID++
 		m.resizeEditors()
@@ -333,6 +347,7 @@ func (m *appModel) switchTab(offset int) {
 
 // openExport prepares and focuses the export prompt.
 func (m *appModel) openExport() {
+	// Export is temporary: completion and cancellation both return to editing or preview.
 	m.returnMode = m.mode
 	m.mode = exportMode
 	m.blurActive()
@@ -368,6 +383,7 @@ func (m *appModel) blurActive() {
 
 // resizeEditors fits inputs within the terminal frame.
 func (m *appModel) resizeEditors() {
+	// Reserve the editor's horizontal frame and the header, top padding, and footer rows.
 	width := max(20, m.width-4)
 	height := max(1, m.height-3)
 	for i := range m.tabs {
@@ -377,6 +393,7 @@ func (m *appModel) resizeEditors() {
 	m.pathInput.SetWidth(max(10, m.width-16))
 	m.preview.SetWidth(width)
 	m.preview.SetHeight(height)
+	// Subtract the overlay frame and constrain help height so short terminals can scroll it.
 	m.help.SetWidth(max(1, min(58, m.width-8)-styleOverlay.GetHorizontalFrameSize()))
 	m.help.SetHeight(max(1, min(m.height-6, lipgloss.Height(m.helpView()))))
 	m.help.SetContent(m.helpView())
@@ -397,6 +414,7 @@ func (m *appModel) refreshPreview() {
 			return
 		}
 	}
+	// Rendering is presentation only; fall back to source without changing the draft.
 	m.setStatus("Preview failed: "+err.Error(), true)
 	m.preview.SetContent(content)
 }
@@ -404,6 +422,7 @@ func (m *appModel) refreshPreview() {
 // changed advances the revision and schedules autosave.
 func (m appModel) changed() (tea.Model, tea.Cmd) {
 	m.revision++
+	// Capture this edit's revision so Update can reject the timer if another change follows.
 	revision := m.revision
 	return m, tea.Tick(autosaveDelay, func(time.Time) tea.Msg { return autosaveMsg(revision) })
 }
@@ -429,6 +448,7 @@ func (m *appModel) setStatus(message string, isError bool) {
 
 // title derives a compact label from the note content.
 func (t tab) title() string {
+	// Prefer the first meaningful content line over the saved or exported fallback label.
 	for _, line := range strings.Split(t.editor.Value(), "\n") {
 		line = strings.TrimSpace(strings.TrimLeft(line, "#*- "))
 		if line != "" {
@@ -491,6 +511,7 @@ func (m appModel) renderHeader() string {
 		return styleTab.Render(label)
 	}
 
+	// Anchor the visible range on the active tab, fitting left neighbors before right ones.
 	start, end := m.active, m.active
 	used := lipgloss.Width(renderTab(m.active))
 	for start > 0 {
@@ -536,6 +557,7 @@ func (m appModel) renderFooter() string {
 			leftText = m.status
 		}
 	}
+	// Reserve shortcut text, side padding, and a gap before fitting the variable status text.
 	leftText = truncateWidth(leftText, max(1, m.width-lipgloss.Width(rightText)-3))
 	left := styleMuted.Render(leftText)
 	if m.statusError {
@@ -628,6 +650,7 @@ func truncateWidth(value string, width int) string {
 	if width <= 3 {
 		return ""
 	}
+	// Wide characters occupy multiple cells; remove whole UTF-8 runes until the suffix fits.
 	for lipgloss.Width(value+"...") > width && len(value) > 0 {
 		_, size := utf8.DecodeLastRuneInString(value)
 		value = value[:len(value)-size]

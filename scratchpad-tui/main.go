@@ -23,6 +23,7 @@ func run(in io.Reader, out io.Writer) error {
 		return err
 	}
 
+	// Do not start with empty drafts if restoration fails; a later save could overwrite the session.
 	session, err := store.load()
 	if err != nil {
 		return fmt.Errorf("load drafts: %w", err)

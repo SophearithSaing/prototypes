@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 )
 
+// savedTab keeps metadata in the JSON index and content in a separate Markdown file.
 type savedTab struct {
 	ID      int    `json:"id"`
 	Title   string `json:"title"`
@@ -40,6 +41,7 @@ func newSessionStore() (sessionStore, error) {
 func (s sessionStore) load() (savedSession, error) {
 	session, err := s.loadIndex()
 	if os.IsNotExist(err) {
+		// A missing index is a fresh session, unlike a missing draft referenced by an index.
 		return savedSession{}, nil
 	}
 	if err != nil {
@@ -114,6 +116,7 @@ func recoverPendingNote(path string) error {
 		return fmt.Errorf("inspect note %s: %w", path, err)
 	}
 	if err == nil {
+		// Names or matching bytes are not ownership proof; both paths must link to the same file.
 		if !note.Mode().IsRegular() || !os.SameFile(staged, note) {
 			return fmt.Errorf("refusing to recover unrelated note %s", path)
 		}
@@ -149,10 +152,12 @@ func (s sessionStore) save(session savedSession) error {
 	if err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("read previous index: %w", err)
 	}
+	// Only the previous index grants permission to replace a draft; filenames alone do not.
 	owned := make(map[int]bool, len(previous.Tabs))
 	for _, tab := range previous.Tabs {
 		owned[tab.ID] = true
 	}
+	// Preflight every destination before writing content, recovering only uncommitted drafts.
 	current := make(map[int]bool, len(session.Tabs))
 	for _, tab := range session.Tabs {
 		current[tab.ID] = true
@@ -162,6 +167,7 @@ func (s sessionStore) save(session savedSession) error {
 				return err
 			}
 		}
+		// Lstat exposes symlinks so they are rejected rather than treated as regular drafts.
 		info, err := os.Lstat(path)
 		if err != nil && !os.IsNotExist(err) {
 			return fmt.Errorf("inspect note %s: %w", path, err)
@@ -182,7 +188,8 @@ func (s sessionStore) save(session savedSession) error {
 	}
 	data = append(data, '\n')
 
-	// Roll back new files on returned errors so the save can be retried.
+	// Best-effort rollback covers new drafts only; replaced, previously owned drafts
+	// may already contain new content even if publishing the index later fails.
 	var created []string
 	committed := false
 	defer func() {
@@ -197,6 +204,7 @@ func (s sessionStore) save(session savedSession) error {
 		if owned[tab.ID] {
 			err = writeAtomic(path, []byte(tab.Content), true)
 		} else {
+			// Track before publishing so rollback also handles a marker left by a failed link.
 			created = append(created, path)
 			err = writePendingNote(path, []byte(tab.Content))
 		}
@@ -204,15 +212,18 @@ func (s sessionStore) save(session savedSession) error {
 			return err
 		}
 	}
+	// Publish metadata only after every draft exists. This is the index commit boundary.
 	if err := writeAtomic(s.path, data, true); err != nil {
 		return err
 	}
 	committed = true
+	// Cleanup errors below do not undo the committed index or roll back its new drafts.
 	for _, tab := range session.Tabs {
 		if err := os.Remove(pendingNotePath(s.notePath(tab.ID))); err != nil && !os.IsNotExist(err) {
 			return fmt.Errorf("index saved but remove pending note: %w", err)
 		}
 	}
+	// Delete closed drafts from the old index, never by sweeping similarly named files.
 	for _, tab := range previous.Tabs {
 		if owned[tab.ID] && !current[tab.ID] {
 			if err := os.Remove(s.notePath(tab.ID)); err != nil && !os.IsNotExist(err) {
@@ -228,6 +239,7 @@ func (s sessionStore) save(session savedSession) error {
 
 // writeAtomic publishes a complete private file, optionally replacing its destination.
 func writeAtomic(path string, data []byte, replace bool) error {
+	// Stage beside the destination so rename and hard-link publication stay on one filesystem.
 	tmp, err := os.CreateTemp(filepath.Dir(path), ".scratchpad-*")
 	if err != nil {
 		return fmt.Errorf("create temporary file for %s: %w", path, err)
@@ -243,6 +255,7 @@ func writeAtomic(path string, data []byte, replace bool) error {
 		tmp.Close()
 		return fmt.Errorf("write temporary file for %s: %w", path, err)
 	}
+	// Flush and close before exposing the file; readers must never see a partial write.
 	if err := tmp.Sync(); err != nil {
 		tmp.Close()
 		return fmt.Errorf("sync temporary file for %s: %w", path, err)
