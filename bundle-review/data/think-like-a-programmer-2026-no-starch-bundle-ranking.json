@@ -1,0 +1,304 @@
+{
+  "bundle": "Think Like a Programmer 2026 by No Starch Press",
+  "ranking_method": {
+    "current_relevance_weight": 0.35,
+    "durability_weight": 0.3,
+    "practicality_weight": 0.35,
+    "note": "Publication date is used as evidence when judging current relevance, not as a separate score."
+  },
+  "cover_source": "Official Penguin Random House cover endpoint for No Starch Press titles, keyed by print ISBN",
+  "publisher_url_source": "No Starch Press canonical book pages",
+  "books": [
+    {
+      "ranking": 1,
+      "title": "Data Structures and Algorithms in JavaScript",
+      "authors": [
+        "Federico Kereki"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718502628",
+      "url": "https://nostarch.com/node/717",
+      "scores": {
+        "overall": 9.56,
+        "current": 9.5,
+        "durability": 9.7,
+        "practicality": 9.5
+      },
+      "description": "It teaches algorithm analysis, sorting, searching, trees, heaps, graphs, tries, functional data structures, and how to implement them using modern JavaScript. It is for frontend and backend JavaScript developers who want stronger computer-science fundamentals, better performance intuition, or serious interview preparation."
+    },
+    {
+      "ranking": 2,
+      "title": "Total TypeScript",
+      "authors": [
+        "Matt Pocock",
+        "Taylor Bell"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718504165",
+      "url": "https://nostarch.com/total-typescript",
+      "scores": {
+        "overall": 9.54,
+        "current": 9.9,
+        "durability": 8.8,
+        "practicality": 9.8
+      },
+      "description": "It teaches TypeScript from core types and narrowing through generics, type transformations, compiler configuration, modules, and designing maintainable type architectures. It is for JavaScript and TypeScript developers who want to move beyond basic annotations and use the type system deliberately in real applications."
+    },
+    {
+      "ranking": 3,
+      "title": "The Rust Programming Language, 3rd Edition",
+      "authors": [
+        "Steve Klabnik",
+        "Carol Nichols",
+        "Chris Krycho"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718504448",
+      "url": "https://nostarch.com/rust-programming-language-3e",
+      "scores": {
+        "overall": 9.52,
+        "current": 10.0,
+        "durability": 9.2,
+        "practicality": 9.3
+      },
+      "description": "It teaches modern Rust using the Rust 2024 Edition, including ownership, lifetimes, traits, error handling, concurrency, async programming, Cargo, testing, and unsafe-code analysis. It is for developers learning Rust seriously or already using it who want an authoritative path toward safe, production-grade systems programming."
+    },
+    {
+      "ranking": 4,
+      "title": "Algorithmic Thinking, 2nd Edition",
+      "authors": [
+        "Daniel Zingaro"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718503229",
+      "url": "https://nostarch.com/node/745",
+      "scores": {
+        "overall": 9.45,
+        "current": 9.3,
+        "durability": 9.8,
+        "practicality": 9.3
+      },
+      "description": "It teaches hash tables, recursion, dynamic programming, graphs, shortest paths, binary search, heaps, union-find, randomization, and the process of selecting an appropriate algorithm for a problem. It is for developers who want to improve problem-solving ability through substantial programming challenges rather than simply memorize textbook algorithms."
+    },
+    {
+      "ranking": 5,
+      "title": "Writing a C Compiler",
+      "authors": [
+        "Nora Sandler"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718500426",
+      "url": "https://nostarch.com/node/636",
+      "scores": {
+        "overall": 9.38,
+        "current": 9.3,
+        "durability": 9.9,
+        "practicality": 9.0
+      },
+      "description": "It teaches compiler construction by having you build a compiler for a substantial subset of C, covering lexing, parsing, semantic analysis, x64 code generation, optimization, and register allocation. It is for experienced programmers who want a deep but highly tangible understanding of how programming languages become executable machine code."
+    },
+    {
+      "ranking": 6,
+      "title": "Math for Programming",
+      "authors": [
+        "Ronald T. Kneusel"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718503588",
+      "url": "https://nostarch.com/math-programming",
+      "scores": {
+        "overall": 9.34,
+        "current": 9.5,
+        "durability": 9.9,
+        "practicality": 8.7
+      },
+      "description": "It teaches the mathematical toolkit programmers repeatedly encounter: discrete math, combinatorics, graphs, trees, probability, statistics, linear algebra, calculus, and differential equations. It is for working programmers who have gaps in their math background and want concepts tied back to algorithms, simulations, machine learning, and software problems."
+    },
+    {
+      "ranking": 7,
+      "title": "Introduction to Computer Organization: ARM Edition",
+      "authors": [
+        "Robert G. Plantz"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718502741",
+      "url": "https://nostarch.com/introcomputerorgforarm",
+      "scores": {
+        "overall": 9.25,
+        "current": 9.6,
+        "durability": 9.7,
+        "practicality": 8.5
+      },
+      "description": "It teaches how high-level programs map onto hardware through data representation, logic circuits, memory, CPUs, ARM64 assembly, calling conventions, data structures, and I/O. It is for programmers who want to understand what their code actually does below the runtime, especially those interested in performance, embedded development, or modern ARM systems."
+    },
+    {
+      "ranking": 8,
+      "title": "Computer Graphics from Scratch",
+      "authors": [
+        "Gabriel Gambetta"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718500761",
+      "url": "https://nostarch.com/node/568",
+      "scores": {
+        "overall": 9.2,
+        "current": 8.7,
+        "durability": 9.9,
+        "practicality": 9.1
+      },
+      "description": "It teaches 3D rendering from first principles by having you build both a ray tracer and a rasterizer, including cameras, lighting, shadows, reflections, perspective, clipping, and triangle rendering. It is for programmers who want a concrete project that develops graphics, geometry, and algorithmic intuition without depending heavily on a particular graphics API."
+    },
+    {
+      "ranking": 9,
+      "title": "The Art of Randomness",
+      "authors": [
+        "Ronald T. Kneusel"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718503243",
+      "url": "https://nostarch.com/art-randomness",
+      "scores": {
+        "overall": 9.08,
+        "current": 9.1,
+        "durability": 9.6,
+        "practicality": 8.6
+      },
+      "description": "It teaches how randomized algorithms and random processes are used in simulation, optimization, sampling, machine learning, cryptography, experimental design, art, and music through hands-on Python examples. It is for programmers who want practical intuition for when randomness is a useful computational tool rather than merely a source of unpredictable numbers."
+    },
+    {
+      "ranking": 10,
+      "title": "Computer Architecture",
+      "authors": [
+        "Charles Fox"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718502864",
+      "url": "https://nostarch.com/computerarchitecture",
+      "scores": {
+        "overall": 9.0,
+        "current": 9.3,
+        "durability": 9.8,
+        "practicality": 8.0
+      },
+      "description": "It teaches computer architecture from logic gates and simple CPUs through memory, pipelining, out-of-order execution, embedded systems, x86, RISC-V, GPUs, parallel machines, and emerging architectures. It is for programmers, students, and technical professionals who want a broad understanding of how computing hardware evolved and how modern processors actually execute software."
+    },
+    {
+      "ranking": 11,
+      "title": "Effective C, 2nd Edition",
+      "authors": [
+        "Robert C. Seacord"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718504127",
+      "url": "https://nostarch.com/node/790",
+      "scores": {
+        "overall": 8.91,
+        "current": 9.6,
+        "durability": 9.4,
+        "practicality": 7.8
+      },
+      "description": "It teaches professional C programming using C23, with emphasis on types, expressions, memory management, strings, I/O, program structure, debugging, testing, static analysis, security, and undefined behavior. It is for developers who use C or need a modern and security-conscious understanding of the language, although its direct value is naturally lower outside systems and embedded work."
+    },
+    {
+      "ranking": 12,
+      "title": "How Computers Really Work",
+      "authors": [
+        "Matthew Justice"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718500662",
+      "url": "https://nostarch.com/how-computers-really-work",
+      "scores": {
+        "overall": 8.84,
+        "current": 8.4,
+        "durability": 9.4,
+        "practicality": 8.8
+      },
+      "description": "It explains the computing stack from circuits, binary, memory, machine code, and operating systems through networking and the web, reinforced by dozens of optional hardware and software projects. It is for self-taught developers and curious programmers who want to fill in the lower-level gaps between source code, hardware, operating systems, and networks."
+    },
+    {
+      "ranking": 13,
+      "title": "Write Great Code, Volume 2, 2nd Edition",
+      "authors": [
+        "Randall Hyde"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718500389",
+      "url": "https://nostarch.com/writegreatcode2_2",
+      "scores": {
+        "overall": 8.77,
+        "current": 8.2,
+        "durability": 9.5,
+        "practicality": 8.7
+      },
+      "description": "It teaches high-level programmers to reason about the machine code their compilers generate, covering assembly fundamentals, compiler code generation, data representation, expressions, control flow, functions, and techniques for inspecting compiler output. It is for experienced developers who want to write high-level code with a stronger understanding of performance and what the compiler is doing underneath."
+    },
+    {
+      "ranking": 14,
+      "title": "Think Like a Programmer",
+      "authors": [
+        "V. Anton Spraul"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781593274245",
+      "url": "https://nostarch.com/thinklikeaprogrammer",
+      "scores": {
+        "overall": 8.68,
+        "current": 7.8,
+        "durability": 9.8,
+        "practicality": 8.6
+      },
+      "description": "It teaches systematic problem solving through decomposition, pattern recognition, data structures, recursion, reuse, and progressively harder open-ended programming exercises. It is primarily for newer or self-taught programmers who know syntax but struggle to turn vague problems into working solutions, though its problem-solving framework remains durable."
+    },
+    {
+      "ranking": 15,
+      "title": "The Art of ARM Assembly, Volume 1",
+      "authors": [
+        "Randall Hyde"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718502826",
+      "url": "https://nostarch.com/node/767",
+      "scores": {
+        "overall": 8.61,
+        "current": 9.7,
+        "durability": 9.2,
+        "practicality": 7.0
+      },
+      "description": "It teaches 64-bit ARM assembly in depth, including machine organization, GNU assembler syntax, memory, data representation, functions, parameters, arithmetic, control structures, conversions, tables, and strings. It is for systems, embedded, performance, and low-level developers who need to work directly with the architecture now powering many phones, Macs, servers, and embedded devices."
+    },
+    {
+      "ranking": 16,
+      "title": "The Secret Life of Programs",
+      "authors": [
+        "Jonathan E. Steinhart"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781593279707",
+      "url": "https://nostarch.com/foundationsofcomp",
+      "scores": {
+        "overall": 8.46,
+        "current": 8.0,
+        "durability": 9.3,
+        "practicality": 8.2
+      },
+      "description": "It explains foundational computing concepts spanning hardware, number representation, logic, memory, programming languages, operating systems, networking, security, and how software interacts with the underlying machine. It is for programmers who can already code but want a broader mental model of the systems beneath their applications."
+    },
+    {
+      "ranking": 17,
+      "title": "Quantum Computing",
+      "authors": [
+        "Andrew Glassner"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781718504004",
+      "url": "https://nostarch.com/node/799",
+      "scores": {
+        "overall": 8.22,
+        "current": 9.7,
+        "durability": 8.5,
+        "practicality": 6.5
+      },
+      "description": "It teaches quantum-computing fundamentals such as qubits, superposition, gates, interference, entanglement, measurement, and how to implement real quantum programs. It is for programmers and technically curious readers who want an accessible route into quantum computing, although its immediate usefulness for ordinary software engineering is still limited."
+    },
+    {
+      "ranking": 18,
+      "title": "How Software Works",
+      "authors": [
+        "V. Anton Spraul"
+      ],
+      "cover_url": "https://images.penguinrandomhouse.com/cover/9781593276669",
+      "url": "https://nostarch.com/howsoftwareworks",
+      "scores": {
+        "overall": 6.89,
+        "current": 6.8,
+        "durability": 8.6,
+        "practicality": 5.5
+      },
+      "description": "It conceptually explains technologies such as encryption, password protection, CGI, compression, search, concurrency, route finding, and internet communication without requiring readers to write code. It is aimed at non-programmers or beginners who want to understand what software is doing, making it considerably less valuable for an experienced engineer despite many concepts remaining valid."
+    }
+  ]
+}
