@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
   await page.evaluate(() => document.fonts.ready);
 });
 
-test("loads the 3D playground without errors or horizontal overflow", async ({
+test("loads the runtime diagram without errors or horizontal overflow", async ({
   page,
 }, testInfo) => {
   const errors: string[] = [];
@@ -16,6 +16,19 @@ test("loads the 3D playground without errors or horizontal overflow", async ({
     page.getByRole("heading", { name: "JavaScript, in motion." }),
   ).toBeVisible();
   await expect(page.locator(".scene-viewport canvas")).toBeVisible();
+  await expect(page.locator(".scene-viewport")).toHaveAttribute(
+    "data-renderer",
+    "webgl",
+  );
+  await expect(page.locator(".diagram-zone")).toHaveCount(4);
+  await expect(page.locator(".diagram-connection")).toHaveCount(5);
+  await expect(page.locator(".scene-viewport canvas")).toHaveCSS(
+    "pointer-events",
+    "none",
+  );
+  await expect(
+    page.getByRole("button", { name: "Reset camera view" }),
+  ).toHaveCount(0);
   await expect(page.locator(".scene-fallback")).toHaveCount(0);
   await expect(page.getByRole("progressbar")).toHaveAttribute(
     "aria-valuenow",
@@ -46,6 +59,15 @@ for (const scenario of scenarios) {
       await expect(page.getByRole("progressbar")).toHaveAttribute(
         "aria-valuenow",
         String(index + 1),
+      );
+      for (const zone of ["stack", "apis", "microtasks", "tasks"] as const) {
+        await expect(
+          page.locator(`.zone-${zone} .diagram-item code`),
+        ).toHaveText(scenario.frames[index][zone]);
+      }
+      await expect(page.locator(".scene-viewport")).toHaveAttribute(
+        "data-moving",
+        "false",
       );
       if (scenario.id === "overview" && index === 4)
         await page.screenshot({
@@ -197,7 +219,7 @@ test("keeps simulations usable without WebGL", async ({ page }) => {
   await page.reload();
   await expect(page.locator(".scene-fallback")).toBeVisible();
   await page.getByRole("button", { name: "Step", exact: true }).click();
-  await expect(page.locator(".zone-stack .fallback-items")).toContainText(
+  await expect(page.locator(".zone-stack .diagram-items")).toContainText(
     "Hello",
   );
   await expect(page.locator(".console-line > span:nth-child(2)")).toHaveText([
@@ -229,10 +251,17 @@ test("has no automated accessibility violations in the playground or guide", asy
 test("automatically finishes and can replay without carrying over output", async ({
   page,
 }) => {
-  await page.clock.install();
+  await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
+  await page.clock.pauseAt(new Date("2026-01-01T00:00:01Z"));
   await page.getByLabel("Playback speed").selectOption("2");
   await page.getByRole("button", { name: "Run simulation" }).click();
-  await page.clock.runFor(9000);
+  for (let index = 1; index < scenarios[0].frames.length; index++) {
+    await page.clock.runFor(900);
+    await expect(page.getByRole("progressbar")).toHaveAttribute(
+      "aria-valuenow",
+      String(index + 1),
+    );
+  }
   await expect(
     page.getByRole("button", { name: "Replay simulation" }),
   ).toBeVisible();
@@ -266,39 +295,164 @@ test("resizes cleanly from small phones to wide desktops", async ({ page }) => {
   }
 });
 
-test("supports orbiting and resetting the real 3D camera", async ({ page }) => {
+test("moves a 3D task along an arrow without moving the diagram", async ({
+  page,
+}, testInfo) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
+  await page.clock.pauseAt(new Date("2026-01-01T00:00:01Z"));
+  const position = () =>
+    page.locator(".zone-stack").evaluate((element) => {
+      const node = element as HTMLElement;
+      return {
+        x: node.offsetLeft,
+        y: node.offsetTop,
+        width: node.offsetWidth,
+        height: node.offsetHeight,
+      };
+    });
+  const originalBounds = await position();
+  await page.getByRole("button", { name: "Step", exact: true }).click();
+  await page.getByRole("button", { name: "Step", exact: true }).click();
+  await page.clock.runFor(450);
+  await expect(page.locator(".scene-viewport")).toHaveAttribute(
+    "data-moving",
+    "true",
+  );
+  await expect(
+    page.locator('.diagram-connection[data-route="stack-apis"]'),
+  ).toHaveClass(/connection-active/);
+  await expect(page.locator(".zone-apis .diagram-items")).toHaveCSS(
+    "opacity",
+    "0",
+  );
+  expect(await position()).toEqual(originalBounds);
+  await page.screenshot({
+    path: testInfo.outputPath("3d-transfer.png"),
+    fullPage: true,
+  });
+  await page.clock.runFor(700);
+  await expect(page.locator(".scene-viewport")).toHaveAttribute(
+    "data-moving",
+    "false",
+  );
+  await expect(page.locator(".zone-apis .diagram-item")).toBeVisible();
+  await expect(page.locator(".zone-apis .diagram-items")).toHaveCSS(
+    "opacity",
+    "0",
+  );
+  await page.getByLabel("Playback speed").selectOption("2");
+  await page.getByRole("button", { name: "Step", exact: true }).click();
+  await page.clock.runFor(650);
+  await expect(page.locator(".scene-viewport")).toHaveAttribute(
+    "data-moving",
+    "false",
+  );
+  await expect(page.locator(".zone-tasks .diagram-items")).toHaveCSS(
+    "opacity",
+    "0",
+  );
+});
+
+test("renders containers and resting blocks in WebGL, not HTML cards", async ({
+  page,
+}, testInfo) => {
+  await page.getByRole("button", { name: "Step", exact: true }).click();
+  await page.getByRole("button", { name: "Expand runtime" }).click();
+  await expect(page.locator(".scene-viewport")).toHaveAttribute(
+    "data-renderer",
+    "webgl",
+  );
+  await expect(page.locator(".zone-stack .diagram-items")).toHaveCSS(
+    "opacity",
+    "0",
+  );
+  await expect(page.locator(".zone-stack")).toHaveCSS(
+    "background-color",
+    "rgba(0, 0, 0, 0)",
+  );
   const canvas = page.locator(".scene-viewport canvas");
-  const bounds = (await canvas.boundingBox())!;
-  const originalPosition = await page
-    .locator(".zone-stack")
-    .evaluate((element) => parseFloat((element as HTMLElement).style.left));
-  await page.mouse.move(
-    bounds.x + bounds.width / 2,
-    bounds.y + bounds.height / 2,
+  expect(
+    await canvas.evaluate((element) => {
+      const context = (element as HTMLCanvasElement).getContext("webgl2")!;
+      return context.getParameter(context.CURRENT_PROGRAM) !== null;
+    }),
+  ).toBe(true);
+  const before = await canvas.screenshot({
+    path: testInfo.outputPath("before-hiding-html.png"),
+    scale: "css",
+  });
+  await page.addStyleTag({
+    content: ".diagram-board { visibility: hidden !important; }",
+  });
+  const after = await canvas.screenshot({
+    path: testInfo.outputPath("all-3d-runtime.png"),
+    scale: "css",
+  });
+  expect(after.equals(before)).toBe(true);
+});
+
+test("pauses transfers and clears an in-flight block on reset", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
+  await page.clock.pauseAt(new Date("2026-01-01T00:00:01Z"));
+  await page.getByRole("button", { name: "Run simulation" }).click();
+  await page.clock.runFor(1900);
+  await page.getByRole("button", { name: "Pause simulation" }).click();
+  await page.clock.runFor(2000);
+  await expect(page.locator(".scene-viewport")).toHaveAttribute(
+    "data-moving",
+    "true",
   );
-  await page.mouse.down();
-  await page.mouse.move(
-    bounds.x + bounds.width / 2 + 65,
-    bounds.y + bounds.height / 2 + 10,
-    {
-      steps: 8,
-    },
+  await expect(page.getByRole("progressbar")).toHaveAttribute(
+    "aria-valuenow",
+    "2",
   );
-  await page.mouse.up();
-  await expect
-    .poll(() =>
-      page
-        .locator(".zone-stack")
-        .evaluate((element) => parseFloat((element as HTMLElement).style.left)),
-    )
-    .not.toBeCloseTo(originalPosition, 1);
-  await page.getByRole("button", { name: "Reset camera view" }).click();
-  await expect
-    .poll(() =>
-      page
-        .locator(".zone-stack")
-        .evaluate((element) => parseFloat((element as HTMLElement).style.left)),
-    )
-    .toBeCloseTo(originalPosition, 1);
+  await page.getByRole("button", { name: "Resume simulation" }).click();
+  await page.clock.runFor(1200);
+  await expect(page.locator(".scene-viewport")).toHaveAttribute(
+    "data-moving",
+    "false",
+  );
+  await page.getByRole("button", { name: "Step", exact: true }).click();
+  await expect(page.locator(".scene-viewport")).toHaveAttribute(
+    "data-moving",
+    "true",
+  );
+  await page
+    .getByRole("button", { name: "Reset simulation", exact: true })
+    .click();
+  await expect(page.locator(".scene-viewport")).toHaveAttribute(
+    "data-moving",
+    "false",
+  );
+  await expect(page.locator(".diagram-item")).toHaveCount(0);
+});
+
+test("restores readable queues if WebGL is lost during a transfer", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.getByRole("button", { name: "Step", exact: true }).click();
+  await page.getByRole("button", { name: "Step", exact: true }).click();
+  await page
+    .locator(".scene-viewport canvas")
+    .dispatchEvent("webglcontextlost");
+  await expect(page.locator(".scene-fallback")).toBeVisible();
+  await expect(page.locator(".zone-apis .diagram-item")).toBeVisible();
+  await expect(page.locator(".zone-apis .diagram-item")).toHaveCSS(
+    "opacity",
+    "1",
+  );
+  await page.getByRole("button", { name: "Step", exact: true }).click();
+  await expect(page.locator(".zone-tasks .diagram-item")).toBeVisible();
+  await expect(page.locator(".zone-tasks .diagram-item")).toHaveCSS(
+    "opacity",
+    "1",
+  );
+  await expect(page.locator(".zone-tasks .diagram-item")).toContainText(
+    "timer callback",
+  );
 });

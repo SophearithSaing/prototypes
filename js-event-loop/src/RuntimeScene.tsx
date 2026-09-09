@@ -1,79 +1,107 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
-import { MoveUpRight, X } from "lucide-react";
+import { MousePointer2, RotateCw, X } from "lucide-react";
 import { getZoneDetails, zoneDetails } from "./scenarios";
+import { createDiagramLayout, createDiagramPath } from "./diagramGeometry";
+import type { DiagramBoxes } from "./diagramGeometry";
 import type { Frame, Scenario, ZoneId } from "./scenarios";
 
-const zones: ZoneId[] = ["stack", "apis", "microtasks", "tasks"];
-const positions: Record<ZoneId, THREE.Vector3> = {
-  stack: new THREE.Vector3(-3.4, 0, -1.65),
-  apis: new THREE.Vector3(3.4, 0, -1.65),
-  microtasks: new THREE.Vector3(3.4, 0, 2.1),
-  tasks: new THREE.Vector3(-3.4, 0, 2.1),
-};
+const zones: ZoneId[] = ["stack", "apis", "tasks", "microtasks"];
+const connections: { from: ZoneId; to: ZoneId }[] = [
+  { from: "stack", to: "apis" },
+  { from: "stack", to: "microtasks" },
+  { from: "apis", to: "tasks" },
+  { from: "microtasks", to: "stack" },
+  { from: "tasks", to: "stack" },
+  { from: "stack", to: "tasks" },
+];
 
 interface Props {
   frame: Frame;
   playing: boolean;
+  speed: number;
   runtime: Scenario["runtime"];
-  resetView: number;
-}
-
-interface SceneHandle {
-  update: (frame: Frame) => void;
-  reset: () => void;
-}
-
-function disposeObject(object: THREE.Object3D) {
-  object.traverse((child) => {
-    if (child instanceof THREE.Mesh || child instanceof THREE.Line) {
-      child.geometry.dispose();
-      const materials = Array.isArray(child.material)
-        ? child.material
-        : [child.material];
-      materials.forEach(
-        (material: THREE.Material & { map?: THREE.Texture | null }) => {
-          material.map?.dispose();
-          material.dispose();
-        },
-      );
-    }
-  });
 }
 
 export default function RuntimeScene({
   frame,
   playing,
+  speed,
   runtime,
-  resetView,
 }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
-  const labelRefs = useRef<Partial<Record<ZoneId, HTMLButtonElement | null>>>(
-    {},
-  );
-  const centerLabel = useRef<HTMLDivElement>(null);
-  const sceneHandle = useRef<SceneHandle | null>(null);
-  const playingRef = useRef(playing);
+  const boardRef = useRef<HTMLDivElement>(null);
+  const nodeRefs = useRef<Partial<Record<ZoneId, HTMLElement | null>>>({});
+  const sceneHandle = useRef<{
+    update: (next: Frame) => void;
+    wake: () => void;
+  } | null>(null);
   const frameRef = useRef(frame);
+  const runtimeRef = useRef(runtime);
+  const selectedRef = useRef<ZoneId | null>(null);
+  const playbackRef = useRef({ playing, speed });
+  const arrowId = useId();
   const [selectedZone, setSelectedZone] = useState<ZoneId | null>(null);
   const [unavailable, setUnavailable] = useState(false);
+  const [layout, setLayout] = useState({
+    points: {} as Record<string, [number, number][]>,
+    paths: {} as Record<string, string>,
+    loop: { x: 0, y: 0 },
+    delegate: { x: 0, y: 0 },
+  });
 
   useEffect(() => {
-    playingRef.current = playing;
-  }, [playing]);
+    playbackRef.current = { playing, speed };
+    sceneHandle.current?.wake();
+  }, [playing, speed]);
+
   useEffect(() => {
     frameRef.current = frame;
+    runtimeRef.current = runtime;
     sceneHandle.current?.update(frame);
-  }, [frame]);
+  }, [frame, runtime]);
+
   useEffect(() => {
-    sceneHandle.current?.reset();
-  }, [resetView]);
+    selectedRef.current = selectedZone;
+    sceneHandle.current?.wake();
+  }, [selectedZone]);
+
+  useEffect(() => {
+    const board = boardRef.current;
+    if (!board) return;
+
+    function measure() {
+      const origin = board!.getBoundingClientRect();
+      const bounds = Object.fromEntries(
+        zones.map((zone) => {
+          const rect = nodeRefs.current[zone]!.getBoundingClientRect();
+          return [
+            zone,
+            {
+              x: rect.left - origin.left,
+              y: rect.top - origin.top,
+              width: rect.width,
+              height: rect.height,
+            },
+          ];
+        }),
+      ) as DiagramBoxes;
+      setLayout(createDiagramLayout(bounds));
+    }
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(board);
+    zones.forEach((zone) => observer.observe(nodeRefs.current[zone]!));
+    measure();
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const mount = mountRef.current;
-    if (!mount) return;
+    const board = boardRef.current;
+    if (!mount || !board) return;
 
     let renderer: THREE.WebGLRenderer;
     try {
@@ -82,398 +110,473 @@ export default function RuntimeScene({
       setUnavailable(true);
       return;
     }
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-8, 8, 4.4, -4.4, 0.1, 80);
-    camera.position.set(6, 13, 22);
-    camera.lookAt(0, 0.2, 0.25);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
     renderer.domElement.setAttribute("aria-hidden", "true");
     mount.prepend(renderer.domElement);
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 0.2, 0.25);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.065;
-    controls.enablePan = false;
-    controls.enableZoom = false;
-    controls.minPolarAngle = 0.45;
-    controls.maxPolarAngle = 1.15;
-    controls.minAzimuthAngle = -0.45;
-    controls.maxAzimuthAngle = 1.25;
-    controls.update();
-    controls.saveState();
-
-    scene.add(new THREE.AmbientLight(0xffffff, 1.7));
-    const keyLight = new THREE.DirectionalLight(0xfffdf1, 2.6);
-    keyLight.position.set(-4, 10, 6);
-    keyLight.castShadow = true;
-    keyLight.shadow.mapSize.set(2048, 2048);
-    keyLight.shadow.camera.left = -9;
-    keyLight.shadow.camera.right = 9;
-    keyLight.shadow.camera.top = 9;
-    keyLight.shadow.camera.bottom = -9;
-    keyLight.shadow.normalBias = 0.04;
-    keyLight.shadow.bias = -0.0001;
-    keyLight.shadow.radius = 4;
-    scene.add(keyLight);
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 2000);
+    camera.position.z = 1000;
+    scene.add(new THREE.AmbientLight(0xffffff, 1.8));
+    const light = new THREE.DirectionalLight(0xffffff, 2.6);
+    light.position.set(-350, 500, 800);
+    light.castShadow = true;
+    light.shadow.mapSize.set(2048, 2048);
+    light.shadow.camera.left = -900;
+    light.shadow.camera.right = 900;
+    light.shadow.camera.top = 900;
+    light.shadow.camera.bottom = -900;
+    light.shadow.camera.far = 2500;
+    light.shadow.normalBias = 0.3;
+    light.shadow.radius = 3;
+    scene.add(light);
 
     const ground = new THREE.Mesh(
-      new THREE.PlaneGeometry(80, 80),
-      new THREE.ShadowMaterial({ opacity: 0.11 }),
+      new THREE.PlaneGeometry(4000, 4000),
+      new THREE.ShadowMaterial({ opacity: 0.13 }),
     );
-    ground.rotation.x = -Math.PI / 2;
-    ground.position.y = -0.13;
+    ground.position.z = -15;
     ground.receiveShadow = true;
     scene.add(ground);
-
-    const grid = new THREE.GridHelper(40, 64, "#ccd3c4", "#ccd3c4");
-    grid.position.y = -0.12;
-    const gridMaterial = grid.material as THREE.Material;
-    gridMaterial.transparent = true;
-    gridMaterial.opacity = 0.16;
-    scene.add(grid);
-
-    const stationGroups = {} as Record<ZoneId, THREE.Group>;
-    const taskGroups = {} as Record<ZoneId, THREE.Group>;
-    const platformMaterials = {} as Record<ZoneId, THREE.MeshStandardMaterial>;
-
-    zones.forEach((zone) => {
-      const group = new THREE.Group();
-      group.position.copy(positions[zone]);
-      scene.add(group);
-      stationGroups[zone] = group;
-
-      const baseMaterial = new THREE.MeshStandardMaterial({
-        color: zoneDetails[zone].color,
-        roughness: 0.6,
-        metalness: 0.02,
-      });
-      platformMaterials[zone] = baseMaterial;
-      const base = new THREE.Mesh(
-        new RoundedBoxGeometry(2.7, 0.19, 1.65, 4, 0.09),
-        baseMaterial,
-      );
-      base.position.y = 0.02;
-      base.castShadow = true;
-      base.receiveShadow = true;
-      group.add(base);
-
-      const top = new THREE.Mesh(
-        new RoundedBoxGeometry(2.54, 0.045, 1.48, 3, 0.02),
-        new THREE.MeshStandardMaterial({
-          color: zoneDetails[zone].color,
-          roughness: 0.8,
-          transparent: true,
-          opacity: 0.45,
-        }),
-      );
-      top.position.y = 0.135;
-      group.add(top);
-
-      const taskGroup = new THREE.Group();
-      group.add(taskGroup);
-      taskGroups[zone] = taskGroup;
-
-      const start = positions[zone].clone().setY(-0.04);
-      const end = start.clone().multiplyScalar(0.33).setY(-0.04);
-      const line = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints([start, end]),
-        new THREE.LineDashedMaterial({
-          color: "#8f9e8a",
-          dashSize: 0.11,
-          gapSize: 0.1,
-          transparent: true,
-          opacity: 0.5,
-        }),
-      );
-      line.computeLineDistances();
-      scene.add(line);
-    });
-
-    const loopGroup = new THREE.Group();
-    loopGroup.position.set(0, 0.015, 0.2);
-    const disc = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.36, 1.36, 0.07, 80),
-      new THREE.MeshStandardMaterial({
-        color: "#e5eadb",
-        transparent: true,
-        opacity: 0.6,
-        roughness: 0.9,
-      }),
-    );
-    disc.position.y = -0.015;
-    loopGroup.add(disc);
-
-    const track = new THREE.Mesh(
-      new THREE.TorusGeometry(1.17, 0.027, 8, 100),
-      new THREE.MeshStandardMaterial({ color: "#7e9b61", roughness: 0.7 }),
-    );
-    track.rotation.x = Math.PI / 2;
-    track.position.y = 0.065;
-    loopGroup.add(track);
-
-    const innerTrack = new THREE.Mesh(
-      new THREE.TorusGeometry(1.05, 0.009, 6, 80),
-      new THREE.MeshBasicMaterial({
-        color: "#a9ba95",
-        transparent: true,
-        opacity: 0.55,
-      }),
-    );
-    innerTrack.rotation.x = Math.PI / 2;
-    innerTrack.position.y = 0.065;
-    loopGroup.add(innerTrack);
-
-    [0.3, Math.PI + 0.3].forEach((angle) => {
-      const arrow = new THREE.Mesh(
-        new THREE.ConeGeometry(0.095, 0.24, 3),
-        new THREE.MeshStandardMaterial({ color: "#668847", roughness: 0.6 }),
-      );
-      arrow.position.set(Math.cos(angle) * 1.17, 0.07, Math.sin(angle) * 1.17);
-      arrow.quaternion.setFromUnitVectors(
-        new THREE.Vector3(0, 1, 0),
-        new THREE.Vector3(-Math.sin(angle), 0, Math.cos(angle)),
-      );
-      loopGroup.add(arrow);
-    });
-    scene.add(loopGroup);
-
-    const orb = new THREE.Mesh(
-      new THREE.SphereGeometry(0.085, 20, 20),
-      new THREE.MeshStandardMaterial({
-        color: "#496e31",
-        emissive: "#9cb766",
-        emissiveIntensity: 0.15,
-      }),
-    );
-    loopGroup.add(orb);
-
-    const movingTask = new THREE.Mesh(
-      new RoundedBoxGeometry(0.28, 0.28, 0.28, 3, 0.065),
-      new THREE.MeshStandardMaterial({ color: "#436b38", roughness: 0.3 }),
-    );
-    movingTask.castShadow = true;
-    movingTask.visible = false;
-    scene.add(movingTask);
-
-    const motionPreference = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    );
-    let reducedMotion = motionPreference.matches;
-    const onMotionChange = () => {
-      reducedMotion = motionPreference.matches;
-      needsRender = true;
-    };
-    motionPreference.addEventListener("change", onMotionChange);
-    let transfer: Frame["transfer"];
-    let transferStart = 0;
-    let currentActive: ZoneId | null = null;
-    let needsRender = true;
-    let visible = true;
-    const invalidate = () => {
-      needsRender = true;
-    };
-    controls.addEventListener("change", invalidate);
-
-    function update(nextFrame: Frame) {
-      needsRender = true;
-      currentActive = nextFrame.active;
-      transfer = nextFrame.transfer;
-      transferStart = performance.now();
-      zones.forEach((zone) => {
-        const taskGroup = taskGroups[zone];
-        disposeObject(taskGroup);
-        taskGroup.clear();
-        const items = nextFrame[zone];
-        const slots = Math.max(items.length, 3);
-
-        for (let index = 0; index < slots; index++) {
-          const label = items[index];
-          const geometry = new RoundedBoxGeometry(2.18, 0.31, 1.02, 3, 0.06);
-          const material = new THREE.MeshStandardMaterial({
-            color: zoneDetails[zone].color,
-            transparent: true,
-            opacity: label ? 0.95 : 0.2,
-            roughness: 0.48,
-            metalness: 0.01,
-            depthWrite: !!label,
-          });
-          const block = new THREE.Mesh(geometry, material);
-          block.position.set(0, 0.34 + index * 0.37, 0);
-          block.castShadow = !!label;
-          block.receiveShadow = true;
-          taskGroup.add(block);
-
-          const edges = new THREE.LineSegments(
-            new THREE.EdgesGeometry(new THREE.BoxGeometry(2.1, 0.26, 0.96)),
-            new THREE.LineBasicMaterial({
-              color: zoneDetails[zone].color,
-              transparent: true,
-              opacity: label ? 0.28 : 0.48,
-            }),
-          );
-          edges.position.copy(block.position);
-          taskGroup.add(edges);
-
-          if (label) {
-            const canvas = document.createElement("canvas");
-            canvas.width = 768;
-            canvas.height = 176;
-            const context = canvas.getContext("2d");
-            if (context) {
-              context.font = "500 68px monospace";
-              context.fillStyle = "#293c2f";
-              context.textAlign = "center";
-              context.textBaseline = "middle";
-              context.fillText(label, 384, 88, 712);
-              const texture = new THREE.CanvasTexture(canvas);
-              texture.colorSpace = THREE.SRGBColorSpace;
-              texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-              const text = new THREE.Mesh(
-                new THREE.PlaneGeometry(2.1, 0.74),
-                new THREE.MeshBasicMaterial({
-                  map: texture,
-                  transparent: true,
-                  depthWrite: false,
-                  side: THREE.DoubleSide,
-                }),
-              );
-              text.rotation.x = -Math.PI / 2;
-              text.position.set(0, block.position.y + 0.159, 0);
-              taskGroup.add(text);
-            }
-          }
-        }
-      });
-    }
-
-    sceneHandle.current = {
-      update,
-      reset: () => {
-        // Clear orbit inertia before restoring the saved camera.
-        controls.enableDamping = false;
-        controls.update();
-        controls.reset();
-        controls.enableDamping = true;
-      },
-    };
-    update(frameRef.current);
+    const diagram = new THREE.Group();
+    scene.add(diagram);
 
     let width = 1;
     let height = 1;
-    const resize = () => {
-      needsRender = true;
-      width = mount.clientWidth;
-      height = mount.clientHeight;
-      if (!width || !height) return;
-      const aspect = width / height;
-      const viewHeight = Math.max(6.6, 12.5 / aspect);
-      camera.left = (-viewHeight * aspect) / 2;
-      camera.right = (viewHeight * aspect) / 2;
-      camera.top = viewHeight / 2;
-      camera.bottom = -viewHeight / 2;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-    };
-    const observer = new ResizeObserver(resize);
-    observer.observe(mount);
-    const visibilityObserver = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      if (visible) needsRender = true;
-    });
-    visibilityObserver.observe(mount);
-    resize();
+    let current = frameRef.current;
+    let taskMeshes = {} as Record<ZoneId, THREE.Group[]>;
+    let zoneMaterials = {} as Record<ZoneId, THREE.MeshStandardMaterial>;
+    const boxes = {} as DiagramBoxes;
+    let motion: {
+      from: ZoneId;
+      to: ZoneId;
+      sourceIndex: number;
+      progress: number;
+      manual: boolean;
+      mesh: THREE.Group;
+      end: THREE.Vector3;
+      path: THREE.CurvePath<THREE.Vector3>;
+    } | null = null;
+    let animationFrame = 0;
+    let lastTime: number | null = null;
+    let visible = true;
+    let disposed = false;
+    const motionPreference = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
 
-    const projected = new THREE.Vector3();
-    const center = new THREE.Vector3(0, 0.08, 0.23);
-    let animationFrame: number;
-    let angle = -0.45;
-    let lastTime = performance.now();
-    function animate(now: number) {
-      animationFrame = requestAnimationFrame(animate);
-      const elapsed = Math.min((now - lastTime) / 1000, 0.05);
-      lastTime = now;
-      controls.update();
+    function disposeDiagram() {
+      diagram.traverse((object) => {
+        if (!(object instanceof THREE.Mesh)) return;
+        object.geometry.dispose();
+        const materials = Array.isArray(object.material)
+          ? object.material
+          : [object.material];
+        materials.forEach(
+          (material: THREE.Material & { map?: THREE.Texture | null }) => {
+            material.map?.dispose();
+            material.dispose();
+          },
+        );
+      });
+      diagram.clear();
+    }
 
-      const progress = (now - transferStart) / 850;
-      const inMotion =
-        !reducedMotion &&
-        (playingRef.current ||
-          (!!transfer && progress < 1) ||
-          movingTask.visible);
-      if (!visible || document.hidden || (!needsRender && !inMotion)) return;
-      needsRender = false;
+    function position(x: number, y: number, z: number) {
+      return new THREE.Vector3(x - width / 2, height / 2 - y, z);
+    }
 
-      if (playingRef.current && !reducedMotion) angle += elapsed * 0.7;
-      orb.position.set(Math.cos(angle) * 1.17, 0.115, Math.sin(angle) * 1.17);
+    function slot(zone: ZoneId, index: number) {
+      const box = boxes[zone];
+      const y =
+        zone === "stack"
+          ? box.y + box.height - 24 - index * 30
+          : box.y + 70 + index * 30;
+      return position(box.x + box.width / 2, y, 14);
+    }
+
+    function cuboid(
+      w: number,
+      h: number,
+      depth: number,
+      color: THREE.ColorRepresentation,
+    ) {
+      const mesh = new THREE.Mesh(
+        new RoundedBoxGeometry(w, h, depth, 3, Math.min(3, depth / 2)),
+        new THREE.MeshStandardMaterial({ color, roughness: 0.55 }),
+      );
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      return mesh;
+    }
+
+    function label(
+      value: string,
+      w: number,
+      h: number,
+      size: number,
+      color = "#43533a",
+    ) {
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.ceil(w * 2);
+      canvas.height = Math.ceil(h * 2);
+      const context = canvas.getContext("2d");
+      if (context) {
+        context.scale(2, 2);
+        context.font = `500 ${size}px ${size > 10 ? '"DM Sans", sans-serif' : '"DM Mono", monospace'}`;
+        context.fillStyle = color;
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(value, w / 2, h / 2, w - 4);
+      }
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      return new THREE.Mesh(
+        new THREE.PlaneGeometry(w, h),
+        new THREE.MeshBasicMaterial({
+          map: texture,
+          transparent: true,
+          depthWrite: false,
+          toneMapped: false,
+        }),
+      );
+    }
+
+    function finish() {
+      if (motion) motion.mesh.position.copy(motion.end);
+      motion = null;
+      mount!.dataset.moving = "false";
+    }
+
+    function wake() {
+      lastTime = null;
+      if (!animationFrame && !disposed)
+        animationFrame = requestAnimationFrame(animate);
+    }
+
+    function draw() {
+      if (!visible || document.hidden || disposed) return;
+      zones.forEach((zone) => {
+        const material = zoneMaterials[zone];
+        if (!material) return;
+        material.emissive.set(zoneDetails[zone].color);
+        material.emissiveIntensity =
+          current.active === zone || selectedRef.current === zone ? 0.22 : 0;
+      });
+      renderer.render(scene, camera);
+      mount!.dataset.renderer = "webgl";
+    }
+
+    function rebuild() {
+      if (disposed) return;
+      const inFlight = motion;
+      const viewport = mount!.getBoundingClientRect();
+      disposeDiagram();
+      taskMeshes = {} as Record<ZoneId, THREE.Group[]>;
+      zoneMaterials = {} as Record<ZoneId, THREE.MeshStandardMaterial>;
 
       zones.forEach((zone) => {
-        platformMaterials[zone].emissive.set(
-          currentActive === zone ? zoneDetails[zone].color : "#000000",
+        const element = nodeRefs.current[zone]!;
+        const rect = element.getBoundingClientRect();
+        const info = getZoneDetails(zone, runtimeRef.current);
+        const box = {
+          x: rect.left - viewport.left,
+          y: rect.top - viewport.top,
+          width: rect.width,
+          height: rect.height,
+        };
+        boxes[zone] = box;
+        const centerX = box.x + box.width / 2;
+        const centerY = box.y + box.height / 2;
+        const tint = new THREE.Color(info.color);
+        const backing = cuboid(
+          box.width,
+          box.height,
+          16,
+          tint.clone().lerp(new THREE.Color("#ffffff"), 0.22),
         );
-        platformMaterials[zone].emissiveIntensity =
-          currentActive === zone ? 0.22 : 0;
-        stationGroups[zone].position.y =
-          currentActive === zone && playingRef.current && !reducedMotion
-            ? Math.sin(now * 0.003) * 0.025
-            : 0;
-        projected
-          .copy(positions[zone])
-          .add(
-            zone === "stack" || zone === "apis"
-              ? new THREE.Vector3(0, 1.4, 0)
-              : new THREE.Vector3(0, -0.12, 1.13),
-          )
-          .project(camera);
-        const label = labelRefs.current[zone];
-        if (label) {
-          label.style.left = `${(projected.x * 0.5 + 0.5) * width}px`;
-          label.style.top = `${(-projected.y * 0.5 + 0.5) * height}px`;
+        backing.position.copy(position(centerX, centerY, 0));
+        zoneMaterials[zone] = backing.material;
+        diagram.add(backing);
+
+        const inset = cuboid(box.width - 5, box.height - 5, 3, "#fbfcf8");
+        inset.position.copy(position(centerX, centerY, 9));
+        diagram.add(inset);
+        const header = cuboid(
+          box.width - 7,
+          45,
+          5,
+          tint.clone().lerp(new THREE.Color("#ffffff"), 0.82),
+        );
+        header.position.copy(position(centerX, box.y + 25, 12));
+        diagram.add(header);
+
+        const small = box.width < 185;
+        const title = label(info.title, box.width - 37, 18, small ? 10 : 12);
+        title.position.copy(position(centerX - 10, box.y + 19, 15));
+        diagram.add(title);
+        const caption = label(
+          element.querySelector(".zone-caption")!.textContent!,
+          box.width - 15,
+          12,
+          small ? 6 : 7,
+          "#5f6e53",
+        );
+        caption.position.copy(position(centerX, box.y + 36, 15));
+        diagram.add(caption);
+        const count = cuboid(17, 16, 4, "#f8faf3");
+        count.position.copy(position(box.x + box.width - 15, box.y + 19, 16));
+        diagram.add(count);
+        const countText = label(String(current[zone].length), 15, 14, 8);
+        countText.position.copy(
+          position(box.x + box.width - 15, box.y + 19, 18.1),
+        );
+        diagram.add(countText);
+
+        taskMeshes[zone] = current[zone].map((value, index) => {
+          const group = new THREE.Group();
+          const w = Math.min(180, box.width - 22);
+          group.add(cuboid(w, 25, 12, info.color));
+          const text = label(
+            `${String(index + 1).padStart(2, "0")}  ${value}`,
+            w - 10,
+            21,
+            small ? 8 : 10,
+          );
+          text.position.z = 6.1;
+          group.add(text);
+          group.position.copy(slot(zone, index));
+          diagram.add(group);
+          return group;
+        });
+
+        if (!current[zone].length) {
+          const bodyY = box.y + 48 + (box.height - 48) / 2;
+          const placeholder = cuboid(
+            Math.min(150, box.width * 0.65),
+            19,
+            3,
+            tint.clone().lerp(new THREE.Color("#ffffff"), 0.78),
+          );
+          placeholder.position.copy(position(centerX, bodyY - 10, 12));
+          diagram.add(placeholder);
+          const empty = label(
+            zone === "stack"
+              ? "Stack is clear"
+              : zone === "apis"
+                ? "No host operations"
+                : "Nothing queued",
+            box.width - 12,
+            15,
+            small ? 8 : 9,
+            "#68715f",
+          );
+          empty.position.copy(position(centerX, bodyY + 17, 12));
+          diagram.add(empty);
         }
       });
 
-      projected.copy(center).project(camera);
-      if (centerLabel.current) {
-        centerLabel.current.style.left = `${(projected.x * 0.5 + 0.5) * width}px`;
-        centerLabel.current.style.top = `${(-projected.y * 0.5 + 0.5) * height}px`;
-      }
-
-      movingTask.visible = !!transfer && progress < 1 && !reducedMotion;
-      if (transfer && movingTask.visible) {
-        movingTask.position.lerpVectors(
-          positions[transfer.from],
-          positions[transfer.to],
-          Math.min(progress, 1),
+      const geometry = createDiagramLayout(boxes);
+      const routes: Record<string, THREE.Vector3[]> = {};
+      connections.forEach(({ from, to }) => {
+        if (runtimeRef.current !== "node" && from === "stack" && to === "tasks")
+          return;
+        const key = `${from}-${to}`;
+        const route = geometry.points[key].map(([x, y]) => position(x, y, 4));
+        routes[key] = route;
+        const active =
+          current.transfer?.from === from && current.transfer.to === to;
+        const color = active ? "#648549" : "#aab69b";
+        const rail = new THREE.Mesh(
+          new THREE.TubeGeometry(
+            createDiagramPath(route),
+            80,
+            active ? 1.35 : 0.9,
+            6,
+            false,
+          ),
+          new THREE.MeshStandardMaterial({ color, roughness: 0.65 }),
         );
-        movingTask.position.y = 0.85 + Math.sin(progress * Math.PI) * 1.5;
-        movingTask.rotation.set(progress * Math.PI, progress * Math.PI, 0);
-      }
-      renderer.render(scene, camera);
-    }
-    animationFrame = requestAnimationFrame(animate);
+        rail.castShadow = true;
+        diagram.add(rail);
+        const tip = route.at(-1)!;
+        const direction = tip.clone().sub(route.at(-2)!).normalize();
+        const arrow = new THREE.Mesh(
+          new THREE.ConeGeometry(3, 7, 4),
+          new THREE.MeshStandardMaterial({ color }),
+        );
+        arrow.position.copy(tip).addScaledVector(direction, -3.5);
+        arrow.quaternion.setFromUnitVectors(
+          new THREE.Vector3(0, 1, 0),
+          direction,
+        );
+        arrow.castShadow = true;
+        diagram.add(arrow);
+      });
 
+      const loop = position(geometry.loop.x, geometry.loop.y, 12);
+      const disc = new THREE.Mesh(
+        new THREE.CylinderGeometry(19, 19, 6, 48),
+        new THREE.MeshStandardMaterial({ color: "#e0eacb", roughness: 0.55 }),
+      );
+      disc.rotation.x = Math.PI / 2;
+      disc.position.copy(loop);
+      disc.castShadow = true;
+      diagram.add(disc);
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(16, 0.9, 6, 48, Math.PI * 1.75),
+        new THREE.MeshStandardMaterial({ color: "#7a965c" }),
+      );
+      ring.position.copy(loop).setZ(15.5);
+      diagram.add(ring);
+      const loopLabel = label("EVENT LOOP", 29, 16, 5);
+      loopLabel.position.copy(loop).setZ(15.6);
+      diagram.add(loopLabel);
+
+      if (inFlight) {
+        const { from, to, sourceIndex } = inFlight;
+        const rail = routes[`${from}-${to}`];
+        const mesh = taskMeshes[to].at(-1);
+        if (rail && mesh) {
+          const start = slot(from, sourceIndex);
+          const end = mesh.position.clone();
+          const route = rail.map((point) => point.clone().setZ(14));
+          const entrance = route[0];
+          const exit = route.at(-1)!;
+          const path = createDiagramPath([
+            start,
+            new THREE.Vector3(entrance.x, start.y, 14),
+            ...route,
+            new THREE.Vector3(exit.x, end.y, 14),
+            end,
+          ]);
+          motion = { ...inFlight, mesh, end, path };
+          const p = motion.progress;
+          mesh.position.copy(path.getPointAt(p * p * (3 - 2 * p)));
+        } else finish();
+      }
+      draw();
+      wake();
+    }
+
+    function update(next: Frame) {
+      finish();
+      const previous = current;
+      current = next;
+      if (next.transfer && !motionPreference.matches) {
+        const { from, to } = next.transfer;
+        const sourceIndex =
+          from === "stack"
+            ? Math.max(previous.stack.length, next.stack.length, 1) - 1
+            : 0;
+        // Rebuild binds this transfer to the destination's actual persistent mesh.
+        motion = {
+          from,
+          to,
+          sourceIndex,
+          progress: 0,
+          manual: !playbackRef.current.playing,
+          mesh: new THREE.Group(),
+          end: new THREE.Vector3(),
+          path: new THREE.CurvePath<THREE.Vector3>(),
+        };
+        mount!.dataset.moving = "true";
+      }
+      rebuild();
+    }
+
+    function animate(now: number) {
+      animationFrame = 0;
+      if (!visible || document.hidden || disposed) return;
+      const canAdvance =
+        motion && (motion.manual || playbackRef.current.playing);
+      if (motion) {
+        if (lastTime !== null && canAdvance)
+          motion.progress +=
+            (Math.min(now - lastTime, 64) * playbackRef.current.speed) / 1000;
+        if (motionPreference.matches || motion.progress >= 1) finish();
+        else {
+          const p = motion.progress;
+          motion.mesh.position.copy(
+            motion.path.getPointAt(p * p * (3 - 2 * p)),
+          );
+        }
+      }
+      lastTime = now;
+      draw();
+      if (motion && canAdvance) animationFrame = requestAnimationFrame(animate);
+    }
+
+    const resize = () => {
+      const changed =
+        width !== mount.clientWidth || height !== mount.clientHeight;
+      width = mount.clientWidth;
+      height = mount.clientHeight;
+      if (!width || !height) return;
+      camera.left = -width / 2;
+      camera.right = width / 2;
+      camera.top = height / 2;
+      camera.bottom = -height / 2;
+      camera.updateProjectionMatrix();
+      // Oblique orthographic projection keeps diagram faces aligned, but reveals depth.
+      camera.projectionMatrix.elements[8] =
+        camera.projectionMatrix.elements[0] * 0.38;
+      camera.projectionMatrix.elements[9] =
+        camera.projectionMatrix.elements[5] * 0.3;
+      camera.projectionMatrix.elements[12] =
+        camera.projectionMatrix.elements[8] * (camera.position.z - 20);
+      camera.projectionMatrix.elements[13] =
+        camera.projectionMatrix.elements[9] * (camera.position.z - 20);
+      camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+      if (changed) renderer.setSize(width, height);
+      rebuild();
+    };
+    const observer = new ResizeObserver(resize);
+    observer.observe(mount);
+    observer.observe(board);
+    zones.forEach((zone) => observer.observe(nodeRefs.current[zone]!));
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      wake();
+    });
+    visibilityObserver.observe(mount);
     const contextLost = (event: Event) => {
       event.preventDefault();
       cancelAnimationFrame(animationFrame);
+      animationFrame = 0;
+      finish();
+      sceneHandle.current = null;
+      disposed = true;
+      delete mount.dataset.renderer;
       setUnavailable(true);
     };
     renderer.domElement.addEventListener("webglcontextlost", contextLost);
+    motionPreference.addEventListener("change", wake);
+    document.addEventListener("visibilitychange", wake);
+    sceneHandle.current = { update, wake };
+    resize();
+    update(frameRef.current);
+    document.fonts.ready.then(() => {
+      if (!disposed) rebuild();
+    });
 
     return () => {
       cancelAnimationFrame(animationFrame);
+      finish();
+      disposed = true;
+      delete mount.dataset.renderer;
       observer.disconnect();
       visibilityObserver.disconnect();
-      motionPreference.removeEventListener("change", onMotionChange);
+      motionPreference.removeEventListener("change", wake);
+      document.removeEventListener("visibilitychange", wake);
       renderer.domElement.removeEventListener("webglcontextlost", contextLost);
-      controls.removeEventListener("change", invalidate);
-      controls.dispose();
-      disposeObject(scene);
-      keyLight.shadow.dispose();
+      ground.geometry.dispose();
+      ground.material.dispose();
+      disposeDiagram();
+      light.shadow.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
       renderer.domElement.remove();
@@ -496,56 +599,154 @@ export default function RuntimeScene({
             ? "Following the flow"
             : "Ready when you are"}
       </div>
-      <div className="scene-dimension">3D WORKSPACE</div>
-      {unavailable && (
-        <p className="fallback-notice">
-          3D is unavailable on this device. The live queue view and simulations
-          still work.
-        </p>
-      )}
-
-      <div className="scene-center-label" ref={centerLabel} aria-hidden="true">
-        <span>EVENT</span>
-        <span>LOOP</span>
+      <div className="scene-dimension">
+        {unavailable ? "RUNTIME DIAGRAM" : "3D RUNTIME / DIAGRAM VIEW"}
       </div>
 
-      {zones.map((zone) => {
-        const info = getZoneDetails(zone, runtime);
-        return (
-          <button
-            key={zone}
-            ref={(element) => {
-              labelRefs.current[zone] = element;
-            }}
-            className={`zone-label zone-${zone} ${frame.active === zone ? "zone-active" : ""} ${selectedZone === zone ? "zone-selected" : ""}`}
-            onClick={() => setSelectedZone(selectedZone === zone ? null : zone)}
-            aria-label={`${info.title}: ${frame[zone].length} ${zone === "apis" ? "registered operations" : "items"}. Learn more`}
-            aria-expanded={selectedZone === zone}
+      <div className="diagram-board" ref={boardRef}>
+        <svg className="diagram-links" aria-hidden="true">
+          <defs>
+            <marker
+              id={`${arrowId}-arrow`}
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+              markerUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 1 1 L 7 4 L 1 7"
+                fill="none"
+                stroke="#a1ac94"
+                strokeWidth="1.4"
+              />
+            </marker>
+            <marker
+              id={`${arrowId}-active`}
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+              markerUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 1 1 L 7 4 L 1 7"
+                fill="none"
+                stroke="#66874c"
+                strokeWidth="1.6"
+              />
+            </marker>
+          </defs>
+          {connections
+            .filter(
+              ({ from, to }) =>
+                runtime === "node" || from !== "stack" || to !== "tasks",
+            )
+            .map(({ from, to }) => {
+              const key = `${from}-${to}`;
+              const active =
+                frame.transfer?.from === from && frame.transfer.to === to;
+              return (
+                <path
+                  key={key}
+                  data-route={key}
+                  className={`diagram-connection ${active ? "connection-active" : ""}`}
+                  d={layout.paths[key] || ""}
+                  markerEnd={`url(#${arrowId}-${active ? "active" : "arrow"})`}
+                />
+              );
+            })}
+          <text
+            className="diagram-link-label"
+            x={layout.delegate.x}
+            y={layout.delegate.y}
+            textAnchor="middle"
           >
-            <span className="zone-name">
-              <i style={{ backgroundColor: info.color }} />
-              {info.title}
-              <span className="zone-count">{frame[zone].length}</span>
-            </span>
-            <span className="zone-caption">
-              {zone === "stack"
-                ? "LAST IN, FIRST OUT"
-                : zone === "apis"
-                  ? "HOST ENVIRONMENT"
-                  : zone === "microtasks"
-                    ? "DRAINED BEFORE TASKS"
-                    : runtime === "node"
-                      ? "POLL / CHECK / TIMERS"
-                      : "ONE TASK AT A TIME"}
-            </span>
-            {unavailable && (
-              <span className="fallback-items">
-                {frame[zone].join(" / ") || "Empty"}
-              </span>
-            )}
-          </button>
-        );
-      })}
+            delegate
+          </text>
+        </svg>
+
+        <div
+          className="diagram-loop"
+          style={{ left: layout.loop.x, top: layout.loop.y }}
+          role="img"
+          aria-label="Event loop selects ready callbacks"
+        >
+          <RotateCw size={17} />
+          <span>EVENT LOOP</span>
+        </div>
+
+        {zones.map((zone) => {
+          const info = getZoneDetails(zone, runtime);
+          return (
+            <section
+              key={zone}
+              ref={(element) => {
+                nodeRefs.current[zone] = element;
+              }}
+              className={`diagram-zone zone-${zone} ${frame.active === zone ? "zone-active" : ""} ${selectedZone === zone ? "zone-selected" : ""}`}
+              style={{ "--zone-color": info.color } as CSSProperties}
+              aria-label={info.title}
+            >
+              <button
+                className="zone-label"
+                onClick={() =>
+                  setSelectedZone(selectedZone === zone ? null : zone)
+                }
+                aria-label={`${info.title}: ${frame[zone].length} ${zone === "apis" ? "registered operations" : "items"}. Learn more`}
+                aria-expanded={selectedZone === zone}
+              >
+                <span className="zone-name">
+                  <i />
+                  {info.title}
+                  <span className="zone-count">{frame[zone].length}</span>
+                </span>
+                <span className="zone-caption">
+                  {zone === "stack"
+                    ? "LAST IN, FIRST OUT"
+                    : zone === "apis"
+                      ? "HOST ENVIRONMENT"
+                      : zone === "microtasks"
+                        ? "01 / DRAIN FIRST"
+                        : runtime === "node"
+                          ? "02 / PHASE CALLBACKS"
+                          : "02 / NEXT READY TASK"}
+                </span>
+              </button>
+              {frame[zone].length ? (
+                <ol
+                  className="diagram-items"
+                  aria-label={`${info.title} contents`}
+                >
+                  {frame[zone].map((label, index) => (
+                    <li
+                      className="diagram-item"
+                      key={`${index}-${label}`}
+                      title={label}
+                    >
+                      <span className="item-position">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <code>{label}</code>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <div className="diagram-empty">
+                  <span aria-hidden="true" />
+                  {zone === "stack"
+                    ? "Stack is clear"
+                    : zone === "apis"
+                      ? "No host operations"
+                      : "Nothing queued"}
+                </div>
+              )}
+            </section>
+          );
+        })}
+      </div>
 
       {detail && (
         <div
@@ -567,20 +768,13 @@ export default function RuntimeScene({
           <p>{detail.description}</p>
         </div>
       )}
-
       <div className="scene-instruction">
-        <MoveUpRight size={12} />
+        <MousePointer2 size={12} />
         <span>
           {unavailable
-            ? "Click a component to learn more"
-            : "Drag to orbit. Click a component to explore."}
+            ? "3D unavailable. Diagram and playback still work."
+            : "Follow the arrows. Click a component to explore."}
         </span>
-      </div>
-      <div className="scene-axis" aria-hidden="true">
-        <span>y</span>
-        <i />
-        <span>x</span>
-        <span>z</span>
       </div>
     </div>
   );

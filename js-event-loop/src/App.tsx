@@ -67,7 +67,6 @@ export default function App() {
   const [frameIndex, setFrameIndex] = useState(-1);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
-  const [resetView, setResetView] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
@@ -352,15 +351,6 @@ export default function App() {
                 <div className="panel-actions">
                   <button
                     className="icon-button"
-                    title="Reset camera view"
-                    aria-label="Reset camera view"
-                    onClick={() => setResetView((value) => value + 1)}
-                  >
-                    <RotateCcw size={15} />
-                  </button>
-                  <span className="action-separator" />
-                  <button
-                    className="icon-button"
                     ref={expandRef}
                     title={expanded ? "Exit expanded view" : "Expand runtime"}
                     aria-label={
@@ -378,7 +368,7 @@ export default function App() {
                 frame={frame}
                 playing={playing}
                 runtime={scenario.runtime}
-                resetView={resetView}
+                speed={speed}
               />
 
               <div className="runtime-legend" aria-label="Runtime color key">
@@ -758,8 +748,10 @@ export default function App() {
                 <h3>Slow down the invisible parts.</h3>
                 <p>
                   Pause whenever you like, advance with Step, or change the
-                  playback speed. Drag the 3D workspace to orbit. Click any
-                  component to understand its role.
+                  playback speed. The entire runtime is 3D, arranged like a flat
+                  diagram. Blocks slide along its paths from one slot to the
+                  next, without jumping through space. Click a component to
+                  understand its role.
                 </p>
               </div>
             </section>
