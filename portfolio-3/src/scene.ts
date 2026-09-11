@@ -3,7 +3,11 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
-import { RoadJourney, type RoadTravelState } from "./road-journey";
+import {
+  RoadJourney,
+  createRoadControls,
+  type RoadTravelState,
+} from "./road-journey";
 
 export interface RoadSceneState extends RoadTravelState {
   available: boolean;
@@ -431,10 +435,8 @@ export function createJourneyScene(
   let focusedMilestone: number | null = null;
   const road = new RoadJourney();
   const roadLookAt = new THREE.Vector3();
-  const roadTangent = new THREE.Vector3();
   let view: "overview" | "road" = "overview";
   let layoutView: "overview" | "road" = view;
-  let nodeParameters: number[] = [];
   const initialBounds = container.getBoundingClientRect();
   let inViewport =
     initialBounds.bottom > 0 &&
@@ -531,8 +533,8 @@ export function createJourneyScene(
       return THREE.MathUtils.clamp(x, min, max);
     });
     const nodeY = [0.75, 0.6, 0.45, 0.3, 0.15];
-    const controls = [floorPoint(0.45, 0.83), floorPoint(0.455, 0.792)];
-    const nodeControlIndices: number[] = [];
+    let controls = [floorPoint(0.45, 0.83), floorPoint(0.455, 0.792)];
+    let nodeControlIndices: number[] = [];
     for (let index = 0; index < nodes.length; index++) {
       nodeControlIndices.push(controls.length);
       controls.push(floorPoint(nodeX[index], nodeY[index]));
@@ -546,11 +548,13 @@ export function createJourneyScene(
       }
     }
     controls.push(floorPoint(0.56, 0.135), floorPoint(0.53, 0.125));
+    if (view === "road") {
+      const roadLayout = createRoadControls(controls, nodeControlIndices);
+      controls = roadLayout.points;
+      nodeControlIndices = roadLayout.stopIndices;
+    }
     mainCurve = new THREE.CatmullRomCurve3(controls, false, "centripetal");
     mainCurve.arcLengthDivisions = 600;
-    nodeParameters = nodeControlIndices.map(
-      (index) => index / (controls.length - 1),
-    );
     road.setRoute(mainCurve, nodeControlIndices);
     replaceGeometry(
       mainCore,
@@ -855,15 +859,16 @@ export function createJourneyScene(
       index < Math.min(nodes.length, milestoneElements.length);
       index++
     ) {
-      nodes[index].group.getWorldPosition(projected);
       const element = milestoneElements[index];
       if (view === "road") {
-        mainCurve.getTangent(nodeParameters[index], roadTangent);
         const side = index % 2 ? -1 : 1;
-        const offset = Math.min(1.15, camera.aspect * 0.8) * side;
-        projected.x -= roadTangent.z * offset;
-        projected.z += roadTangent.x * offset;
-        projected.y += 1.8;
+        road.getStopAnchor(
+          index,
+          Math.min(1.65, camera.aspect * 1.5) * side,
+          projected,
+        );
+      } else {
+        nodes[index].group.getWorldPosition(projected);
       }
       projected.project(camera);
       let x = (projected.x * 0.5 + 0.5) * width;
@@ -896,12 +901,12 @@ export function createJourneyScene(
           x = THREE.MathUtils.clamp(
             x,
             halfWidth,
-            Math.max(halfWidth, width - halfWidth - (compact ? 390 : 0)),
+            Math.max(halfWidth, width - halfWidth),
           );
           y = THREE.MathUtils.clamp(
             y,
             215,
-            Math.max(215, height - (compact ? 30 : 300)),
+            Math.max(215, height - (compact ? 106 : 300)),
           );
         }
         if (!element.hidden) {

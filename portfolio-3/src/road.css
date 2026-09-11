@@ -416,23 +416,42 @@
     margin-top: 8px;
   }
   .road-hud {
-    left: auto;
+    left: 16px;
     right: 16px;
     bottom: 14px;
     transform: none;
-    width: min(320px, calc(100% - 270px));
-    padding: 14px 18px 12px;
+    width: auto;
+    padding: 10px 14px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    align-items: center;
+    gap: 18px;
   }
   .road-stations,
   #road-help {
     display: none;
   }
   .road-stop-title {
-    font-size: 26px;
+    font-size: 22px;
+    margin-top: 4px;
   }
   .road-stop-info {
-    min-height: 91px;
-    margin-bottom: 8px;
+    min-height: 0;
+    margin: 0;
+    text-align: left;
+  }
+  .road-stop-kicker {
+    justify-content: flex-start;
+    font-size: 7px;
+  }
+  .road-stop-note {
+    display: none;
+  }
+  .road-read {
+    justify-content: flex-start;
+    min-height: 20px;
+    margin: 2px 0 0;
+    font-size: 8px;
   }
   .road-navigation {
     gap: 9px;

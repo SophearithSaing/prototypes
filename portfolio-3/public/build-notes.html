@@ -2178,11 +2178,10 @@ replaceGeometry(
               The ground-level mode reuses the luminous curve with a low camera
               and floating HTML labels.
               <code>src/road-journey.ts</code> measures progress in world-space
-              distance, eases each button-requested leg, and samples a
-              look-ahead point to turn through the bends. Ambient animation and
-              intentional travel have separate clocks, so pausing the background
-              does not prevent a requested trip. Reduced-motion navigation goes
-              directly to the destination.
+              distance and eases each button-requested leg. Ambient animation
+              and intentional travel have separate clocks, so pausing the
+              background does not prevent a requested trip. Reduced-motion
+              navigation goes directly to the destination.
             </p>
             <p>
               A full-screen native dialog contains the guided experience. Wheel
@@ -2191,6 +2190,24 @@ replaceGeometry(
               transition. Each arrival enables its chapter, and leaving the mode
               restores the original overview. The route has a fixed authoring
               aspect ratio so resizing does not reshape the road mid-trip.
+            </p>
+            <p>
+              The first camera followed a point just 3.5 units ahead on the
+              winding line. Review made the problem clear: it turned too
+              sharply. The first refinement used a forward rail with 0.45 units
+              of lateral sway and a 12-unit look-ahead, limiting its heading
+              variation to about two degrees each way.
+            </p>
+            <p>
+              A second review found that the line was still much more aggressive
+              than the movement. Road mode now builds two broad S-curves and
+              shares their wave profile with the camera: 1.0 unit of road sway,
+              0.8 units of camera sway, and about four degrees of steering each
+              way. Dense curve samples keep the line smooth between stops. The
+              camera is raised to 2.4 units with a roughly 13-degree downward
+              angle. Its previous 1.65-unit height and 8.5-degree angle remain
+              in comments for easy reversion. Experience cards are anchored
+              beside each arrival view so they retain their alternating sides.
             </p>
             <div class="limitations">
               <h3>What remains intentionally unfinished</h3>

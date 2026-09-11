@@ -40,7 +40,8 @@ The contact form opens a prefilled email draft. It does not submit to a server o
 - Click or keyboard-activate any milestone to read a chapter and navigate the timeline.
 - Open a project for its concept notes and technology stack.
 - Drag the overview scene or move the pointer for subtle perspective changes.
-- Choose **View from the ground** to enter the road-level journey. **First stop**, **Next stop**, and **Previous stop** move the camera along the same wavy line, turning with its curves. Scroll, touch dragging, and pointer movement do not control the road camera.
+- Choose **View from the ground** to enter the road-level journey. **First stop**, **Next stop**, and **Previous stop** advance through the wavy road with gentle left/right drift and a mostly forward-facing camera. Experiences alternate along both sides. Scroll, touch dragging, and pointer movement do not control the road camera.
+- The road and camera share broad S-curves: the camera follows 80% of the line's lateral movement with approximately four degrees of steering each way. The experimental raised viewpoint and its previous height/angle are together in `src/road-journey.ts` for easy adjustment or reversion.
 - Each arrival unlocks its floating experience card and **Read this chapter**. **Back to overview** or Escape leaves the road; Escape first closes an open chapter. Reduced-motion visitors move directly between stops.
 - Ambient sound is synthesized with the Web Audio API and only starts on request.
 - Pause controls and system reduced-motion preferences are supported.
@@ -50,4 +51,4 @@ The contact form opens a prefilled email draft. It does not submit to a server o
 
 ## Road Navigation Tests
 
-Run `npm test` with Node.js 22.18 or newer. The built-in Node test runner verifies curve-following and turning, sequential stop boundaries, repeated-command protection, reverse travel, reduced-motion jumps, stationary cameras, and resize/reset behavior.
+Run `npm test` with Node.js 22.18 or newer. The built-in Node test runner verifies path/camera alignment, raised viewpoint bounds, gentle sway and bounded heading changes, alternating roadside cards, sequential stop boundaries, repeated-command protection, reverse travel, reduced-motion jumps, stationary cameras, and resize/reset behavior.
