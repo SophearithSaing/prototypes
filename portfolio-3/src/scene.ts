@@ -3,14 +3,22 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { RoadJourney, type RoadTravelState } from "./road-journey";
+
+export interface RoadSceneState extends RoadTravelState {
+  available: boolean;
+}
 
 export function createJourneyScene(
   container: HTMLElement,
   milestoneElements: HTMLElement[],
+  onRoadChange?: (state: RoadSceneState) => void,
 ): {
   dispose(): void;
   setPaused(paused: boolean): void;
   setFocusedMilestone(index: number | null): void;
+  setView(view: "overview" | "road"): void;
+  moveToStop(direction: -1 | 1): void;
 } {
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const originalPositions = milestoneElements.map((element) => ({
@@ -98,6 +106,7 @@ export function createJourneyScene(
   const atmosphere = new THREE.Mesh(
     new THREE.PlaneGeometry(2, 2),
     new THREE.ShaderMaterial({
+      uniforms: { uRoad: { value: 0 } },
       depthTest: false,
       depthWrite: false,
       vertexShader: `
@@ -108,6 +117,7 @@ export function createJourneyScene(
         }
       `,
       fragmentShader: `
+        uniform float uRoad;
         varying vec2 vUv;
         float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
         float noise(vec2 p) {
@@ -120,8 +130,9 @@ export function createJourneyScene(
           vec2 p = vUv;
           float cloud = noise(p * vec2(7.0, 11.0)) * 0.57
             + noise(p * 29.0) * 0.28 + noise(p * 73.0) * 0.15;
-          float blue = exp(-dot((p - vec2(0.55, 0.69)) * vec2(2.7, 2.0),
-            (p - vec2(0.55, 0.69)) * vec2(2.7, 2.0)));
+          vec2 blueCenter = vec2(0.55, mix(0.69, 0.48, uRoad));
+          float blue = exp(-dot((p - blueCenter) * vec2(2.7, 2.0),
+            (p - blueCenter) * vec2(2.7, 2.0)));
           float gold = exp(-dot((p - vec2(0.47, 0.24)) * vec2(5.8, 3.0),
             (p - vec2(0.47, 0.24)) * vec2(5.8, 3.0)));
           vec3 color = vec3(0.007, 0.010, 0.016);
@@ -418,6 +429,12 @@ export function createJourneyScene(
   let contextLost = false;
   let ready = false;
   let focusedMilestone: number | null = null;
+  const road = new RoadJourney();
+  const roadLookAt = new THREE.Vector3();
+  const roadTangent = new THREE.Vector3();
+  let view: "overview" | "road" = "overview";
+  let layoutView: "overview" | "road" = view;
+  let nodeParameters: number[] = [];
   const initialBounds = container.getBoundingClientRect();
   let inViewport =
     initialBounds.bottom > 0 &&
@@ -425,6 +442,21 @@ export function createJourneyScene(
     initialBounds.right > 0 &&
     initialBounds.left < window.innerWidth;
   const labelPositions = milestoneElements.map(() => ({ x: NaN, y: NaN }));
+
+  function notifyRoad(): void {
+    onRoadChange?.({ ...road.state, available: !disposed && !contextLost });
+  }
+
+  function restoreMilestones(): void {
+    for (const element of milestoneElements) {
+      element.hidden = false;
+      element.inert = false;
+      element.classList.remove("is-road-stop");
+      element.style.removeProperty("--road-scale");
+      element.style.removeProperty("--road-opacity");
+      element.style.removeProperty("z-index");
+    }
+  }
 
   function floorPoint(x: number, y: number): THREE.Vector3 {
     screen.set(x * 2 - 1, 1 - y * 2);
@@ -446,18 +478,23 @@ export function createJourneyScene(
     const nextHeight = container.clientHeight;
     const nextRatio = Math.min(window.devicePixelRatio || 1, 1.5);
     const nextCards = milestoneElements.map(
-      (element) => element.offsetWidth || 170,
+      (element) =>
+        element.offsetWidth ||
+        parseFloat(getComputedStyle(element).width) ||
+        170,
     );
     if (
       nextWidth === width &&
       nextHeight === height &&
       nextRatio === pixelRatio &&
+      layoutView === view &&
       nextCards.every((value, index) => value === cardWidths[index])
     )
       return;
     width = nextWidth;
     height = nextHeight;
     cardWidths = nextCards;
+    layoutView = view;
     if (!width || !height) {
       syncActivity();
       return;
@@ -470,7 +507,13 @@ export function createJourneyScene(
     // A softer, lower-resolution bloom leaves the actual path and stars sharp.
     bloomPass.setSize(width * pixelRatio * 0.72, height * pixelRatio * 0.72);
     pointMaterial.uniforms.uPixelRatio.value = pixelRatio;
-    layoutCamera.aspect = camera.aspect = width / height;
+    // A fixed authoring viewport keeps the road's world geometry consistent
+    // across phones and desktops. Only the viewing camera changes aspect.
+    const layoutWidth = view === "road" ? 1050 : width;
+    const layoutHeight = view === "road" ? 730 : height;
+    layoutCamera.aspect = layoutWidth / layoutHeight;
+    camera.aspect = width / height;
+    camera.fov = view === "road" ? 66 : 40;
     layoutCamera.updateProjectionMatrix();
     camera.updateProjectionMatrix();
 
@@ -482,9 +525,9 @@ export function createJourneyScene(
     // Author in screen space, then intersect the perspective floor. This keeps
     // 66px cards evenly spaced without flattening the journey's depth.
     const nodeX = [0.47, 0.49, 0.49, 0.515, 0.53].map((x, index) => {
-      const space = (cardWidths[index] ?? 170) + 42;
-      const min = index % 2 ? Math.min(0.7, space / width) : 0.2;
-      const max = index % 2 ? 0.8 : Math.max(0.3, 1 - space / width);
+      const space = (view === "road" ? 178 : (cardWidths[index] ?? 170)) + 42;
+      const min = index % 2 ? Math.min(0.7, space / layoutWidth) : 0.2;
+      const max = index % 2 ? 0.8 : Math.max(0.3, 1 - space / layoutWidth);
       return THREE.MathUtils.clamp(x, min, max);
     });
     const nodeY = [0.75, 0.6, 0.45, 0.3, 0.15];
@@ -495,7 +538,7 @@ export function createJourneyScene(
       controls.push(floorPoint(nodeX[index], nodeY[index]));
       if (index < nodes.length - 1) {
         const bulge =
-          width < 600 ? 0.63 - index * 0.012 : 0.605 - index * 0.016;
+          layoutWidth < 600 ? 0.63 - index * 0.012 : 0.605 - index * 0.016;
         controls.push(floorPoint(bulge, nodeY[index] - 0.055));
         controls.push(
           floorPoint((nodeX[index + 1] + bulge) / 2, nodeY[index] - 0.098),
@@ -505,6 +548,10 @@ export function createJourneyScene(
     controls.push(floorPoint(0.56, 0.135), floorPoint(0.53, 0.125));
     mainCurve = new THREE.CatmullRomCurve3(controls, false, "centripetal");
     mainCurve.arcLengthDivisions = 600;
+    nodeParameters = nodeControlIndices.map(
+      (index) => index / (controls.length - 1),
+    );
+    road.setRoute(mainCurve, nodeControlIndices);
     replaceGeometry(
       mainCore,
       new THREE.TubeGeometry(mainCurve, 440, 0.026, 7, false),
@@ -519,8 +566,10 @@ export function createJourneyScene(
         .copy(node.group.position)
         .applyMatrix4(layoutCamera.matrixWorldInverse);
       node.unit =
-        (-sample.z * 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) /
-        height;
+        (-sample.z *
+          2 *
+          Math.tan(THREE.MathUtils.degToRad(layoutCamera.fov / 2))) /
+        layoutHeight;
     }
     for (const [index, mist] of mainMist.entries()) {
       mainCurve.getPointAt((index + 0.3) / mainMist.length, mist.position);
@@ -529,7 +578,7 @@ export function createJourneyScene(
     portal.position.copy(controls[0]);
     portal.position.y = 0;
     portal.scale.setScalar(
-      THREE.MathUtils.clamp(width / height / 1.2, 0.52, 1),
+      THREE.MathUtils.clamp(layoutWidth / layoutHeight / 1.2, 0.52, 1),
     );
     horizon.position.copy(controls[controls.length - 1]);
     horizon.position.y += 0.08;
@@ -537,7 +586,7 @@ export function createJourneyScene(
     const threadPositions: number[] = [];
     const threadColors: number[] = [];
     const threadColor = new THREE.Color();
-    const horizontalScale = width / height / (1050 / 730);
+    const horizontalScale = layoutWidth / layoutHeight / (1050 / 730);
     alternativeCurves = [];
     for (let lane = 0; lane < 30; lane++) {
       const side = lane % 2 ? 1 : -1;
@@ -623,7 +672,13 @@ export function createJourneyScene(
     const starSizes: number[] = [];
     const starPhases: number[] = [];
     for (let index = 0; index < 1150; index++) {
-      if (index < 900) {
+      if (view === "road") {
+        sample.set(
+          (random() - 0.5) * 180,
+          4 + random() * 65,
+          -90 + random() * 180,
+        );
+      } else if (index < 900) {
         sample
           .set(random() * 2.2 - 1.1, random() * 2.2 - 1.1, 0.5)
           .unproject(layoutCamera);
@@ -735,31 +790,45 @@ export function createJourneyScene(
     frame = 0;
     if (!canRender()) return;
     const moving = !paused;
-    const delta =
-      moving && lastTime ? Math.min((timestamp - lastTime) / 1000, 0.05) : 0;
-    lastTime = moving ? timestamp : 0;
+    const traveling = view === "road" && road.state.traveling;
+    const frameDelta = lastTime
+      ? Math.min((timestamp - lastTime) / 1000, 0.05)
+      : 0;
+    lastTime = moving || traveling ? timestamp : 0;
+    const delta = moving ? frameDelta : 0;
     time += delta;
-    if (moving) {
+    if (moving && view === "overview") {
       pointer.x = THREE.MathUtils.damp(pointer.x, pointerTarget.x, 3, delta);
       pointer.y = THREE.MathUtils.damp(pointer.y, pointerTarget.y, 3, delta);
       wander.x = THREE.MathUtils.damp(wander.x, wanderTarget.x, 3, delta);
       wander.y = THREE.MathUtils.damp(wander.y, wanderTarget.y, 3, delta);
     }
-    const offsetX = pointer.x * 0.16 + wander.x;
-    const offsetY = pointer.y * 0.08 + wander.y;
-    camera.position.set(offsetX, 17 - offsetY, 25);
-    camera.lookAt(offsetX * 0.35, 0, -4 + offsetY * 0.3);
+    if (view === "road") {
+      if (road.update(frameDelta, reducedMotion.matches)) notifyRoad();
+      road.getPose(camera.position, roadLookAt);
+      camera.lookAt(roadLookAt);
+    } else {
+      const offsetX = pointer.x * 0.16 + wander.x;
+      const offsetY = pointer.y * 0.08 + wander.y;
+      camera.position.set(offsetX, 17 - offsetY, 25);
+      camera.lookAt(offsetX * 0.35, 0, -4 + offsetY * 0.3);
+    }
     camera.updateMatrixWorld();
     pointMaterial.uniforms.uTime.value = time;
     portalDetails.rotation.y = time * 0.025;
     portalGlow.material.opacity = 0.14 + Math.sin(time * 0.8) * 0.008;
     for (const [index, node] of nodes.entries()) {
-      const target = index === focusedMilestone ? 1 : 0;
+      const target =
+        index === (view === "road" ? road.state.targetIndex : focusedMilestone)
+          ? 1
+          : 0;
       node.focus = moving
         ? THREE.MathUtils.damp(node.focus, target, 9, delta)
         : target;
       const pulse = 1 + Math.sin(time * 1.4 + index * 1.7) * 0.025;
-      node.group.scale.setScalar(node.unit * pulse * (1 + node.focus * 0.3));
+      node.group.scale.setScalar(
+        (view === "road" ? 0.016 : node.unit) * pulse * (1 + node.focus * 0.3),
+      );
       node.material.color.setRGB(
         4.2 + node.focus * 1.8,
         3.1 + node.focus * 1.7,
@@ -775,23 +844,93 @@ export function createJourneyScene(
     }
     particles.geometry.getAttribute("position").needsUpdate = true;
     composer.render(delta);
+    const roadLabels: {
+      left: number;
+      right: number;
+      top: number;
+      bottom: number;
+    }[] = [];
     for (
       let index = 0;
       index < Math.min(nodes.length, milestoneElements.length);
       index++
     ) {
       nodes[index].group.getWorldPosition(projected);
+      const element = milestoneElements[index];
+      if (view === "road") {
+        mainCurve.getTangent(nodeParameters[index], roadTangent);
+        const side = index % 2 ? -1 : 1;
+        const offset = Math.min(1.15, camera.aspect * 0.8) * side;
+        projected.x -= roadTangent.z * offset;
+        projected.z += roadTangent.x * offset;
+        projected.y += 1.8;
+      }
       projected.project(camera);
-      const x = (projected.x * 0.5 + 0.5) * width;
-      const y = (-projected.y * 0.5 + 0.5) * height;
+      let x = (projected.x * 0.5 + 0.5) * width;
+      let y = (-projected.y * 0.5 + 0.5) * height;
+      if (view === "road") {
+        const selected =
+          index === road.state.stopIndex && !road.state.traveling;
+        const distance = road.distanceToStop(index);
+        const scale = THREE.MathUtils.clamp(
+          5.5 / Math.max(1, distance),
+          0.42,
+          1,
+        );
+        element.hidden =
+          projected.z < -1 ||
+          projected.z > 1 ||
+          distance < 0 ||
+          (!selected && (distance > 34 || Math.abs(projected.x) > 1.2));
+        element.inert = !selected;
+        element.classList.toggle("is-road-stop", selected);
+        element.style.setProperty("--road-scale", scale.toFixed(3));
+        element.style.setProperty(
+          "--road-opacity",
+          selected ? "1" : String(Math.max(0.25, 0.65 - distance / 90)),
+        );
+        element.style.zIndex = String(100 - index);
+        if (selected) {
+          const halfWidth = element.offsetWidth / 2 + 20;
+          const compact = height <= 600 && width >= 540;
+          x = THREE.MathUtils.clamp(
+            x,
+            halfWidth,
+            Math.max(halfWidth, width - halfWidth - (compact ? 390 : 0)),
+          );
+          y = THREE.MathUtils.clamp(
+            y,
+            215,
+            Math.max(215, height - (compact ? 30 : 300)),
+          );
+        }
+        if (!element.hidden) {
+          const box = {
+            left: x - (element.offsetWidth * scale) / 2,
+            right: x + (element.offsetWidth * scale) / 2,
+            top: y - element.offsetHeight * scale,
+            bottom: y,
+          };
+          // Distant labels naturally converge; keep the nearest one readable.
+          const overlaps = roadLabels.some(
+            (other) =>
+              box.left < other.right + 12 &&
+              box.right > other.left - 12 &&
+              box.top < other.bottom + 12 &&
+              box.bottom > other.top - 12,
+          );
+          if (!selected && overlaps) element.hidden = true;
+          else roadLabels.push(box);
+        }
+      }
       const previous = labelPositions[index];
       if (
         !Number.isFinite(previous.x) ||
         Math.abs(x - previous.x) > 0.05 ||
         Math.abs(y - previous.y) > 0.05
       ) {
-        milestoneElements[index].style.left = `${x.toFixed(2)}px`;
-        milestoneElements[index].style.top = `${y.toFixed(2)}px`;
+        element.style.left = `${x.toFixed(2)}px`;
+        element.style.top = `${y.toFixed(2)}px`;
         previous.x = x;
         previous.y = y;
       }
@@ -800,7 +939,7 @@ export function createJourneyScene(
       ready = true;
       container.classList.add("is-ready");
     }
-    if (moving) requestRender();
+    if (moving || (view === "road" && road.state.traveling)) requestRender();
   }
 
   function isInteractive(event: PointerEvent): boolean {
@@ -816,6 +955,7 @@ export function createJourneyScene(
 
   function onPointerDown(event: PointerEvent): void {
     if (
+      view === "road" ||
       paused ||
       isInteractive(event) ||
       !event.isPrimary ||
@@ -830,7 +970,8 @@ export function createJourneyScene(
   }
 
   function onPointerMove(event: PointerEvent): void {
-    if (paused || isInteractive(event) || !event.isPrimary) return;
+    if (view === "road" || paused || isInteractive(event) || !event.isPrimary)
+      return;
     const bounds = container.getBoundingClientRect();
     if (!bounds.width || !bounds.height) return;
     if (event.pointerType === "mouse") {
@@ -870,7 +1011,7 @@ export function createJourneyScene(
     activePointer = null;
     if (pointerId !== null && container.hasPointerCapture(pointerId))
       container.releasePointerCapture(pointerId);
-    canvas.style.cursor = "grab";
+    canvas.style.cursor = view === "road" ? "default" : "grab";
   }
 
   function onPointerLeave(): void {
@@ -896,6 +1037,7 @@ export function createJourneyScene(
     endDrag();
     container.classList.remove("is-ready");
     container.classList.add("is-context-lost");
+    notifyRoad();
     syncActivity();
   }
 
@@ -905,6 +1047,7 @@ export function createJourneyScene(
     container.classList.remove("is-context-lost");
     pixelRatio = 0;
     resize();
+    notifyRoad();
   }
 
   const resizeObserver = new ResizeObserver(resize);
@@ -931,6 +1074,30 @@ export function createJourneyScene(
   resize();
 
   return {
+    setView(nextView): void {
+      if (disposed || nextView === view) return;
+      endDrag();
+      view = nextView;
+      road.reset();
+      pointer.set(0, 0);
+      pointerTarget.set(0, 0);
+      wander.set(0, 0);
+      wanderTarget.set(0, 0);
+      restoreMilestones();
+      container.dataset.view = view;
+      canvas.style.cursor = view === "road" ? "default" : "grab";
+      canvas.style.touchAction = view === "road" ? "none" : "pan-y";
+      atmosphere.material.uniforms.uRoad.value = view === "road" ? 1 : 0;
+      resize();
+      notifyRoad();
+    },
+    moveToStop(direction): void {
+      if (disposed || contextLost || view !== "road") return;
+      if (road.move(direction, reducedMotion.matches)) {
+        notifyRoad();
+        requestRender();
+      }
+    },
     setPaused(value: boolean): void {
       if (disposed || paused === value) return;
       paused = value;
@@ -1002,6 +1169,8 @@ export function createJourneyScene(
       canvas.remove();
       if (!hadReadyClass) container.classList.remove("is-ready");
       container.classList.remove("is-context-lost");
+      restoreMilestones();
+      delete container.dataset.view;
       for (const [index, element] of milestoneElements.entries()) {
         element.style.left = originalPositions[index].left;
         element.style.top = originalPositions[index].top;

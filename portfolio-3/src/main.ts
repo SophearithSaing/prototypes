@@ -1,5 +1,6 @@
 import "./style.css";
-import type { createJourneyScene } from "./scene";
+import "./road.css";
+import type { createJourneyScene, RoadSceneState } from "./scene";
 
 const icons = {
   arrow: '<path d="M4 12h15m-6-6 6 6-6 6"/>',
@@ -13,6 +14,7 @@ const icons = {
   play: '<path d="m8 5 11 7-11 7V5Z"/>',
   copy: '<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
   check: '<path d="m5 12 4 4L19 6"/>',
+  road: '<path d="M7 3 3 21M17 3l4 18M12 3v3m0 5v3m0 5v2"/>',
 };
 
 function icon(name: keyof typeof icons, className = "") {
@@ -170,6 +172,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
         <h1 id="hero-title">Every path<br>led me <em>here.</em></h1>
         <p class="hero-description">I'm Sophearith, a creative developer.<br>I turn curiosity into thoughtful digital<br class="desktop-break"> experiences. This is my journey so far.</p>
         <a class="button button-primary" href="#work">Explore my work ${icon("diagonal")}</a>
+        <button class="road-entry" type="button" aria-haspopup="dialog" aria-controls="road-dialog" disabled>${icon("road")}<span>View from the ground</span>${icon("arrow")}</button>
         <div class="intro-note"><span class="availability-dot"></span>Open to good people & interesting projects</div>
       </div>
       <div class="scene-stage" role="group" aria-label="Interactive career timeline from 2018 to 2026">
@@ -198,11 +201,24 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <section class="contact-section content-section" id="contact" aria-labelledby="contact-title"><div class="contact-orbit" aria-hidden="true"></div><p class="eyebrow"><span class="availability-dot"></span>THE NEXT CHAPTER IS UNWRITTEN</p><h2 id="contact-title">Let's make<br>something <em>matter.</em></h2><p>Have an idea, a possibility, or just a good question?<br>I'd love to hear it.</p><button class="button button-primary" data-contact>Start a conversation ${icon("diagonal")}</button><a class="contact-email" href="mailto:${email}">${email}</a></section>
   </main>
   <footer class="site-footer"><a class="footer-brand" href="#journey">${spark}<span>SOPHEARITH</span></a><p>Built with intention. And a little wonder.</p><div><span>&copy; ${new Date().getFullYear()}</span><a href="#journey" aria-label="Back to top">BACK TO TOP ${icon("diagonal")}</a></div></footer>
+  <dialog class="road-dialog" id="road-dialog" aria-labelledby="road-title" aria-describedby="road-help">
+    <div class="road-stage-host"></div>
+    <header class="road-header"><div><p class="eyebrow">${icon("road")}THE GROUND-LEVEL JOURNEY</p><h2 id="road-title">A story, one stop at a time.</h2></div><button class="road-close" type="button" aria-label="Back to overview" autofocus>Back to overview ${icon("close")}</button></header>
+    <div class="road-hud">
+      <ol class="road-stations" aria-label="Journey stops">${milestones.map((milestone, index) => `<li data-road-station="${index}"><span class="station-dot" aria-hidden="true"></span><span>${milestone.year}</span></li>`).join("")}</ol>
+      <div class="road-stop-info"><p class="road-stop-kicker">THE BEGINNING <span class="road-count">00 / 05</span></p><h3 class="road-stop-title">It starts with curiosity.</h3><p class="road-stop-note">Take the road, one experience at a time.</p><button class="road-read text-link" type="button" hidden>Read this chapter ${icon("diagonal")}</button></div>
+      <div class="road-navigation" role="group" aria-label="Navigate the experience stops"><button class="road-previous" type="button" disabled>${icon("arrow")}<span>Previous stop</span></button><button class="road-next button button-primary" type="button"><span>First stop</span>${icon("arrow")}</button></div>
+      <p id="road-help">Use the buttons to follow the road. Scroll and drag do not move the camera.</p>
+    </div>
+    <p class="road-announcement sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+  </dialog>
   <dialog class="detail-dialog" aria-labelledby="dialog-title"><button class="close-dialog" aria-label="Close dialog">${icon("close")}</button><div class="dialog-content"></div></dialog>
   <div class="toast" role="status" aria-live="polite"></div>
 `;
 
 const stage = document.querySelector<HTMLElement>(".scene-stage")!;
+const stageMarker = document.createComment("overview timeline position");
+stage.before(stageMarker);
 const milestoneElements = Array.from(
   document.querySelectorAll<HTMLButtonElement>(".milestone"),
 );
@@ -212,6 +228,116 @@ const dialog = document.querySelector<HTMLDialogElement>(".detail-dialog")!;
 const dialogContent =
   document.querySelector<HTMLDivElement>(".dialog-content")!;
 let focusedMilestone: number | null = null;
+const roadDialog = document.querySelector<HTMLDialogElement>(".road-dialog")!;
+const roadEntry = document.querySelector<HTMLButtonElement>(".road-entry")!;
+const roadPrevious =
+  document.querySelector<HTMLButtonElement>(".road-previous")!;
+const roadNext = document.querySelector<HTMLButtonElement>(".road-next")!;
+const roadRead = document.querySelector<HTMLButtonElement>(".road-read")!;
+const roadStations = Array.from(
+  document.querySelectorAll<HTMLElement>("[data-road-station]"),
+);
+let roadState: RoadSceneState = {
+  stopIndex: -1,
+  targetIndex: -1,
+  traveling: false,
+  available: true,
+};
+
+function updateRoad(state: RoadSceneState) {
+  roadState = state;
+  roadEntry.disabled = !state.available;
+  roadEntry.querySelector("span")!.textContent = state.available
+    ? "View from the ground"
+    : "Ground view temporarily unavailable";
+  const index = state.traveling ? state.targetIndex : state.stopIndex;
+  const milestone = milestones[index];
+  roadDialog.dataset.stopIndex = String(state.stopIndex);
+  roadDialog.dataset.traveling = String(state.traveling);
+  roadDialog.dataset.available = String(state.available);
+  roadDialog.querySelector(".road-stop-kicker")!.innerHTML =
+    `${state.traveling ? "ON THE WAY" : milestone ? milestone.year : "THE BEGINNING"}<span class="road-count">${String(index + 1).padStart(2, "0")} / 05</span>`;
+  roadDialog.querySelector(".road-stop-title")!.textContent =
+    milestone?.role ?? "It starts with curiosity.";
+  roadDialog.querySelector(".road-stop-note")!.textContent = !state.available
+    ? "The 3D view was interrupted. You can return to the overview."
+    : state.traveling
+      ? "Following the curve..."
+      : (milestone?.note ?? "Take the road, one experience at a time.");
+  roadPrevious.disabled = state.stopIndex < 0 || !state.available;
+  roadNext.disabled = !state.available;
+  roadPrevious.setAttribute(
+    "aria-disabled",
+    String(state.traveling || roadPrevious.disabled),
+  );
+  roadNext.setAttribute(
+    "aria-disabled",
+    String(state.traveling || roadNext.disabled),
+  );
+  roadNext.querySelector("span")!.textContent = state.traveling
+    ? "On the way..."
+    : state.stopIndex === milestones.length - 1
+      ? "Back to overview"
+      : state.stopIndex < 0
+        ? "First stop"
+        : "Next stop";
+  roadRead.hidden = state.stopIndex < 0 || state.traveling || !state.available;
+  roadStations.forEach((station, stationIndex) => {
+    station.classList.toggle("is-visited", stationIndex < state.stopIndex);
+    station.classList.toggle("is-current", stationIndex === state.stopIndex);
+    station.classList.toggle(
+      "is-next",
+      state.traveling && stationIndex === state.targetIndex,
+    );
+    if (stationIndex === state.stopIndex)
+      station.setAttribute("aria-current", "step");
+    else station.removeAttribute("aria-current");
+  });
+  roadDialog.querySelector(".road-announcement")!.textContent = !state.available
+    ? "The 3D view is unavailable. Back to overview remains available."
+    : state.traveling
+      ? `Moving to ${milestone?.year ?? "the beginning"}.`
+      : milestone
+        ? `Stop ${index + 1} of ${milestones.length}: ${milestone.year}, ${milestone.role}.`
+        : "At the beginning. Choose First stop to start the journey.";
+}
+
+roadEntry.addEventListener("click", () => {
+  if (!journey || stage.classList.contains("is-context-lost")) return;
+  roadDialog.querySelector(".road-stage-host")!.append(stage);
+  roadDialog.showModal();
+  document.body.classList.add("road-open");
+  journey.setView("road");
+});
+roadDialog
+  .querySelector(".road-close")!
+  .addEventListener("click", () => roadDialog.close());
+roadDialog.addEventListener("close", () => {
+  stageMarker.after(stage);
+  document.body.classList.remove("road-open");
+  journey?.setView("overview");
+  journey?.setPaused(isPaused || dialog.open);
+  roadEntry.focus({ preventScroll: true });
+});
+roadDialog.addEventListener(
+  "wheel",
+  (event) => {
+    if (!event.ctrlKey) event.preventDefault();
+  },
+  { passive: false },
+);
+roadPrevious.addEventListener("click", () => {
+  if (!roadState.traveling && roadState.available) journey?.moveToStop(-1);
+});
+roadNext.addEventListener("click", () => {
+  if (roadState.traveling || !roadState.available) return;
+  if (roadState.stopIndex === milestones.length - 1) roadDialog.close();
+  else journey?.moveToStop(1);
+});
+roadRead.addEventListener("click", () => {
+  if (!roadState.traveling && roadState.stopIndex >= 0)
+    showMilestone(roadState.stopIndex);
+});
 
 function openDialog(content: string, kind: string) {
   journey?.setPaused(true);
@@ -226,11 +352,16 @@ function openDialog(content: string, kind: string) {
 }
 
 function showMilestone(index: number) {
+  if (roadDialog.open && (roadState.traveling || index !== roadState.stopIndex))
+    return;
   const milestone = milestones[index];
   focusedMilestone = index;
   journey?.setFocusedMilestone(index);
+  const chapterNavigation = roadDialog.open
+    ? '<p class="road-reading-note">Close this chapter to continue along the road.</p>'
+    : `<div class="chapter-navigation"><button class="text-link previous-chapter" ${index === 0 ? "disabled" : ""}>${icon("arrow")}Previous chapter</button><button class="text-link next-chapter" ${index === milestones.length - 1 ? "disabled" : ""}>Next chapter${icon("arrow")}</button></div>`;
   openDialog(
-    `<div class="chapter-year">${milestone.year}<span>CHAPTER 0${index + 1} / 05</span></div><p class="eyebrow">${milestone.role}</p><h2 id="dialog-title">${milestone.title}</h2><p class="dialog-description">${milestone.description}</p><blockquote>${milestone.reflection}</blockquote><div class="skill-list">${milestone.skills.map((skill) => `<span>${skill}</span>`).join("")}</div><div class="chapter-navigation"><button class="text-link previous-chapter" ${index === 0 ? "disabled" : ""}>${icon("arrow")}Previous chapter</button><button class="text-link next-chapter" ${index === milestones.length - 1 ? "disabled" : ""}>Next chapter${icon("arrow")}</button></div>`,
+    `<div class="chapter-year">${milestone.year}<span>CHAPTER 0${index + 1} / 05</span></div><p class="eyebrow">${milestone.role}</p><h2 id="dialog-title">${milestone.title}</h2><p class="dialog-description">${milestone.description}</p><blockquote>${milestone.reflection}</blockquote><div class="skill-list">${milestone.skills.map((skill) => `<span>${skill}</span>`).join("")}</div>${chapterNavigation}`,
     "milestone",
   );
   dialogContent
@@ -467,9 +598,10 @@ updateNavigation();
 void document.fonts.ready.then(() => window.dispatchEvent(new Event("resize")));
 void import("./scene")
   .then(({ createJourneyScene }) => {
-    journey = createJourneyScene(stage, milestoneElements);
+    journey = createJourneyScene(stage, milestoneElements, updateRoad);
     journey.setPaused(isPaused || dialog.open);
     motionButton.disabled = false;
+    roadEntry.disabled = false;
   })
   .catch((error: unknown) => {
     console.warn(
@@ -479,6 +611,8 @@ void import("./scene")
     stage.querySelector("canvas")?.remove();
     stage.classList.add("scene-fallback", "is-ready");
     motionButton.hidden = true;
+    roadEntry.disabled = true;
+    roadEntry.querySelector("span")!.textContent = "Ground view requires WebGL";
   });
 window.addEventListener("pagehide", (event) => {
   if (event.persisted) return;
