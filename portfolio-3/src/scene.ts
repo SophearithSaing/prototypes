@@ -8,6 +8,7 @@ import {
   createRoadControls,
   type RoadTravelState,
 } from "./road-journey";
+import { timelineLayout } from "./timeline-layout";
 
 export interface RoadSceneState extends RoadTravelState {
   available: boolean;
@@ -387,13 +388,14 @@ export function createJourneyScene(
   horizonWarmth.scale.y = 0.75;
 
   const nodeGeometry = new THREE.SphereGeometry(1, 20, 14);
-  const nodes = Array.from({ length: 5 }, (_, index) => {
+  const anchors = timelineLayout(milestoneElements.length);
+  const nodes = anchors.map((anchor) => {
     const group = new THREE.Group();
     const material = new THREE.MeshBasicMaterial({
       color: new THREE.Color(4.2, 3.1, 1.8),
     });
     const sphere = new THREE.Mesh(nodeGeometry, material);
-    sphere.scale.setScalar(3.9 - index * 0.2);
+    sphere.scale.setScalar(3.9 - anchor.progress * 0.8);
     group.add(sphere);
     const halo = glow(group, 0xffce89, 34, 0.54);
     const haze = glow(group, 0xe8b675, 88, 0.12);
@@ -526,13 +528,14 @@ export function createJourneyScene(
     };
     // Author in screen space, then intersect the perspective floor. This keeps
     // 66px cards evenly spaced without flattening the journey's depth.
-    const nodeX = [0.47, 0.49, 0.49, 0.515, 0.53].map((x, index) => {
+    const nodeX = anchors.map(({ x }, index) => {
       const space = (view === "road" ? 178 : (cardWidths[index] ?? 170)) + 42;
       const min = index % 2 ? Math.min(0.7, space / layoutWidth) : 0.2;
       const max = index % 2 ? 0.8 : Math.max(0.3, 1 - space / layoutWidth);
       return THREE.MathUtils.clamp(x, min, max);
     });
-    const nodeY = [0.75, 0.6, 0.45, 0.3, 0.15];
+    const nodeY = anchors.map(({ y }) => y);
+    const spacing = nodes.length > 1 ? 0.6 / (nodes.length - 1) : 0.6;
     let controls = [floorPoint(0.45, 0.83), floorPoint(0.455, 0.792)];
     let nodeControlIndices: number[] = [];
     for (let index = 0; index < nodes.length; index++) {
@@ -540,10 +543,15 @@ export function createJourneyScene(
       controls.push(floorPoint(nodeX[index], nodeY[index]));
       if (index < nodes.length - 1) {
         const bulge =
-          layoutWidth < 600 ? 0.63 - index * 0.012 : 0.605 - index * 0.016;
-        controls.push(floorPoint(bulge, nodeY[index] - 0.055));
+          layoutWidth < 600
+            ? 0.63 - anchors[index].progress * 0.048
+            : 0.605 - anchors[index].progress * 0.064;
+        controls.push(floorPoint(bulge, nodeY[index] - spacing * 0.3666667));
         controls.push(
-          floorPoint((nodeX[index + 1] + bulge) / 2, nodeY[index] - 0.098),
+          floorPoint(
+            (nodeX[index + 1] + bulge) / 2,
+            nodeY[index] - spacing * 0.6533333,
+          ),
         );
       }
     }
@@ -883,6 +891,7 @@ export function createJourneyScene(
           1,
         );
         element.hidden =
+          (index < road.state.stopIndex && index !== road.state.targetIndex) ||
           projected.z < -1 ||
           projected.z > 1 ||
           distance < 0 ||

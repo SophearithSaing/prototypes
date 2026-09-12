@@ -186,7 +186,9 @@
   backdrop-filter: blur(18px);
 }
 .road-stations {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(38px, 1fr));
+  gap: 8px;
   align-items: flex-start;
   justify-content: space-between;
   position: relative;
@@ -202,6 +204,9 @@
   right: 13px;
   top: 3px;
   background: #3c414a;
+}
+.road-stations.many-stations::before {
+  display: none;
 }
 .road-stations li {
   position: relative;

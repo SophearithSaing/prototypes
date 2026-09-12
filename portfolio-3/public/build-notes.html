@@ -1464,8 +1464,8 @@
               <div>
                 <dt>src/main.ts</dt>
                 <dd>
-                  Portfolio data, HTML, dialogs, navigation, contact, audio, and
-                  scene initialization.
+                  HTML rendering, dialogs, navigation, contact, audio, and scene
+                  initialization.
                 </dd>
               </div>
               <div>
@@ -1929,10 +1929,11 @@ replaceGeometry(
               rebuilding positions.
             </p>
             <p>
-              This is responsive, but it is not a general-purpose timeline
-              layout engine. The five anchors and their spacing are authored.
-              Adding a sixth milestone requires changes to the scene and CSS
-              fallback, not only another object in the content array.
+              The original layout was authored for five anchors. The JSON-driven
+              version now derives anchors, stop counts, and fallback positions
+              from the experience array. Longer timelines expand vertically to
+              keep the cards spaced, while the ground-level view uses the same
+              button-driven navigation.
             </p>
           </section>
 
@@ -1980,10 +1981,10 @@ replaceGeometry(
 }</code></pre>
             </figure>
             <p class="caption">
-              Template HTML is authored locally. This is not a safe rendering
-              pattern for arbitrary remote content. The visitor's form data is
-              used in an encoded email URL, not inserted into these HTML
-              templates.
+              Template HTML is authored locally. Content loaded from the JSON
+              file is escaped before interpolation; only explicit emphasis and
+              line breaks become markup. The visitor's form data is used in an
+              encoded email URL, not inserted into these HTML templates.
             </p>
             <h3>Contact without pretending there is a backend</h3>
             <p>
@@ -2209,6 +2210,24 @@ replaceGeometry(
               in comments for easy reversion. Experience cards are anchored
               beside each arrival view so they retain their alternating sides.
             </p>
+            <h3>Follow-up: content lives in JSON</h3>
+            <p>
+              The portfolio now fetches <code>public/portfolio.json</code> at
+              runtime. Profile, email, metadata, page copy, milestones,
+              projects, and alternative path labels can be edited without
+              changing the TypeScript. The loader validates fields and shows a
+              retryable error for missing or malformed data. Built-in
+              illustrations are selected by preset name; projects can also
+              reference an image file.
+            </p>
+            <p>
+              Experience order and counts now come from the array, including the
+              current marker, road controls, and chapter counters. Empty lists
+              have explicit empty states. The production build copies the JSON
+              unchanged, so deployed content can be replaced without rebuilding
+              the JavaScript. The original bundle figures above describe the
+              earlier build, before this runtime data-loading step.
+            </p>
             <div class="limitations">
               <h3>What remains intentionally unfinished</h3>
               <ul class="notes-list">
@@ -2218,15 +2237,11 @@ replaceGeometry(
                   them before publishing.
                 </li>
                 <li>
-                  <strong>A general timeline engine.</strong> Five graphical
-                  nodes are hard-coded. Card clearance is a heuristic, not an
-                  overlap solver.
-                </li>
-                <li>
                   <strong>Full no-JavaScript content.</strong> The portfolio
                   generates its interface in JavaScript. Its HTML has a
-                  no-script contact message, not a server-rendered portfolio.
-                  This journal, by contrast, is readable without JavaScript.
+                  no-script link to the JSON content, not a server-rendered
+                  portfolio. This journal, by contrast, is readable without
+                  JavaScript.
                 </li>
                 <li>
                   <strong>Broader device testing.</strong> Desktop automation

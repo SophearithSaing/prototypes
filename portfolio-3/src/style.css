@@ -223,9 +223,9 @@ em {
 }
 
 .hero {
-  height: 100svh;
-  min-height: 810px;
-  max-height: 1200px;
+  height: calc(100svh + var(--timeline-extra, 0px));
+  min-height: calc(810px + var(--timeline-extra, 0px));
+  max-height: calc(1200px + var(--timeline-extra, 0px));
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -256,7 +256,7 @@ em {
 .hero-intro {
   position: absolute;
   left: 6.1%;
-  top: 46.5%;
+  top: min(46.5%, 46.5svh);
   transform: translateY(-50%);
   z-index: 3;
   pointer-events: none;
@@ -455,7 +455,7 @@ em {
   line-height: 1.35;
   font-weight: 450;
   letter-spacing: 0.05px;
-  white-space: nowrap;
+  white-space: normal;
 }
 .milestone-note {
   display: block;
@@ -463,7 +463,7 @@ em {
   line-height: 1.4;
   color: #83838c;
   margin-top: 4px;
-  white-space: nowrap;
+  white-space: normal;
 }
 .milestone-arrow {
   height: 11px;
@@ -1822,25 +1822,9 @@ h2 {
   box-shadow: 0 0 16px #ecc28b66;
   transform: rotate(6deg);
 }
-.scene-fallback .milestone:nth-of-type(1) {
-  left: 44%;
-  top: 75%;
-}
-.scene-fallback .milestone:nth-of-type(2) {
-  left: 47%;
-  top: 60%;
-}
-.scene-fallback .milestone:nth-of-type(3) {
-  left: 50%;
-  top: 45%;
-}
-.scene-fallback .milestone:nth-of-type(4) {
-  left: 53%;
-  top: 30%;
-}
-.scene-fallback .milestone:nth-of-type(5) {
-  left: 56%;
-  top: 15%;
+.scene-fallback .milestone {
+  left: var(--fallback-x);
+  top: var(--fallback-y);
 }
 .scene-fallback .milestone::before {
   content: "";
@@ -1971,7 +1955,7 @@ h2 {
   }
   .hero-intro {
     left: 5%;
-    top: 45%;
+    top: min(45%, 45svh);
   }
   .hero h1 {
     font-size: 78px;
@@ -2140,7 +2124,7 @@ h2 {
     font-size: 66px;
   }
   .hero-intro {
-    top: 41%;
+    top: min(41%, 41svh);
   }
   .hero-intro .eyebrow {
     font-size: 6px;
@@ -2411,7 +2395,7 @@ h2 {
     top: auto;
     bottom: auto;
     width: 100%;
-    height: 600px;
+    height: calc(600px + var(--timeline-extra, 0px));
     margin-top: 15px;
     flex-shrink: 0;
   }
@@ -2989,7 +2973,7 @@ h2 {
     font-size: 7px;
   }
   .scene-stage {
-    height: 595px;
+    height: calc(595px + var(--timeline-extra, 0px));
     margin-top: 24px;
   }
   .hero {

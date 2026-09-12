@@ -1,0 +1,54 @@
+.data-status {
+  min-height: 100svh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 20px;
+  padding: 40px 24px;
+  text-align: center;
+  background: radial-gradient(ellipse at center, #17202c66, transparent 65%);
+  color: var(--muted);
+}
+.data-status > div {
+  max-width: 540px;
+}
+.data-status h1 {
+  font: 400 45px/1.2 var(--serif);
+  color: var(--text);
+  margin: 25px 0 20px;
+}
+.data-status p {
+  font-size: 13px;
+  line-height: 1.9;
+}
+.data-status code {
+  color: var(--gold);
+}
+.data-status .data-error {
+  color: #d8b88c;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+.data-status .button {
+  margin-top: 25px;
+}
+.project-photo {
+  display: block;
+  object-fit: cover;
+}
+.empty-state {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 35px 0;
+}
+.timeline-empty {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 75%;
+  font: 400 28px/1.4 var(--serif);
+  color: var(--gold);
+}
