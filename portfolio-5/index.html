@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#030708" />
+    <meta
+      name="description"
+      content="Alex Rivera — Software engineer. An interactive 3D map of my career, skills, and the connections that made it all possible."
+    />
+    <title>Alex Rivera — A career, connected.</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <a class="identity" href="#home" aria-label="Alex Rivera, home">
+          <span class="monogram">AR<span></span></span>
+          <span class="name">Alex Rivera</span>
+          <span class="occupation">Software Engineer</span>
+        </a>
+        <nav class="navigation" aria-label="Main navigation">
+          <button class="nav-link is-active" data-nav="home">Home</button>
+          <button class="nav-link" data-nav="about">About</button>
+          <button class="nav-link" data-nav="experience">Experience</button>
+          <button class="nav-link" data-nav="skills">Skills</button>
+          <button class="nav-link" data-nav="projects">Projects</button>
+          <button class="nav-link" data-nav="contact">Contact</button>
+        </nav>
+        <button class="work-button" data-nav="projects">
+          View my work
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="m6 5 5 5-5 5m5-10 5 5-5 5" />
+          </svg>
+        </button>
+      </header>
+
+      <main id="home" class="hero">
+        <div class="ambient-light" aria-hidden="true"></div>
+        <section class="intro" aria-labelledby="hero-title">
+          <div class="eyebrow">
+            <span class="status-dot"></span>Three.js powered resume
+          </div>
+          <h1 id="hero-title">
+            My <span class="green-text">career.</span><br /><span
+              class="cyan-text"
+              >Visualized.</span
+            >
+          </h1>
+          <div class="intro-rule" aria-hidden="true"></div>
+          <p class="description">
+            An interactive 3D map of my journey,<br class="desktop-break" />
+            skills, and growth — built with code<br class="desktop-break" />
+            and designed for exploration.
+          </p>
+          <button class="explore-button" id="explore">
+            Explore my journey
+            <span
+              ><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12h14m-6-6 6 6-6 6" /></svg
+            ></span>
+          </button>
+        </section>
+
+        <div
+          class="scene-container"
+          id="scene-container"
+          role="region"
+          aria-label="Interactive 3D career circuit board. Drag to rotate, scroll to zoom. Select a milestone or skill to learn more."
+        >
+          <canvas
+            id="career-canvas"
+            aria-label="3D career board"
+            tabindex="0"
+          ></canvas>
+          <div class="loading" id="loading">
+            <span></span>Connecting the dots
+          </div>
+        </div>
+
+        <div class="interaction-guide">
+          <svg
+            class="mouse-icon"
+            viewBox="0 0 38 60"
+            fill="none"
+            aria-hidden="true"
+          >
+            <rect x="1" y="1" width="36" height="58" rx="18" />
+            <path d="M19 1v24" />
+            <path class="mouse-wheel" d="M19 10v10" />
+          </svg>
+          <div>
+            <span class="drag-instruction">Drag to rotate</span
+            ><span class="zoom-instruction">Scroll to zoom</span>
+          </div>
+          <button
+            class="reset-view"
+            id="reset-view"
+            aria-label="Reset board view"
+            title="Reset board view"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 10a8 8 0 1 1 1 7M4 4v6h6" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="board-legend" aria-label="Board legend">
+          <div>
+            <span class="legend-line career-line"></span
+            ><span>Career path</span>
+          </div>
+          <div>
+            <span class="legend-line skill-line"></span><span>Skill path</span>
+          </div>
+        </div>
+
+        <div
+          class="selection-card"
+          id="selection-card"
+          hidden
+          aria-live="polite"
+        >
+          <div class="selection-topline">
+            <span id="selection-eyebrow"></span
+            ><button id="close-selection" aria-label="Close details">×</button>
+          </div>
+          <h2 id="selection-title"></h2>
+          <p id="selection-description"></p>
+          <div id="selection-tags" class="selection-tags"></div>
+          <button class="next-stop" id="next-stop">
+            Next milestone <span>↗</span>
+          </button>
+        </div>
+
+        <div class="board-accessibility" aria-label="Explore board items">
+          <button data-item="2019">2019 — Junior Developer</button
+          ><button data-item="2020">2020 — Software Engineer</button
+          ><button data-item="2022">2022 — Senior Engineer</button
+          ><button data-item="2024">2024 — Lead Engineer</button
+          ><button data-item="react">React</button
+          ><button data-item="typescript">TypeScript</button
+          ><button data-item="node">Node.js</button
+          ><button data-item="system">System Design</button
+          ><button data-item="three">Three.js</button
+          ><button data-item="cicd">CI/CD</button>
+        </div>
+        <div class="corner-coordinate" aria-hidden="true">
+          <span class="live-indicator"></span>Currently building what’s next
+          <span class="coordinate-separator">/</span>
+          <span class="version">V.2026</span>
+        </div>
+      </main>
+    </div>
+
+    <dialog id="info-dialog" class="info-dialog">
+      <div class="dialog-topline">
+        <span class="dialog-label" id="dialog-label"></span
+        ><button
+          class="dialog-close"
+          id="dialog-close"
+          aria-label="Close dialog"
+        >
+          ×
+        </button>
+      </div>
+      <div id="dialog-content"></div>
+    </dialog>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,347 @@
+@media (min-width: 1700px) {
+  .header {
+    height: 90px !important;
+  }
+  .hero {
+    height: calc(100svh - 90px) !important;
+  }
+  .navigation {
+    gap: 38px !important;
+  }
+  .nav-link,
+  .work-button {
+    font-size: 12px !important;
+  }
+  .description {
+    font-size: 17px !important;
+  }
+  .eyebrow {
+    font-size: 13px !important;
+  }
+  .intro {
+    top: 10% !important;
+  }
+  .interaction-guide {
+    padding: 24px 30px !important;
+  }
+  .interaction-guide > div,
+  .board-legend > div {
+    font-size: 12px !important;
+  }
+}
+@media (max-width: 1250px) {
+  .occupation {
+    display: none !important;
+  }
+  .navigation {
+    gap: 25px !important;
+    margin-right: 26px !important;
+  }
+  .identity {
+    gap: 20px !important;
+  }
+  .header {
+    padding-inline: 3% !important;
+  }
+  .name {
+    font-size: 14px !important;
+  }
+  .intro {
+    top: 10% !important;
+  }
+  .description {
+    font-size: 13px !important;
+  }
+  .eyebrow {
+    font-size: 10px !important;
+  }
+  .explore-button {
+    font-size: 10px !important;
+  }
+  .scene-container {
+    left: 16% !important;
+    right: -12% !important;
+  }
+  .interaction-guide {
+    gap: 18px !important;
+    padding: 18px 20px !important;
+  }
+  .interaction-guide > div {
+    font-size: 10px !important;
+  }
+  .board-legend {
+    padding: 16px 20px !important;
+  }
+  .board-legend > div {
+    font-size: 10px !important;
+  }
+}
+@media (max-width: 1000px) {
+  .navigation {
+    gap: 19px !important;
+  }
+  .nav-link {
+    font-size: 9px !important;
+  }
+  .work-button {
+    font-size: 9px !important;
+    padding-inline: 12px !important;
+    gap: 9px !important;
+  }
+  .name {
+    font-size: 12px !important;
+  }
+  .monogram {
+    height: 35px !important;
+    width: 35px !important;
+    font-size: 17px !important;
+  }
+  .identity {
+    gap: 15px !important;
+  }
+  .intro {
+    top: 8% !important;
+  }
+  h1 {
+    font-size: 49px !important;
+    letter-spacing: -2.5px !important;
+  }
+  .description {
+    font-size: 12px !important;
+  }
+  .intro-rule {
+    margin: 24px 0 22px !important;
+  }
+  .scene-container {
+    left: 13% !important;
+    right: -21% !important;
+    top: 9% !important;
+    bottom: -2% !important;
+  }
+  .explore-button {
+    margin-top: 28px !important;
+  }
+  .selection-card {
+    left: 34% !important;
+    width: 300px !important;
+  }
+  .corner-coordinate {
+    font-size: 8px !important;
+  }
+  .version {
+    display: none !important;
+  }
+  .coordinate-separator {
+    display: none !important;
+  }
+}
+@media (max-width: 760px) {
+  body {
+    overflow: hidden !important;
+  }
+  .header {
+    height: 72px !important;
+    padding: 0 6% !important;
+  }
+  .hero {
+    height: calc(100svh - 72px) !important;
+    min-height: 580px !important;
+  }
+  .navigation {
+    display: none !important;
+  }
+  .identity {
+    gap: 14px !important;
+  }
+  .name {
+    font-size: 12px !important;
+    letter-spacing: 1.4px !important;
+  }
+  .work-button {
+    margin-left: auto !important;
+    height: 34px !important;
+    border-radius: 8px !important;
+    padding: 0 12px !important;
+  }
+  .intro {
+    top: 5% !important;
+    left: 6% !important;
+  }
+  .eyebrow {
+    font-size: 9px !important;
+    letter-spacing: 1.25px !important;
+  }
+  .status-dot {
+    display: block !important;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 8px #00dce760;
+  }
+  h1 {
+    font-size: clamp(43px, 8.2vw, 62px) !important;
+    line-height: 1.06 !important;
+    letter-spacing: -2px !important;
+    margin-top: 14px !important;
+  }
+  .intro-rule {
+    width: 28px !important;
+    height: 2px !important;
+    margin: 18px 0 15px !important;
+  }
+  .description {
+    font-size: 11px !important;
+    line-height: 1.7 !important;
+    max-width: 240px !important;
+  }
+  .desktop-break {
+    display: none !important;
+  }
+  .explore-button {
+    margin-top: 18px !important;
+    font-size: 9px !important;
+    gap: 12px !important;
+  }
+  .explore-button > span {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  .explore-button svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  .scene-container {
+    top: 30% !important;
+    left: -13% !important;
+    right: -25% !important;
+    bottom: 6% !important;
+  }
+  .interaction-guide {
+    bottom: 5.5% !important;
+    left: 6% !important;
+    gap: 11px !important;
+    padding: 11px 14px !important;
+    border-radius: 10px !important;
+    background: #080e1090 !important;
+  }
+  .mouse-icon {
+    width: 21px !important;
+    height: 34px !important;
+  }
+  .interaction-guide > div {
+    font-size: 8px !important;
+    letter-spacing: 0.5px !important;
+    gap: 5px !important;
+  }
+  .reset-view {
+    opacity: 1 !important;
+    right: 2px !important;
+    top: 1px !important;
+    width: 15px !important;
+    height: 15px !important;
+    padding: 3px !important;
+  }
+  .reset-view svg {
+    width: 10px !important;
+    height: 10px !important;
+  }
+  .board-legend {
+    right: 6% !important;
+    bottom: 5.5% !important;
+    padding: 12px 14px !important;
+    border-radius: 10px !important;
+    gap: 7px !important;
+  }
+  .board-legend > div {
+    font-size: 8px !important;
+    gap: 10px !important;
+    letter-spacing: 0.7px !important;
+  }
+  .legend-line {
+    width: 24px !important;
+  }
+  .corner-coordinate {
+    left: 6% !important;
+    bottom: 1.8% !important;
+    font-size: 7px !important;
+    letter-spacing: 0.4px !important;
+  }
+  .selection-card {
+    left: 6% !important;
+    bottom: 15% !important;
+    width: calc(88%) !important;
+    padding: 18px 20px !important;
+  }
+  .selection-card h2 {
+    font-size: 20px !important;
+  }
+  .selection-card p {
+    font-size: 11px !important;
+  }
+  .board-accessibility:focus-within {
+    left: 6% !important;
+    max-width: 88% !important;
+    bottom: 15% !important;
+  }
+  .info-dialog {
+    padding: 25px !important;
+  }
+  .info-dialog h2 {
+    font-size: 31px !important;
+  }
+  .loading {
+    left: 42% !important;
+    font-size: 8px !important;
+  }
+  .scene-error {
+    inset: 35% 20% !important;
+  }
+  .scene-error strong {
+    font-size: 19px !important;
+  }
+}
+@media (max-width: 380px) {
+  .name {
+    font-size: 10px !important;
+  }
+  .identity {
+    gap: 10px !important;
+  }
+  .work-button {
+    font-size: 8px !important;
+    padding-inline: 9px !important;
+  }
+  .hero {
+    min-height: 550px !important;
+  }
+  .intro {
+    top: 4% !important;
+  }
+  .scene-container {
+    top: 32% !important;
+  }
+  .interaction-guide > div {
+    font-size: 7px !important;
+  }
+  .board-legend > div {
+    font-size: 7px !important;
+  }
+}
+@media (max-width: 760px) {
+  .scene-container {
+    left: 0 !important;
+    right: 0 !important;
+    top: 27% !important;
+    mask-image: none !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
