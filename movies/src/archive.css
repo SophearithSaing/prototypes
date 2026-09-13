@@ -1,0 +1,957 @@
+/* An open picture house, with wayfinding kept at the edges of the view. */
+.welcome {
+  padding-top: 34px;
+  padding-bottom: 31px;
+}
+.archive-topline {
+  height: 55px;
+}
+.archive-topline h2 {
+  font-size: 12px;
+}
+.archive-topline .live-badge {
+  font-size: 6px;
+  letter-spacing: 1px;
+}
+.archive-scale {
+  font-size: 9px;
+  color: #a19f8c;
+}
+.archive-scale > span {
+  padding: 0 9px;
+  color: #655d49;
+}
+.archive-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 21px;
+}
+.archive-toolbar .text-button {
+  font-size: 10px;
+}
+.archive-toolbar svg {
+  width: 15px;
+  height: 15px;
+}
+.archive-cinema {
+  height: clamp(590px, 72vh, 880px);
+  min-height: 590px;
+}
+.archive-cinema:fullscreen {
+  height: 100dvh;
+}
+.archive-cinema #scene-container canvas {
+  touch-action: none;
+}
+.archive-vignette {
+  background:
+    linear-gradient(
+      180deg,
+      #0d0e0ba8,
+      transparent 25%,
+      transparent 65%,
+      #0d0e0bbc
+    ),
+    linear-gradient(
+      90deg,
+      #0e0d0938,
+      transparent 25%,
+      transparent 75%,
+      #0e0d0938
+    );
+}
+.archive-location {
+  position: absolute;
+  top: 27px;
+  left: 27px;
+  z-index: 4;
+  pointer-events: none;
+  text-shadow: 0 2px 15px #000;
+}
+.archive-location .eyebrow {
+  font-size: 7px;
+  letter-spacing: 1.9px;
+}
+.archive-location h3 {
+  margin: 9px 0 5px;
+  font: 400 24px var(--serif);
+  color: #e0d4bd;
+}
+.archive-location p {
+  margin: 0;
+  color: #afa590;
+  font-size: 9px;
+}
+.archive-find {
+  position: absolute;
+  top: 27px;
+  right: 27px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #b8a17642;
+  background: #1c1c16b8;
+  backdrop-filter: blur(10px);
+  border-radius: 4px;
+  font-size: 10px;
+  color: #c2b99f;
+}
+.archive-find:hover {
+  background: #383226;
+}
+.archive-find svg {
+  width: 14px;
+  height: 14px;
+}
+.archive-find kbd {
+  font-family: inherit;
+  font-size: 8px;
+  border: 1px solid #b8a1764d;
+  border-radius: 2px;
+  padding: 2px 4px;
+  margin-left: 10px;
+}
+.archive-crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #f0dfb587;
+  box-shadow: 0 0 0 3px #00000014;
+  z-index: 2;
+  pointer-events: none;
+}
+.archive-poster-button {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  pointer-events: auto;
+  padding: 10px 13px;
+  font-size: 8px;
+  letter-spacing: 1.1px;
+  color: #ead7b5;
+  background: #1b1911e3;
+  border: 1px solid #c5ac7c85;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.archive-poster-button:hover,
+.archive-poster-button:focus-visible {
+  opacity: 1;
+}
+.archive-invitation {
+  position: absolute;
+  bottom: 108px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 4;
+  width: max-content;
+  max-width: 70%;
+  text-shadow: 0 2px 20px #000;
+}
+.archive-invitation > span {
+  color: #c0ab83;
+  font-size: 7px;
+  letter-spacing: 2.1px;
+}
+.archive-invitation p {
+  margin: 10px 0 16px;
+  font: italic 25px var(--serif);
+  color: #ebdfc7;
+}
+.archive-invitation button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #c5ac7c;
+  color: #25221a;
+  border: 1px solid #d8bf90;
+  font-size: 10px;
+  padding: 12px 21px;
+  border-radius: 3px;
+  box-shadow: 0 5px 30px #0005;
+}
+.archive-invitation button:hover {
+  background: #ddc496;
+}
+.archive-invitation svg {
+  width: 14px;
+  height: 14px;
+}
+.mini-map {
+  position: absolute;
+  z-index: 5;
+  left: 26px;
+  bottom: 76px;
+  width: 157px;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #ae986141;
+  background: #1b1d16d6;
+  backdrop-filter: blur(12px);
+}
+.mini-map:hover {
+  border-color: #ae986180;
+}
+.mini-map > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 7px;
+  letter-spacing: 1.4px;
+  color: #b6a786;
+}
+.mini-map > div svg {
+  height: 11px;
+  width: 11px;
+}
+.mini-map > svg {
+  width: 100%;
+  height: 137px;
+  display: block;
+  margin: 9px 0;
+}
+.mini-map-legend {
+  font-size: 6px;
+  color: #d6c29a;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  letter-spacing: 0.7px;
+}
+.mini-map-legend b {
+  width: 4px;
+  height: 4px;
+  background: #e8d3a2;
+  border-radius: 50%;
+}
+.mini-map-legend > span {
+  margin-left: auto;
+  font-size: 5px;
+  color: #8c8b74;
+}
+.archive-bottom {
+  bottom: 23px;
+  left: 27px;
+  right: 27px;
+}
+.archive-bottom .walk-hint {
+  font-size: 8px;
+  gap: 8px;
+}
+.archive-bottom .keyboard-key {
+  font-size: 7px;
+  word-spacing: 3px;
+  padding: 4px 6px;
+}
+.archive-bottom .poster-hint {
+  margin: 0;
+  font-size: 8px;
+}
+.archive-bottom .scene-actions {
+  gap: 8px;
+}
+.archive-bottom .scene-actions button {
+  width: 32px;
+  height: 32px;
+}
+.archive-cinema .explore-help {
+  top: 85px;
+  width: 340px;
+  z-index: 9;
+}
+.archive-caption {
+  height: 46px;
+}
+.archive-caption > span {
+  font-size: 7px;
+}
+.archive-caption > span:nth-child(2) {
+  margin: 0;
+  font-size: 11px;
+}
+.archive-caption > label {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 6px;
+  letter-spacing: 1.5px;
+  color: #8e957e;
+}
+.archive-caption select {
+  max-width: 200px;
+  color-scheme: dark;
+  background: #202119;
+  color: #c0b394;
+  border: 1px solid #8a78572e;
+  border-radius: 3px;
+  padding: 6px 24px 6px 9px;
+  font-size: 9px;
+  letter-spacing: 0;
+}
+.touch-navigation {
+  display: none;
+}
+
+/* The directory is inside the fullscreen element, so wayfinding always works. */
+.archive-drawer {
+  position: absolute;
+  z-index: 15;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 355px;
+  display: flex;
+  flex-direction: column;
+  padding: 26px 24px 0;
+  background: #1b1e18f7;
+  border-left: 1px solid #b4a0714d;
+  box-shadow: -20px 0 70px #0006;
+  backdrop-filter: blur(25px);
+  animation: slide-in 0.22s ease;
+}
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.drawer-header .eyebrow {
+  font-size: 6px;
+  letter-spacing: 1.5px;
+}
+.drawer-header .icon-button {
+  width: 27px;
+  height: 27px;
+}
+.archive-drawer > h3 {
+  font: 400 27px var(--serif);
+  letter-spacing: -0.4px;
+  margin: 15px 0 10px;
+}
+.archive-drawer h3 em {
+  color: #cbb38b;
+  font-weight: 400;
+}
+.archive-drawer > p {
+  font-size: 10px;
+  line-height: 1.9;
+  color: #9d9f89;
+  margin: 0 0 20px;
+}
+.archive-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #a6a07830;
+  background: #131710;
+  border-radius: 4px;
+  padding: 0 12px;
+  flex-shrink: 0;
+}
+.archive-search:focus-within {
+  border-color: #b9a06e;
+}
+.archive-search > svg {
+  width: 13px;
+  height: 13px;
+  color: #a69c7e;
+}
+.archive-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 0;
+  background: none;
+  border: 0;
+  color: #dfd6bd;
+  font-size: 10px;
+  outline: none;
+}
+.archive-search input::placeholder {
+  color: #777f68;
+}
+.drawer-scroll {
+  overflow-y: auto;
+  min-height: 0;
+  flex: 1;
+  margin: 22px -12px 0 0;
+  padding-right: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #5b593e transparent;
+  overscroll-behavior: contain;
+}
+.directory-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #95977e;
+  font-size: 7px;
+  letter-spacing: 1.5px;
+  margin: 0 0 15px;
+}
+.directory-heading > span {
+  border: 1px solid #97966c30;
+  padding: 2px 4px;
+  border-radius: 2px;
+  font-size: 7px;
+}
+.directory-year {
+  margin-bottom: 12px;
+  padding: 15px 15px 5px;
+  border: 1px solid #a5986b2e;
+  border-radius: 4px;
+  background: linear-gradient(110deg, #c5ac7c09, transparent);
+}
+.directory-year > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.directory-year strong {
+  font: 400 28px var(--serif);
+  color: #d9c7a2;
+}
+.directory-year > div > span {
+  font-size: 8px;
+  color: #989b80;
+}
+.directory-year > div > span > span {
+  padding: 0 4px;
+  color: #6f735c;
+}
+.directory-year > button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid #b0a37518;
+  padding: 11px 0;
+  color: #b1b198;
+}
+.directory-year > button > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+}
+.directory-year svg {
+  width: 12px;
+  height: 12px;
+}
+.directory-year button.current,
+.directory-year button:hover {
+  color: #e8d0a0;
+}
+.directory-year button.current > span:after {
+  content: "YOU ARE HERE";
+  font-size: 5px;
+  letter-spacing: 0.7px;
+  color: #d0bc8d;
+  margin-left: 5px;
+}
+.other-spaces {
+  margin-top: 27px;
+}
+.directory-space {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+  text-align: left;
+  padding: 13px 0;
+  border-bottom: 1px solid #a4a0781c;
+}
+.directory-space > span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  color: #c0c1a6;
+}
+.directory-space svg {
+  width: 14px;
+  height: 14px;
+  color: #a69a74;
+}
+.directory-space small {
+  display: block;
+  font-size: 8px;
+  color: #7f886f;
+  margin-top: 5px;
+}
+.directory-space:hover > span,
+.directory-space.current > span {
+  color: #e2c899;
+}
+.directory-empty {
+  font-size: 10px;
+  line-height: 1.9;
+  color: #939982;
+}
+.building-plan {
+  margin: 0 15px 23px;
+}
+.plan-entrance {
+  text-align: center;
+}
+.plan-entrance button {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 7px;
+  letter-spacing: 1.2px;
+  color: #a39a78;
+  padding: 8px;
+}
+.plan-entrance svg {
+  height: 12px;
+  width: 12px;
+}
+.plan-row {
+  display: grid;
+  grid-template-columns: 1fr 32px 1fr;
+}
+.plan-row > button {
+  margin: 4px 0;
+  min-height: 53px;
+  padding: 10px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid #9b8e6142;
+  border-radius: 2px;
+  background: #8c88690a;
+}
+.plan-row > button > span {
+  font: 400 15px var(--serif);
+  color: #bfb28c;
+}
+.plan-row > button small {
+  font-size: 5px;
+  letter-spacing: 1px;
+  color: #7a8269;
+}
+.plan-corridor {
+  border-left: 1px dashed #c5ac7c16;
+  border-right: 1px dashed #c5ac7c16;
+  background: #c5ac7c05;
+}
+.plan-row > button.current,
+.plan-row > button:hover {
+  border-color: #d5b77d;
+  background: #c5ac7c18;
+}
+.drawer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 17px 0;
+  color: #9c9f83;
+  font-size: 8px;
+  border-top: 1px solid #a1a4771f;
+  flex-shrink: 0;
+}
+.drawer-footer svg {
+  height: 12px;
+  width: 12px;
+  color: #b4a371;
+}
+.search-room {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid #a4a0781c;
+  margin-bottom: 10px;
+}
+.search-room > span {
+  flex: 1;
+  font-size: 12px;
+  color: #d0c5a5;
+}
+.search-room small {
+  display: block;
+  margin-top: 5px;
+  font-size: 8px;
+  color: #8e987c;
+}
+.search-room svg {
+  height: 15px;
+  width: 15px;
+  color: #b3a27b;
+}
+.archive-film-result {
+  border: 1px solid #b4a47623;
+  padding: 13px;
+  margin-bottom: 10px;
+  border-radius: 3px;
+}
+.archive-film-result strong {
+  font: 400 16px var(--serif);
+  color: #ded3b8;
+  line-height: 1.4;
+}
+.archive-film-result span,
+.archive-film-result small {
+  display: block;
+  font-size: 8px;
+  color: #8f957c;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.archive-film-result small {
+  font-size: 7px;
+  color: #b2a27c;
+}
+.archive-film-result > div:last-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid #9c9d7521;
+}
+.archive-film-result button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 8px;
+  color: #c1b089;
+  padding: 3px 0;
+}
+.archive-film-result button:hover {
+  color: #e8ce98;
+}
+.archive-film-result svg {
+  height: 12px;
+  width: 12px;
+}
+.archive-no-results {
+  padding: 40px 0;
+  text-align: center;
+  font: 400 21px var(--serif);
+  color: #c8b690;
+}
+.archive-no-results span {
+  display: block;
+  font:
+    10px "DM Sans",
+    sans-serif;
+  color: #899077;
+  margin-top: 12px;
+}
+.archive-webgl-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 60px 30px;
+  height: 100%;
+  text-align: center;
+}
+.archive-webgl-fallback h3 {
+  font: 400 30px var(--serif);
+}
+.archive-webgl-fallback p {
+  max-width: 400px;
+  font-size: 12px;
+  line-height: 1.8;
+  margin-bottom: 25px;
+}
+
+@media (min-width: 1500px) {
+  .archive-scale {
+    font-size: 10px;
+  }
+  .archive-location h3 {
+    font-size: 28px;
+  }
+  .archive-location p {
+    font-size: 10px;
+  }
+}
+@media (max-width: 1050px) {
+  .archive-scale {
+    font-size: 8px;
+  }
+  .archive-scale > span {
+    padding: 0 4px;
+  }
+  .archive-location h3 {
+    font-size: 21px;
+  }
+  .archive-find {
+    font-size: 9px;
+  }
+  .mini-map {
+    width: 132px;
+    padding: 10px;
+  }
+  .mini-map > svg {
+    height: 110px;
+  }
+  .archive-bottom .poster-hint {
+    display: none;
+  }
+  .archive-caption > span:nth-child(2) {
+    display: none;
+  }
+}
+@media (pointer: coarse), (max-width: 760px) {
+  .touch-navigation {
+    display: block;
+    position: absolute;
+    z-index: 6;
+    right: 25px;
+    bottom: 78px;
+    text-align: center;
+  }
+  .touch-navigation > span {
+    font-size: 6px;
+    letter-spacing: 1.8px;
+    color: #d3c6a5;
+    text-shadow: 0 1px 6px #000;
+  }
+  .touch-navigation > div {
+    display: grid;
+    grid-template-columns: repeat(3, 40px);
+    gap: 5px;
+    margin-top: 8px;
+  }
+  .touch-navigation button {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #b8a27165;
+    border-radius: 4px;
+    background: #25251bc9;
+    color: #dfcea8;
+    touch-action: none;
+    user-select: none;
+  }
+  .touch-navigation button:first-child {
+    grid-column: 2;
+  }
+  .touch-navigation button:nth-child(2) {
+    grid-column: 1;
+  }
+  .touch-navigation button.pressed {
+    background: #c5ac7c;
+    color: #27271d;
+  }
+  .touch-navigation svg {
+    width: 17px;
+    height: 17px;
+  }
+  .archive-poster-button {
+    opacity: 0.85;
+    padding: 9px;
+    font-size: 7px;
+  }
+}
+@media (max-width: 760px) {
+  .welcome {
+    padding-top: 27px;
+    padding-bottom: 25px;
+  }
+  .archive-topline {
+    height: 51px;
+  }
+  .archive-topline h2 {
+    font-size: 10px;
+    gap: 7px;
+  }
+  .archive-topline .live-badge {
+    font-size: 5px;
+  }
+  .archive-scale {
+    display: none;
+  }
+  .archive-toolbar {
+    gap: 12px;
+  }
+  .archive-toolbar .text-button {
+    font-size: 8px;
+    gap: 6px;
+  }
+  .archive-toolbar svg {
+    height: 13px;
+    width: 13px;
+  }
+  .archive-cinema {
+    height: 640px;
+    min-height: 580px;
+    max-height: 85svh;
+  }
+  .archive-cinema:fullscreen {
+    max-height: none;
+    height: 100dvh;
+  }
+  .archive-location {
+    top: 21px;
+    left: 18px;
+  }
+  .archive-location .eyebrow {
+    font-size: 6px;
+  }
+  .archive-location h3 {
+    font-size: 20px;
+    max-width: 230px;
+  }
+  .archive-location p {
+    font-size: 8px;
+    max-width: 240px;
+    line-height: 1.7;
+  }
+  .archive-find {
+    top: 20px;
+    right: 16px;
+    width: 33px;
+    height: 33px;
+    padding: 0;
+    justify-content: center;
+  }
+  .archive-find > span,
+  .archive-find kbd {
+    display: none;
+  }
+  .archive-invitation {
+    bottom: 240px;
+    max-width: 95%;
+  }
+  .archive-invitation > span {
+    font-size: 5px;
+    letter-spacing: 1.5px;
+  }
+  .archive-invitation p {
+    font-size: 22px;
+    margin: 10px 0 13px;
+  }
+  .archive-invitation button {
+    font-size: 9px;
+    padding: 10px 17px;
+  }
+  .mini-map {
+    left: 17px;
+    bottom: 72px;
+    width: 115px;
+    padding: 9px;
+  }
+  .mini-map > svg {
+    height: 97px;
+    margin: 6px 0;
+  }
+  .mini-map > div {
+    font-size: 6px;
+  }
+  .mini-map-legend {
+    font-size: 5px;
+  }
+  .mini-map-legend > span {
+    display: none;
+  }
+  .archive-bottom {
+    left: 17px;
+    right: 17px;
+    bottom: 18px;
+    gap: 8px;
+  }
+  .archive-bottom .walk-hint {
+    font-size: 7px;
+    gap: 5px;
+  }
+  .archive-bottom .walk-hint > .keyboard-key,
+  .archive-bottom .walk-hint > .hint-divider,
+  .archive-bottom .walk-hint > span:nth-child(2),
+  .archive-bottom .walk-hint > span:last-child {
+    display: none;
+  }
+  .archive-bottom .walk-hint > svg,
+  .archive-bottom .walk-hint > span:nth-child(5) {
+    display: inline;
+  }
+  .archive-bottom .scene-actions {
+    gap: 5px;
+  }
+  .archive-bottom .scene-actions button {
+    width: 30px;
+    height: 30px;
+  }
+  .archive-caption {
+    height: 47px;
+    padding: 0 13px;
+    gap: 8px;
+  }
+  .archive-caption > span {
+    font-size: 5px;
+    letter-spacing: 0.7px;
+    max-width: 110px;
+    line-height: 1.6;
+  }
+  .archive-caption > label {
+    font-size: 5px;
+    gap: 6px;
+    letter-spacing: 0.7px;
+  }
+  .archive-caption select {
+    max-width: 132px;
+    font-size: 8px;
+    padding: 7px 3px 7px 6px;
+  }
+  .touch-navigation {
+    right: 17px;
+    bottom: 84px;
+  }
+  .touch-navigation > div {
+    grid-template-columns: repeat(3, 35px);
+  }
+  .touch-navigation button {
+    width: 35px;
+    height: 35px;
+  }
+  .archive-cinema .explore-help {
+    top: 18px;
+    right: 15px;
+    width: calc(100% - 30px);
+  }
+  .archive-cinema .explore-help p {
+    font-size: 10px;
+  }
+  .archive-drawer {
+    width: min(355px, 100%);
+    padding: 18px 19px 0;
+  }
+  .archive-drawer > h3 {
+    font-size: 26px;
+    margin-top: 9px;
+  }
+  .archive-drawer > p {
+    font-size: 9px;
+    margin-bottom: 13px;
+  }
+  .drawer-scroll {
+    margin-top: 17px;
+  }
+  .drawer-footer {
+    font-size: 7px;
+    padding: 13px 0;
+  }
+}
