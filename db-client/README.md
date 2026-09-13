@@ -66,22 +66,22 @@ not remote connections.
 
 ## Keys
 
-| Context | Keys | Action |
-| --- | --- | --- |
-| Picker | Up / Down, Enter | Select and connect |
-| Picker | `p` | Enter a new session password, overriding other credential sources |
-| Picker | `n`, `d` | New profile; delete selected profile with `y` confirmation |
-| Form / prompt | Esc | Back without saving / connecting |
-| Form | Tab / Shift+Tab, Ctrl+S | Move fields; save and connect |
-| Editor | Enter | Insert a newline, not execute |
+| Context                | Keys                     | Action                                                                 |
+| ---------------------- | ------------------------ | ---------------------------------------------------------------------- |
+| Picker                 | Up / Down, Enter         | Select and connect                                                     |
+| Picker                 | `p`                      | Enter a new session password, overriding other credential sources      |
+| Picker                 | `n`, `d`                 | New profile; delete selected profile with `y` confirmation             |
+| Form / prompt          | Esc                      | Back without saving / connecting                                       |
+| Form                   | Tab / Shift+Tab, Ctrl+S  | Move fields; save and connect                                          |
+| Editor                 | Enter                    | Insert a newline, not execute                                          |
 | Editor / form / prompt | Ctrl+V or terminal paste | Paste text; a delayed Ctrl+V paste is discarded if input/focus changes |
-| Editor / results | F5 / Ctrl+R | Execute the whole SQL buffer |
-| Editor / results | Tab / Shift+Tab | Switch focus |
-| Results | Arrows, PgUp / PgDn | Scroll vertically and horizontally |
-| Results | `[` / `]`, `v` | Previous / next result set; toggle full-value view |
-| SQL session | Ctrl+O | Open connections; Esc returns without switching |
-| Anywhere | Ctrl+C | Cancel busy work, or quit when idle |
-| Anywhere | Ctrl+Q | Quit, including while busy |
+| Editor / results       | F5 / Ctrl+R              | Execute the whole SQL buffer                                           |
+| Editor / results       | Tab / Shift+Tab          | Switch focus                                                           |
+| Results                | Arrows, PgUp / PgDn      | Scroll vertically and horizontally                                     |
+| Results                | `[` / `]`, `v`           | Previous / next result set; toggle full-value view                     |
+| SQL session            | Ctrl+O                   | Open connections; Esc returns without switching                        |
+| Anywhere               | Ctrl+C                   | Cancel busy work, or quit when idle                                    |
+| Anywhere               | Ctrl+Q                   | Quit, including while busy                                             |
 
 Full-value view also scrolls horizontally for wide values. The picker additionally
 accepts `q` to quit. A `DATABASE_URL` profile cannot be deleted; unset the variable

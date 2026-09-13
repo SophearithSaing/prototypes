@@ -12,9 +12,7 @@
     {
       "ranking": 1,
       "title": "Data Structures and Algorithms in JavaScript",
-      "authors": [
-        "Federico Kereki"
-      ],
+      "authors": ["Federico Kereki"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718502628",
       "url": "https://nostarch.com/node/717",
       "scores": {
@@ -28,10 +26,7 @@
     {
       "ranking": 2,
       "title": "Total TypeScript",
-      "authors": [
-        "Matt Pocock",
-        "Taylor Bell"
-      ],
+      "authors": ["Matt Pocock", "Taylor Bell"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718504165",
       "url": "https://nostarch.com/total-typescript",
       "scores": {
@@ -45,11 +40,7 @@
     {
       "ranking": 3,
       "title": "The Rust Programming Language, 3rd Edition",
-      "authors": [
-        "Steve Klabnik",
-        "Carol Nichols",
-        "Chris Krycho"
-      ],
+      "authors": ["Steve Klabnik", "Carol Nichols", "Chris Krycho"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718504448",
       "url": "https://nostarch.com/rust-programming-language-3e",
       "scores": {
@@ -63,9 +54,7 @@
     {
       "ranking": 4,
       "title": "Algorithmic Thinking, 2nd Edition",
-      "authors": [
-        "Daniel Zingaro"
-      ],
+      "authors": ["Daniel Zingaro"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718503229",
       "url": "https://nostarch.com/node/745",
       "scores": {
@@ -79,9 +68,7 @@
     {
       "ranking": 5,
       "title": "Writing a C Compiler",
-      "authors": [
-        "Nora Sandler"
-      ],
+      "authors": ["Nora Sandler"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718500426",
       "url": "https://nostarch.com/node/636",
       "scores": {
@@ -95,9 +82,7 @@
     {
       "ranking": 6,
       "title": "Math for Programming",
-      "authors": [
-        "Ronald T. Kneusel"
-      ],
+      "authors": ["Ronald T. Kneusel"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718503588",
       "url": "https://nostarch.com/math-programming",
       "scores": {
@@ -111,9 +96,7 @@
     {
       "ranking": 7,
       "title": "Introduction to Computer Organization: ARM Edition",
-      "authors": [
-        "Robert G. Plantz"
-      ],
+      "authors": ["Robert G. Plantz"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718502741",
       "url": "https://nostarch.com/introcomputerorgforarm",
       "scores": {
@@ -127,9 +110,7 @@
     {
       "ranking": 8,
       "title": "Computer Graphics from Scratch",
-      "authors": [
-        "Gabriel Gambetta"
-      ],
+      "authors": ["Gabriel Gambetta"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718500761",
       "url": "https://nostarch.com/node/568",
       "scores": {
@@ -143,9 +124,7 @@
     {
       "ranking": 9,
       "title": "The Art of Randomness",
-      "authors": [
-        "Ronald T. Kneusel"
-      ],
+      "authors": ["Ronald T. Kneusel"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718503243",
       "url": "https://nostarch.com/art-randomness",
       "scores": {
@@ -159,9 +138,7 @@
     {
       "ranking": 10,
       "title": "Computer Architecture",
-      "authors": [
-        "Charles Fox"
-      ],
+      "authors": ["Charles Fox"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718502864",
       "url": "https://nostarch.com/computerarchitecture",
       "scores": {
@@ -175,9 +152,7 @@
     {
       "ranking": 11,
       "title": "Effective C, 2nd Edition",
-      "authors": [
-        "Robert C. Seacord"
-      ],
+      "authors": ["Robert C. Seacord"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718504127",
       "url": "https://nostarch.com/node/790",
       "scores": {
@@ -191,9 +166,7 @@
     {
       "ranking": 12,
       "title": "How Computers Really Work",
-      "authors": [
-        "Matthew Justice"
-      ],
+      "authors": ["Matthew Justice"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718500662",
       "url": "https://nostarch.com/how-computers-really-work",
       "scores": {
@@ -207,9 +180,7 @@
     {
       "ranking": 13,
       "title": "Write Great Code, Volume 2, 2nd Edition",
-      "authors": [
-        "Randall Hyde"
-      ],
+      "authors": ["Randall Hyde"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718500389",
       "url": "https://nostarch.com/writegreatcode2_2",
       "scores": {
@@ -223,9 +194,7 @@
     {
       "ranking": 14,
       "title": "Think Like a Programmer",
-      "authors": [
-        "V. Anton Spraul"
-      ],
+      "authors": ["V. Anton Spraul"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781593274245",
       "url": "https://nostarch.com/thinklikeaprogrammer",
       "scores": {
@@ -239,9 +208,7 @@
     {
       "ranking": 15,
       "title": "The Art of ARM Assembly, Volume 1",
-      "authors": [
-        "Randall Hyde"
-      ],
+      "authors": ["Randall Hyde"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718502826",
       "url": "https://nostarch.com/node/767",
       "scores": {
@@ -255,9 +222,7 @@
     {
       "ranking": 16,
       "title": "The Secret Life of Programs",
-      "authors": [
-        "Jonathan E. Steinhart"
-      ],
+      "authors": ["Jonathan E. Steinhart"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781593279707",
       "url": "https://nostarch.com/foundationsofcomp",
       "scores": {
@@ -271,9 +236,7 @@
     {
       "ranking": 17,
       "title": "Quantum Computing",
-      "authors": [
-        "Andrew Glassner"
-      ],
+      "authors": ["Andrew Glassner"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781718504004",
       "url": "https://nostarch.com/node/799",
       "scores": {
@@ -287,9 +250,7 @@
     {
       "ranking": 18,
       "title": "How Software Works",
-      "authors": [
-        "V. Anton Spraul"
-      ],
+      "authors": ["V. Anton Spraul"],
       "cover_url": "https://images.penguinrandomhouse.com/cover/9781593276669",
       "url": "https://nostarch.com/howsoftwareworks",
       "scores": {

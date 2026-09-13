@@ -932,8 +932,8 @@
             <h1>A quiet place for <span>fast thoughts.</span></h1>
             <p class="lede">
               Scratchpad is a keyboard-first terminal notebook. It opens ready
-              to type, keeps every Markdown draft automatically, and switches
-              to a rendered view whenever you want to read instead of edit.
+              to type, keeps every Markdown draft automatically, and switches to
+              a rendered view whenever you want to read instead of edit.
             </p>
             <div class="runline" aria-label="Run command">
               <span class="prompt" aria-hidden="true">$</span>
@@ -958,7 +958,14 @@
                 <span class="tui-tab">2 &nbsp; Weekend ideas</span>
               </div>
               <div class="tui-editor-shell">
-                <div class="tui-editor"># Product notes<br /><br />Keep capture friction close to zero.<br />Drafts should survive without asking.<br /><br />**The interface is the workflow.**<span class="cursor" aria-hidden="true"></span></div>
+                <div class="tui-editor">
+                  # Product notes<br /><br />Keep capture friction close to
+                  zero.<br />Drafts should survive without asking.<br /><br />**The
+                  interface is the workflow.**<span
+                    class="cursor"
+                    aria-hidden="true"
+                  ></span>
+                </div>
               </div>
               <div class="tui-footer">
                 <span>Drafts saved</span>
@@ -1010,8 +1017,8 @@
               <h3>The keyboard is enough</h3>
               <p>
                 Tabs, Markdown preview, export, help, and exit all have direct
-                shortcuts. Mouse support is unnecessary, keeping the
-                interaction model small and predictable.
+                shortcuts. Mouse support is unnecessary, keeping the interaction
+                model small and predictable.
               </p>
             </article>
           </div>
@@ -1072,7 +1079,9 @@
 
             <div class="code-panel">
               <div class="code-label">main.go / composition root</div>
-              <pre tabindex="0"><span class="kw">func</span> <span class="fn">run</span>(in io.Reader, out io.Writer) error {
+              <pre
+                tabindex="0"
+              ><span class="kw">func</span> <span class="fn">run</span>(in io.Reader, out io.Writer) error {
     store, err := <span class="fn">newSessionStore</span>()
     <span class="comment">// Missing state is a valid first launch.</span>
     session, err := store.<span class="fn">load</span>()
@@ -1159,7 +1168,9 @@
             </div>
             <div class="code-panel">
               <div class="code-label">model.go / content routing</div>
-              <pre tabindex="0"><span class="kw">func</span> (m appModel) <span class="fn">updateContent</span>(msg tea.Msg) (tea.Model, tea.Cmd) {
+              <pre
+                tabindex="0"
+              ><span class="kw">func</span> (m appModel) <span class="fn">updateContent</span>(msg tea.Msg) (tea.Model, tea.Cmd) {
     <span class="kw">var</span> cmd tea.Cmd
     <span class="kw">if</span> m.mode == viewMode {
         m.preview, cmd = m.preview.<span class="fn">Update</span>(msg)
@@ -1223,8 +1234,8 @@
               <small>Latest only</small>
               <h3>Persist session</h3>
               <p>
-                 Markdown drafts are written first, then the metadata index is
-                 committed only when the timer is still current.
+                Markdown drafts are written first, then the metadata index is
+                committed only when the timer is still current.
               </p>
             </article>
           </div>
@@ -1241,7 +1252,9 @@
             </div>
             <div class="code-panel">
               <div class="code-label">model.go / autosave scheduling</div>
-              <pre tabindex="0"><span class="kw">func</span> (m appModel) <span class="fn">changed</span>() (tea.Model, tea.Cmd) {
+              <pre
+                tabindex="0"
+              ><span class="kw">func</span> (m appModel) <span class="fn">changed</span>() (tea.Model, tea.Cmd) {
     m.revision++
     revision := m.revision
     <span class="kw">return</span> m, tea.<span class="fn">Tick</span>(autosaveDelay,
@@ -1270,10 +1283,11 @@
               <p class="eyebrow">Markdown-first storage</p>
               <h2>Readable drafts. Minimal metadata.</h2>
               <p class="section-intro">
-                Every tab lives in a regular <code>note-&lt;id&gt;.md</code> file.
-                <code>session.json</code> stores only ordering, titles, the active
-                tab, and the next ID, so note text never depends on a private
-                data format.
+                Every tab lives in a regular
+                <code>note-&lt;id&gt;.md</code> file.
+                <code>session.json</code> stores only ordering, titles, the
+                active tab, and the next ID, so note text never depends on a
+                private data format.
               </p>
             </div>
             <div class="atomic-path">
@@ -1301,8 +1315,8 @@
               <div class="atomic-step">
                 <b>04</b
                 ><span
-                  >Remove ownership markers and Markdown files belonging to
-                  tabs closed by the committed session.</span
+                  >Remove ownership markers and Markdown files belonging to tabs
+                  closed by the committed session.</span
                 >
               </div>
             </div>
@@ -1321,7 +1335,9 @@
             </div>
             <div class="code-panel">
               <div class="code-label">store.go / file publication</div>
-              <pre tabindex="0"><span class="kw">func</span> <span class="fn">writeAtomic</span>(path string, data []byte, replace bool) error {
+              <pre
+                tabindex="0"
+              ><span class="kw">func</span> <span class="fn">writeAtomic</span>(path string, data []byte, replace bool) error {
     tmp, err := os.<span class="fn">CreateTemp</span>(
         filepath.<span class="fn">Dir</span>(path), <span class="str">".scratchpad-*"</span>,
     )
@@ -1452,9 +1468,9 @@
               <div>
                 <h3>Stable file identities</h3>
                 <p>
-                  Tab IDs map directly to <code>note-&lt;id&gt;.md</code>. Renaming a
-                  derived title never moves a draft, and closing a tab removes
-                  only the file owned by that ID.
+                  Tab IDs map directly to <code>note-&lt;id&gt;.md</code>.
+                  Renaming a derived title never moves a draft, and closing a
+                  tab removes only the file owned by that ID.
                 </p>
               </div>
             </article>
