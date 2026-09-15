@@ -1,0 +1,150 @@
+{
+  "site": {
+    "title": "{name} - A Story in Motion",
+    "description": "{name} is a creative developer turning curiosity into thoughtful digital experiences. Explore the journey, the work, and the possibilities ahead."
+  },
+  "profile": {
+    "name": "Sophearith",
+    "role": "Creative Developer",
+    "email": "hello@sophearith.dev",
+    "availability": "Open to good people & interesting projects",
+    "coordinates": "11.5564° N · 104.9282° E"
+  },
+  "hero": {
+    "eyebrow": "A STORY, STILL UNFOLDING",
+    "title": "Every path\nled me *here.*",
+    "description": "I'm {name}, a creative developer.\nI turn curiosity into thoughtful digital\nexperiences. This is my journey so far."
+  },
+  "work": {
+    "eyebrow": "01 / SELECTED WORK",
+    "aside": "A FEW THINGS I'VE PUT INTO THE WORLD",
+    "title": "Ideas, made *real.*",
+    "description": "Thoughtful design. Purposeful code.\nA little something you didn't expect.",
+    "note": "Selected independent concepts & explorations.",
+    "closingNote": "Made with care, from the first sketch to the last pixel."
+  },
+  "about": {
+    "eyebrow": "02 / THE PERSON BEHIND THE PIXELS",
+    "aside": "ALWAYS A WORK IN PROGRESS",
+    "intro": "DEVELOPER BY TRADE. EXPLORER AT HEART.",
+    "title": "A curious mind.\nA maker's *heart.*",
+    "paragraphs": [
+      "I like making things that make people feel something. Sometimes that's a beautifully simple interface. Sometimes it's a small, unexpected interaction that makes you pause.",
+      "My work lives where design and engineering meet. I care about the details, ask a lot of questions, and believe the best digital experiences feel effortlessly human."
+    ],
+    "skills": [
+      "Creative development",
+      "Interface design",
+      "React & TypeScript",
+      "Three.js & WebGL"
+    ],
+    "contactPrompt": "Enough about me. What are you working on?"
+  },
+  "contact": {
+    "eyebrow": "THE NEXT CHAPTER IS UNWRITTEN",
+    "title": "Let's make\nsomething *matter.*",
+    "description": "Have an idea, a possibility, or just a good question?\nI'd love to hear it.",
+    "dialogEyebrow": "OPEN TO NEW POSSIBILITIES",
+    "dialogTitle": "Good things start\nwith a *hello.*",
+    "dialogDescription": "Tell me a little about what you have in mind. Big ideas, small details, and friendly hellos are all welcome."
+  },
+  "footer": { "note": "Built with intention. And a little wonder." },
+  "milestones": [
+    {
+      "year": "2018",
+      "role": "Computer Science",
+      "note": "A spark of curiosity",
+      "title": "It started with a *what if.*",
+      "description": "A blank editor, a blinking cursor, and the realization that a few lines of code could become something people could use. Studying computer science gave that curiosity a foundation.",
+      "reflection": "The most important thing I learned was not a programming language. It was how to stay curious when I did not have the answer.",
+      "skills": [
+        "The fundamentals",
+        "Creative problem-solving",
+        "First experiments"
+      ]
+    },
+    {
+      "year": "2020",
+      "role": "Frontend Developer",
+      "note": "Ideas into interfaces",
+      "title": "Making things *real.*",
+      "description": "My first full-time role brought ideas out of the classroom and into the browser. I found my place in the space between design and engineering, making interfaces that felt as good as they worked.",
+      "reflection": "Small details are not small when someone interacts with them every day. This is where my love for thoughtful frontend development began.",
+      "skills": ["JavaScript", "Responsive interfaces", "Design systems"]
+    },
+    {
+      "year": "2022",
+      "role": "Software Engineer",
+      "note": "Growth & possibility",
+      "title": "Finding my *stride.*",
+      "description": "Moving beyond individual screens, I began thinking in systems. Collaborating across disciplines taught me to connect the details of implementation with the bigger picture of a product.",
+      "reflection": "Good software is a team sport. Listening well and asking the right questions turned out to be just as useful as writing the right code.",
+      "skills": ["React & TypeScript", "Product thinking", "Collaboration"]
+    },
+    {
+      "year": "2024",
+      "role": "Senior Engineer",
+      "note": "The bigger picture",
+      "title": "Room to *grow.*",
+      "description": "Leading projects meant finding clarity in ambiguity, helping other developers grow, and making technical decisions with care. The work became less about what I could build alone and more about what we could build together.",
+      "reflection": "Keep the architecture simple, the conversation open, and the person on the other side of the screen at the center.",
+      "skills": ["Technical direction", "Mentorship", "Craft at scale"]
+    },
+    {
+      "year": "2026",
+      "role": "Building my vision",
+      "note": "The story continues",
+      "title": "A path of my *own.*",
+      "description": "Today, I am bringing design sensibility and engineering experience together as an independent creative developer. Exploring the web as a place for useful tools, unexpected interactions, and a little wonder.",
+      "reflection": "Not every possibility becomes a path. But every experiment teaches me something. I am excited about the ones still ahead.",
+      "skills": [
+        "Independent practice",
+        "Creative development",
+        "Three.js & WebGL"
+      ]
+    }
+  ],
+  "alternatives": [
+    {
+      "year": "2023",
+      "label": "A different city",
+      "note": "Another possibility"
+    },
+    { "year": "2021", "label": "The startup route", "note": "A path not taken" }
+  ],
+  "projects": [
+    {
+      "name": "Orbit",
+      "category": "PRODUCT DESIGN & DEVELOPMENT",
+      "year": "2026",
+      "summary": "A calmer way to see the bigger picture.",
+      "artwork": "orbit",
+      "description": "An independent dashboard concept that turns complex business data into a clear, focused workspace. Built around a simple question: what if analytics helped you think, instead of making you work harder?",
+      "detail": "The exploration brings together a modular interface, purposeful data visualization, and a quiet visual system. Every interaction is designed to make the next decision a little easier.",
+      "stack": ["React", "TypeScript", "Data visualization"],
+      "kind": "Independent concept"
+    },
+    {
+      "name": "Forma",
+      "category": "DESIGN & CREATIVE DEVELOPMENT",
+      "year": "2025",
+      "summary": "Digital space for considered spaces.",
+      "artwork": "forma",
+      "description": "A digital identity and website concept for an architecture practice. Warm materials, generous typography, and a deliberate pace translate the feeling of a physical space into the browser.",
+      "detail": "The design pairs an editorial grid with subtle, scroll-led transitions. An exercise in knowing what to leave out, and letting the work speak for itself.",
+      "stack": ["Next.js", "CSS animation", "Art direction"],
+      "kind": "Independent concept"
+    },
+    {
+      "name": "Still",
+      "category": "INTERACTIVE WEB EXPERIENCE",
+      "year": "2025",
+      "summary": "A small pause in a very noisy world.",
+      "artwork": "still",
+      "description": "An experimental breathing and ambient sound experience. A living, light-filled sphere responds to a gentle breathing rhythm, creating a small pocket of calm right in your browser.",
+      "detail": "An exploration of how real-time graphics and generative audio can make the web feel less like a tool and more like a place. Designed to be quiet, accessible, and unhurried.",
+      "stack": ["Three.js", "Web Audio", "GLSL"],
+      "kind": "Creative exploration"
+    }
+  ]
+}
