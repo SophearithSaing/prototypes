@@ -1,0 +1,386 @@
+{
+  "bundle": "AI in Production: Governance, Reliability, and Application",
+  "ranking_method": {
+    "current_relevance_weight": 0.35,
+    "durability_weight": 0.3,
+    "practicality_weight": 0.35,
+    "note": "Publication date is used as evidence when judging current relevance, not as a separate score."
+  },
+  "cover_source": "Official Manning cover assets distributed by Simon & Schuster",
+  "publisher_url_source": "Manning Publications canonical book pages",
+  "books": [
+    {
+      "ranking": 1,
+      "title": "Building Reliable AI Systems",
+      "authors": ["Rush Shahani"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436732/building-reliable-ai-systems-9781633436732_lg.jpg",
+      "url": "https://www.manning.com/books/building-reliable-ai-systems",
+      "scores": {
+        "overall": 9.75,
+        "current": 10.0,
+        "durability": 9.4,
+        "practicality": 9.8
+      },
+      "description": "It teaches how to turn an AI prototype into a dependable production system through evaluation, observability, failure analysis, safeguards, incident handling, and operational reliability. It is for AI engineers, software engineers, and technical leads who need applications and agents that can survive real users rather than just impressive demos."
+    },
+    {
+      "ranking": 2,
+      "title": "LLM Evaluation and Alignment, The Foundational Ideas",
+      "authors": ["Han Lee"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633434240/evaluation-and-alignment-the-seminal-papers-9781633434240_lg.jpg",
+      "url": "https://www.manning.com/books/llm-evaluation-and-alignment-the-foundational-ideas",
+      "scores": {
+        "overall": 9.6,
+        "current": 9.9,
+        "durability": 9.6,
+        "practicality": 9.3
+      },
+      "description": "It teaches how LLM evaluation evolved from lexical metrics such as BLEU and ROUGE to semantic metrics, LLM-as-a-judge, hallucination measurement, red teaming, RLHF, and alignment techniques. It is for AI engineers and LLM practitioners who want durable mental models for deciding whether an AI system is actually good enough to ship."
+    },
+    {
+      "ranking": 3,
+      "title": "\"Looks Good to Me\"",
+      "authors": ["Adrienne Braganza"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633438125/looks-good-to-me-9781633438125_lg.jpg",
+      "url": "https://www.manning.com/books/looks-good-to-me",
+      "scores": {
+        "overall": 9.57,
+        "current": 9.5,
+        "durability": 9.5,
+        "practicality": 9.7
+      },
+      "description": "It teaches how to conduct effective code reviews, establish review culture, write useful comments, automate mechanical checks, and incorporate static analysis, testing, pair programming, and AI into the process. It is for developers through engineering leads who want to improve code quality and make reviews more consistent and useful."
+    },
+    {
+      "ranking": 4,
+      "title": "Machine Learning Platform Engineering",
+      "authors": [
+        "Benjamin Tan Wei Hao",
+        "Shanoop Padmanabhan",
+        "Varun Mallya"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437333/machine-learning-platform-engineering-9781633437333_lg.jpg",
+      "url": "https://www.manning.com/books/machine-learning-platform-engineering",
+      "scores": {
+        "overall": 9.55,
+        "current": 9.8,
+        "durability": 9.2,
+        "practicality": 9.6
+      },
+      "description": "It teaches how to build an internal platform for ML and AI workloads, including orchestration, training, serving, feature management, monitoring, evaluation, and MLOps using tools such as Kubeflow, MLflow, BentoML, Evidently, and Feast. It is for software engineers, ML engineers, and platform teams responsible for getting models reliably from notebooks into production."
+    },
+    {
+      "ranking": 5,
+      "title": "Effective Platform Engineering",
+      "authors": [
+        "Ajay Chankramath",
+        "Nic Cheneweth",
+        "Bryan Oliver",
+        "Sean Alvarez"
+      ],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436497/effective-platform-engineering-9781633436497_lg.jpg",
+      "url": "https://www.manning.com/books/effective-platform-engineering",
+      "scores": {
+        "overall": 9.51,
+        "current": 9.7,
+        "durability": 9.3,
+        "practicality": 9.5
+      },
+      "description": "It teaches how to design, build, and scale internal developer platforms with self-service workflows, control planes, Kubernetes, APIs, SLOs, product thinking, and measurable developer experience. It is for software, DevOps, SRE, and platform engineers building infrastructure that lets product teams ship without becoming infrastructure specialists."
+    },
+    {
+      "ranking": 6,
+      "title": "AI Governance",
+      "authors": ["Engin Bozdag", "Stefano Bennati"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436817/ai-governance-9781633436817_lg.jpg",
+      "url": "https://www.manning.com/books/ai-governance",
+      "scores": {
+        "overall": 9.35,
+        "current": 9.8,
+        "durability": 9.0,
+        "practicality": 9.2
+      },
+      "description": "It teaches how to operationalize AI governance through risk assessment, privacy and security controls, bias testing, prompt-injection defenses, monitoring, incident learning, regulatory compliance, and deployment-specific safeguards. It is for engineering managers, architects, security engineers, privacy practitioners, and teams responsible for putting generative AI into production without creating an avoidable compliance bonfire."
+    },
+    {
+      "ranking": 7,
+      "title": "The Art of AI Product Development",
+      "authors": ["Dr. Janna Lipenkova"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437050/the-art-of-ai-product-development-9781633437050_lg.jpg",
+      "url": "https://www.manning.com/books/the-art-of-ai-product-development",
+      "scores": {
+        "overall": 9.29,
+        "current": 9.3,
+        "durability": 9.4,
+        "practicality": 9.2
+      },
+      "description": "It teaches how to identify valuable AI opportunities, validate feasibility, design AI-powered products, manage experimentation, measure business outcomes, and move from prototype to sustainable product. It is for product-minded engineers, technical leads, founders, and product managers who care more about delivering useful AI than merely adding AI to a roadmap slide."
+    },
+    {
+      "ranking": 8,
+      "title": "AI Model Evaluation",
+      "authors": ["Leemay Nassery"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633435674/ai-model-evaluation-9781633435674_lg.jpg",
+      "url": "https://www.manning.com/books/ai-model-evaluation",
+      "scores": {
+        "overall": 9.27,
+        "current": 9.8,
+        "durability": 9.3,
+        "practicality": 8.7
+      },
+      "description": "It teaches how to evaluate AI systems with offline metrics, experiments, behavioral analysis, production constraints, A/B testing, and strategies for understanding model utility and impact before exposing users to it. It is for ML and AI practitioners taking models from development into user-facing production, although the current MEAP is still incomplete."
+    },
+    {
+      "ranking": 9,
+      "title": "Transformers in Action",
+      "authors": ["Nicole Koenigstein"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437883/transformers-in-action-9781633437883_lg.jpg",
+      "url": "https://www.manning.com/books/transformers-in-action",
+      "scores": {
+        "overall": 9.12,
+        "current": 9.5,
+        "durability": 9.3,
+        "practicality": 8.6
+      },
+      "description": "It teaches transformer architecture, self-attention, encoder and decoder models, optimization, tuning, RAG, multimodal systems, smaller specialized models, and the mathematics that explain their behavior. It is for developers and ML practitioners who want enough architectural depth to make better decisions about models rather than treating every LLM as a mysterious API."
+    },
+    {
+      "ranking": 10,
+      "title": "Learn AI Data Engineering",
+      "authors": ["David Melillo"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633435728/learn-ai-data-engineering-9781633435728_lg.jpg",
+      "url": "https://www.manning.com/books/learn-ai-data-engineering",
+      "scores": {
+        "overall": 9.11,
+        "current": 9.8,
+        "durability": 8.1,
+        "practicality": 9.3
+      },
+      "description": "It teaches how to use and embed LLMs in data-engineering workflows for SQL and Python generation, cleaning, transformation, enrichment, analysis, and agentic automation. It is for data engineers and data professionals who already know Python and SQL and want concrete ways to integrate AI into real pipelines."
+    },
+    {
+      "ranking": 11,
+      "title": "Optimization Algorithms",
+      "authors": ["Alaa Khamis"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633438835/optimization-algorithms-9781633438835_lg.jpg",
+      "url": "https://www.manning.com/books/optimization-algorithms",
+      "scores": {
+        "overall": 9.06,
+        "current": 9.0,
+        "durability": 9.8,
+        "practicality": 8.5
+      },
+      "description": "It teaches optimization techniques for design, planning, scheduling, routing, and control problems, including classical, evolutionary, swarm, and AI-inspired approaches implemented through practical examples. It is for developers, data scientists, and engineers solving problems where finding a good solution among enormous numbers of possibilities matters more than generating text."
+    },
+    {
+      "ranking": 12,
+      "title": "Effective Conversational AI",
+      "authors": ["Andrew Freed", "Cari Jacobs", "Eniko Rozsa"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436404/effective-conversational-ai-9781633436404_lg.jpg",
+      "url": "https://www.manning.com/books/effective-conversational-ai",
+      "scores": {
+        "overall": 9.04,
+        "current": 9.1,
+        "durability": 8.8,
+        "practicality": 9.2
+      },
+      "description": "It covers production conversational systems, including question answering, process automation, routing, generative AI, evaluation, user experience, and continuous improvement. It is for engineers, product managers, and technical leads building enterprise assistants that need to perform useful tasks reliably rather than merely sustain a charming conversation."
+    },
+    {
+      "ranking": 13,
+      "title": "LLMs in Production",
+      "authors": ["Christopher Brousseau", "Matthew Sharp"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437203/llms-in-production-9781633437203_lg.jpg",
+      "url": "https://www.manning.com/books/llms-in-production",
+      "scores": {
+        "overall": 8.98,
+        "current": 8.8,
+        "durability": 8.7,
+        "practicality": 9.4
+      },
+      "description": "It teaches the engineering work required to take LLM applications into production, including model interaction, application architecture, data pipelines, deployment, monitoring, scaling, and avoiding common operational failures. It is for software, data, and ML engineers who want to move beyond experiments and build maintainable LLM-backed products."
+    },
+    {
+      "ranking": 14,
+      "title": "Financial AI in Practice",
+      "authors": ["Taehun Kim"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633435391/financial-ai-in-practice-9781633435391_lg.jpg",
+      "url": "https://www.manning.com/books/financial-ai-in-practice",
+      "scores": {
+        "overall": 8.8,
+        "current": 9.8,
+        "durability": 8.8,
+        "practicality": 7.8
+      },
+      "description": "It teaches applied financial AI through credit-risk modeling, fraud detection, graph and unsupervised methods, investment systems, and hybrid strategies that combine quantitative models with LLM-derived information. It is for data scientists and engineers working in fintech or financial services, making it highly practical inside that domain but much less transferable outside it."
+    },
+    {
+      "ranking": 15,
+      "title": "Build AI Drug Discovery Pipelines",
+      "authors": ["Noah Flynn"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437661/build-ai-drug-discovery-pipelines-9781633437661_lg.jpg",
+      "url": "https://www.manning.com/books/build-ai-drug-discovery-pipelines",
+      "scores": {
+        "overall": 8.68,
+        "current": 9.8,
+        "durability": 9.0,
+        "practicality": 7.3
+      },
+      "description": "It teaches drug discovery and cheminformatics by building hands-on ML pipelines for screening compounds, protein folding, generative molecule design, toxicity, and AlphaFold-inspired workflows. It is for Python developers, ML practitioners, and computational-biology newcomers who want to build something substantial in drug discovery, although its domain specialization limits general software-engineering payoff."
+    },
+    {
+      "ranking": 16,
+      "title": "Human-in-the-Loop Machine Learning",
+      "authors": ["Robert (Munro) Monarch"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617296741/human-in-the-loop-machine-learning-9781617296741_lg.jpg",
+      "url": "https://www.manning.com/books/human-in-the-loop-machine-learning",
+      "scores": {
+        "overall": 8.66,
+        "current": 8.0,
+        "durability": 9.4,
+        "practicality": 8.7
+      },
+      "description": "It teaches active learning, data annotation, quality control, sampling, transfer learning, interface design, and workflows that combine human judgment with machine learning. It is for data scientists and ML engineers building systems where training data, feedback quality, and human oversight matter as much as the model itself."
+    },
+    {
+      "ranking": 17,
+      "title": "Coding with AI",
+      "authors": ["Jeremy Morgan"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437272/coding-with-ai-9781633437272_lg.jpg",
+      "url": "https://www.manning.com/books/coding-with-ai",
+      "scores": {
+        "overall": 8.38,
+        "current": 9.1,
+        "durability": 6.8,
+        "practicality": 9.0
+      },
+      "description": "It teaches professional AI-assisted development workflows spanning requirements, architecture, code generation, testing, debugging, refactoring, prompting, and documentation. It is for working developers who want to integrate coding assistants into a disciplined engineering process, though its tool-specific guidance will age faster than the underlying workflow ideas."
+    },
+    {
+      "ranking": 18,
+      "title": "Software Testing with Generative AI",
+      "authors": ["Mark Winteringham"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437364/software-testing-with-generative-ai-9781633437364_lg.jpg",
+      "url": "https://www.manning.com/books/software-testing-with-generative-ai",
+      "scores": {
+        "overall": 8.37,
+        "current": 8.4,
+        "durability": 7.6,
+        "practicality": 9.0
+      },
+      "description": "It teaches how generative AI can assist test design, automation, test-data generation, exploratory testing, TDD, feedback, and AI-powered testing assistants. It is for developers, testers, and quality engineers who want immediate productivity gains, though specific tools and prompting techniques will age faster than the testing principles themselves."
+    },
+    {
+      "ranking": 19,
+      "title": "Build Financial Software with Generative AI (From Scratch)",
+      "authors": ["Christopher Kardell", "Mark Brouwer"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436626/build-financial-software-with-generative-ai-from-scratch-9781633436626_lg.jpg",
+      "url": "https://www.manning.com/books/build-financial-software-with-generative-ai-from-scratch",
+      "scores": {
+        "overall": 8.36,
+        "current": 8.8,
+        "durability": 7.9,
+        "practicality": 8.3
+      },
+      "description": "It teaches how to build realistic financial applications with generative AI using Python, combining financial-domain requirements with LLM integration and practical software-development techniques. It is for developers interested in fintech who want a substantial project rather than disconnected AI examples, with somewhat lower value for engineers outside financial services."
+    },
+    {
+      "ranking": 20,
+      "title": "Interpretable AI",
+      "authors": ["Ajay Thampi"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617297649/interpretable-ai-9781617297649_lg.jpg",
+      "url": "https://www.manning.com/books/interpretable-ai",
+      "scores": {
+        "overall": 8.3,
+        "current": 7.6,
+        "durability": 9.0,
+        "practicality": 8.4
+      },
+      "description": "It teaches model interpretability using transparent models, partial-dependence plots, LIME, SHAP, Anchors, saliency methods, fairness analysis, bias mitigation, and techniques for explaining complex ML systems. It is for data scientists and ML engineers who need models people can inspect and justify, though its 2022 coverage naturally misses much of the newer LLM-specific interpretability landscape."
+    },
+    {
+      "ranking": 21,
+      "title": "Generative AI in Action",
+      "authors": ["Amit Bahree"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436947/generative-ai-in-action-9781633436947_lg.jpg",
+      "url": "https://www.manning.com/books/generative-ai-in-action",
+      "scores": {
+        "overall": 8.29,
+        "current": 8.5,
+        "durability": 7.7,
+        "practicality": 8.6
+      },
+      "description": "It surveys enterprise generative-AI applications across text, images, music, and code along with deployment, performance, safety, governance, and ethical considerations. It is for enterprise developers, architects, and technical leads, with durable system-design material but faster-aging examples and APIs."
+    },
+    {
+      "ranking": 22,
+      "title": "Succeeding with AI",
+      "authors": ["Veljko Krunic"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781617296932/succeeding-with-ai-9781617296932_lg.jpg",
+      "url": "https://www.manning.com/books/succeeding-with-ai",
+      "scores": {
+        "overall": 8.24,
+        "current": 7.3,
+        "durability": 9.4,
+        "practicality": 8.2
+      },
+      "description": "It teaches how to select, plan, structure, and manage AI projects around measurable business outcomes, including pipelines, project risks, early warning signs, and links between technical work and business value. It is for engineering, data, and business leaders running AI initiatives, and although it predates the generative-AI boom its project-management lessons have aged considerably better than its publication date suggests."
+    },
+    {
+      "ranking": 23,
+      "title": "AI for Everyday IT",
+      "authors": ["Chrissy LeMaire", "Brandon Abshire"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436428/ai-for-everyday-it-9781633436428_lg.jpg",
+      "url": "https://www.manning.com/books/ai-for-everyday-it",
+      "scores": {
+        "overall": 8.23,
+        "current": 8.9,
+        "durability": 6.8,
+        "practicality": 8.8
+      },
+      "description": "It demonstrates how AI assistants can help with support, root-cause analysis, disaster recovery, documentation, databases, development, DevOps, and IT management. It is for IT professionals and managers seeking immediate productivity improvements, but much of the provider-specific guidance will date quickly."
+    },
+    {
+      "ranking": 24,
+      "title": "Spring AI in Action",
+      "authors": ["Craig Walls"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633436114/spring-ai-in-action-9781633436114_lg.jpg",
+      "url": "https://www.manning.com/books/spring-ai-in-action",
+      "scores": {
+        "overall": 8.11,
+        "current": 9.5,
+        "durability": 6.6,
+        "practicality": 8.0
+      },
+      "description": "It teaches how to build LLM features in Spring Boot using Spring AI, including RAG, conversational memory, multimodal input, tool use, agents, and observability. It is for Java and Spring developers who want highly practical AI integration in their existing stack, while its framework-specific nature makes the knowledge age faster and transfer less broadly."
+    },
+    {
+      "ranking": 25,
+      "title": "The AI Pocket Book",
+      "authors": ["Emmanuel Maggiori"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633435759/the-ai-pocketbook-9781633435759_lg.jpg",
+      "url": "https://www.manning.com/books/the-ai-pocket-book",
+      "scores": {
+        "overall": 7.87,
+        "current": 9.0,
+        "durability": 7.8,
+        "practicality": 6.8
+      },
+      "description": "It gives engineers a compact overview of how modern AI works, why hallucinations happen, how to evaluate tools, when AI is useful, and where hype exceeds reality. It is for technical readers who want a quick, skeptical orientation to AI rather than an implementation-heavy guide."
+    },
+    {
+      "ranking": 26,
+      "title": "Inside AI",
+      "authors": ["Akli Adjaoute"],
+      "cover_url": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781633437722/inside-ai-9781633437722_lg.jpg",
+      "url": "https://www.manning.com/books/inside-ai",
+      "scores": {
+        "overall": 7.4,
+        "current": 8.6,
+        "durability": 8.8,
+        "practicality": 5.0
+      },
+      "description": "It examines AI's history, core techniques, limitations, business successes and failures, organizational adoption, and the difference between actual capability and marketing hype. It is for executives and decision-makers rather than hands-on engineers, making it useful context but a lower priority when the goal is building production systems."
+    }
+  ]
+}
