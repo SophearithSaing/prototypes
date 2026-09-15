@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#03080b" />
+    <meta
+      name="description"
+      content="Alex Rivera — Software Engineer. An interactive circuit-board map of my career, skills, and the connections in between."
+    />
+    <title>Alex Rivera — A career, connected.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=IBM+Plex+Mono:wght@400;450;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="/assets/index-D9T84Hi1.js"></script>
+    <link
+      rel="modulepreload"
+      crossorigin
+      href="/assets/three-core-WEinqkvm.js"
+    />
+    <link
+      rel="modulepreload"
+      crossorigin
+      href="/assets/three-effects-BawLS995.js"
+    />
+    <link rel="stylesheet" crossorigin href="/assets/index-bTdovRf1.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <a class="identity" href="#home" aria-label="Alex Rivera home">
+          <span class="monogram">AR<i></i></span>
+          <span class="name">ALEX RIVERA</span>
+          <span class="occupation">Software Engineer</span>
+        </a>
+        <nav aria-label="Main navigation">
+          <button class="nav-link active" data-view="home">Home</button>
+          <button class="nav-link" data-view="about">About</button>
+          <button class="nav-link" data-view="experience">Experience</button>
+          <button class="nav-link" data-view="skills">Skills</button>
+          <button class="nav-link" data-view="projects">Projects</button>
+          <button class="nav-link" data-view="contact">Contact</button>
+        </nav>
+        <button class="work-button" data-view="projects">
+          View my work <span>»</span>
+        </button>
+      </header>
+
+      <main id="home">
+        <div
+          id="scene"
+          role="img"
+          aria-label="Interactive three-dimensional circuit board showing Alex Rivera's career and software engineering skills"
+        ></div>
+        <div class="scene-shade"></div>
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="eyebrow"><span></span> THREE.JS POWERED RESUME</div>
+          <h1 id="hero-title">
+            My <span class="green">career.</span><br /><span class="cyan"
+              >Visualized.</span
+            >
+          </h1>
+          <div class="hero-dash"></div>
+          <p>
+            An interactive 3D map of my journey,<br class="desktop-break" />
+            skills, and growth — built with code<br class="desktop-break" />
+            and designed for exploration.
+          </p>
+          <button class="explore" id="explore">
+            Explore my journey
+            <span class="play-icon"
+              ><svg viewBox="0 0 20 20" fill="none">
+                <path
+                  d="m8 6 6 4-6 4V6Z"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linejoin="round"
+                /></svg
+            ></span>
+          </button>
+          <div class="micro-caption">
+            <span class="status-dot"></span> EVERY CONNECTION TELLS A STORY
+          </div>
+        </section>
+
+        <div class="interaction-guide">
+          <svg class="mouse-icon" viewBox="0 0 45 65" fill="none">
+            <rect
+              x="6"
+              y="3"
+              width="33"
+              height="56"
+              rx="16.5"
+              stroke="currentColor"
+              stroke-width="1"
+            />
+            <path d="M22.5 3v19" stroke="currentColor" />
+            <rect
+              x="21"
+              y="11"
+              width="3"
+              height="11"
+              rx="1.5"
+              fill="currentColor"
+            />
+          </svg>
+          <div>
+            <span>Drag to rotate</span><span>Scroll to zoom</span
+            ><span>Click nodes</span>
+          </div>
+          <button
+            id="reset-view"
+            title="Reset board view"
+            aria-label="Reset board view"
+          >
+            ↺
+          </button>
+        </div>
+        <div class="legend">
+          <div><i class="career-line"></i><span>Career path</span></div>
+          <div><i class="skill-line"></i><span>Skill connections</span></div>
+        </div>
+        <div class="board-caption">
+          <span class="status-dot"></span> SYSTEM ONLINE
+          <span class="caption-divider">/</span> PORTFOLIO v.2025
+        </div>
+        <div class="hover-tooltip" id="tooltip"></div>
+        <div class="loading" id="loading">
+          <span></span> INITIALIZING EXPERIENCE
+        </div>
+
+        <aside
+          class="detail-panel"
+          id="detail-panel"
+          aria-live="polite"
+          aria-labelledby="detail-title"
+          hidden
+        >
+          <button
+            class="close-panel"
+            id="close-panel"
+            aria-label="Close details"
+          >
+            ×
+          </button>
+          <div class="panel-eyebrow" id="detail-eyebrow"></div>
+          <h2 id="detail-title"></h2>
+          <p id="detail-description"></p>
+          <div class="panel-tags" id="detail-tags"></div>
+          <div class="panel-footer">
+            <span class="status-dot"></span
+            ><span id="detail-footer">PART OF THE BIGGER PICTURE</span>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>
