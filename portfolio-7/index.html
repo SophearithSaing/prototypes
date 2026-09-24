@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050c12" />
+    <meta
+      name="description"
+      content="An interactive journey through software engineering, from web development in 2021 to leading Node.js development in 2025."
+    />
+    <title>Dev. — A journey in code</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23071017'/%3E%3Cpath d='m20 14-10 10 10 10m8-20 10 10-10 10' fill='none' stroke='%2316eee4' stroke-width='3'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <a class="brand" href="#" aria-label="Dev. Journey home"
+          ><span class="brand-mark">d<span>.</span></span
+          ><span class="brand-divider"></span
+          ><span class="brand-description">A JOURNEY IN CODE</span></a
+        >
+        <nav class="navigation" aria-label="Main navigation">
+          <button
+            class="nav-link active"
+            data-view="overview"
+            aria-current="page"
+          >
+            Overview
+          </button>
+          <button class="nav-link" data-view="journey">The journey</button>
+          <button class="nav-link" data-view="stack">Tech stack</button>
+        </nav>
+        <div class="availability">
+          <span class="status-dot"></span>Always building<span
+            class="availability-arrow"
+            >↗</span
+          >
+        </div>
+      </header>
+
+      <main class="experience" id="experience">
+        <div id="scene" aria-hidden="true"></div>
+        <div class="scene-shade" aria-hidden="true"></div>
+        <div class="grain" aria-hidden="true"></div>
+
+        <section class="hero" aria-labelledby="hero-title">
+          <p class="eyebrow"><span></span> SOFTWARE ENGINEER</p>
+          <h1 id="hero-title">Always <span>building.</span></h1>
+          <p class="hero-description">
+            From the first line of code to leading what’s next.<br />A little
+            curiosity. A lot of possibility.
+          </p>
+          <button class="explore-button" id="explore">
+            Explore my journey
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 12h15m-6-6 6 6-6 6" />
+            </svg>
+          </button>
+          <div class="hero-caption">
+            <span>2021 — 2025</span><span class="caption-line"></span
+            ><span>AND STILL EVOLVING</span>
+          </div>
+        </section>
+
+        <div class="map-caption">
+          <span class="map-caption-cross">+</span
+          ><span
+            >THE PATH SO FAR<br /><b
+              >04 CHAPTERS. ONE CONTINUOUS JOURNEY.</b
+            ></span
+          >
+        </div>
+
+        <section class="career-map" aria-label="Interactive career timeline">
+          <div id="milestones"></div>
+          <div id="technologies"></div>
+        </section>
+
+        <div class="bottom-bar">
+          <div class="interaction-hint">
+            <span class="mouse-icon"><span></span></span>
+            <div>
+              EVERY STEP BUILDS THE NEXT<span
+                >Select a milestone to explore
+                <span class="hint-arrow">↗</span></span
+              >
+            </div>
+          </div>
+          <div class="map-index">
+            <span>01</span>
+            <div><i></i><i></i><i></i><i></i></div>
+            <span>04</span>
+          </div>
+          <div class="map-legend">
+            <span><i class="legend-line career-line"></i>Career path</span
+            ><span
+              ><i class="legend-line skill-line"></i>Skills & technologies</span
+            >
+          </div>
+        </div>
+
+        <aside
+          class="detail-panel"
+          id="detail-panel"
+          aria-labelledby="detail-title"
+          hidden
+        >
+          <div class="panel-topline">
+            <span id="detail-kicker"></span
+            ><button class="close-panel" aria-label="Close career details">
+              ×
+            </button>
+          </div>
+          <div id="detail-content" aria-live="polite"></div>
+          <div class="panel-navigation">
+            <span id="detail-progress"></span>
+            <div>
+              <button id="previous-milestone" aria-label="Previous milestone">
+                ←</button
+              ><button id="next-milestone" aria-label="Next milestone">
+                →
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <aside
+          class="stack-panel"
+          id="stack-panel"
+          aria-labelledby="stack-title"
+          hidden
+        >
+          <div class="panel-topline">
+            <span>THE TOOLKIT</span
+            ><button class="close-panel" aria-label="Close technology stack">
+              ×
+            </button>
+          </div>
+          <h2 id="stack-title">Built with experience.</h2>
+          <p class="panel-description">
+            The technologies behind every chapter.
+          </p>
+          <div id="stack-content"></div>
+          <p class="stack-footnote">
+            <span class="status-dot"></span>Always learning. Always adding.
+          </p>
+        </aside>
+
+        <p class="scene-fallback" hidden>
+          The journey continues — explore each milestone below.
+        </p>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
