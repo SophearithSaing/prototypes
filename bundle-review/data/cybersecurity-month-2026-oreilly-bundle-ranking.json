@@ -1,0 +1,318 @@
+{
+  "bundle": "Cybersecurity Month 2026",
+  "ranking_method": {
+    "current_relevance_weight": 0.35,
+    "durability_weight": 0.3,
+    "practicality_weight": 0.35,
+    "note": "Publication date is evidence for current relevance, not a separate score."
+  },
+  "cover_source": "Official O'Reilly Learning cover endpoint keyed to each edition's digital ISBN",
+  "publisher_url_source": "O'Reilly Media canonical book pages",
+  "books": [
+    {
+      "ranking": 1,
+      "title": "Web Application Security, 2nd Edition",
+      "authors": ["Andrew Hoffman"],
+      "released": "January 2024",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098143923/250w/",
+      "url": "https://www.oreilly.com/library/view/web-application-security/9781098143923/",
+      "scores": {
+        "overall": 9.63,
+        "current": 9.5,
+        "durability": 9.6,
+        "practicality": 9.8
+      },
+      "description": "It teaches modern web application security through reconnaissance, exploitation, defense, threat modeling, secure development, GraphQL, cloud deployments, CDNs, and server-side rendering. It is for software engineers and security practitioners who want to understand both how web applications are attacked and how to design durable mitigations."
+    },
+    {
+      "ranking": 2,
+      "title": "Identity Security for Software Development",
+      "authors": ["John Walsh", "Uzi Ailon", "Matt Barker"],
+      "released": "May 2025",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098158026/250w/",
+      "url": "https://www.oreilly.com/library/view/identity-security-for/9781098158026/",
+      "scores": {
+        "overall": 9.6,
+        "current": 9.7,
+        "durability": 9.5,
+        "practicality": 9.6
+      },
+      "description": "It teaches authentication, authorization, secrets management, machine identities, credentials, zero trust identity, and how to integrate identity security into applications, CI/CD, Kubernetes, and multicloud environments. It is for developers, DevSecOps engineers, and security engineers who want security controls embedded in normal software delivery rather than bolted on afterward."
+    },
+    {
+      "ranking": 3,
+      "title": "Defensive Security Handbook, 2nd Edition",
+      "authors": ["Lee Brotherston", "Amanda Berlin", "William F. Reyor"],
+      "released": "June 2024",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098127237/250w/",
+      "url": "https://www.oreilly.com/library/view/defensive-security-handbook/9781098127237/",
+      "scores": {
+        "overall": 9.54,
+        "current": 9.4,
+        "durability": 9.5,
+        "practicality": 9.7
+      },
+      "description": "It teaches how to build and improve an information-security program through asset management, incident response, vulnerability management, logging, monitoring, network defense, password management, penetration-testing concepts, and secure development. It is for engineers, administrators, and security practitioners who need a broad, practical defensive-security playbook rather than a narrowly specialized reference."
+    },
+    {
+      "ranking": 4,
+      "title": "Software Supply Chain Security",
+      "authors": ["Cassie Crossley"],
+      "released": "February 2024",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098133696/250w/",
+      "url": "https://www.oreilly.com/library/view/software-supply-chain/9781098133696/",
+      "scores": {
+        "overall": 9.46,
+        "current": 9.3,
+        "durability": 9.6,
+        "practicality": 9.5
+      },
+      "description": "It teaches risks and controls across source code, dependencies, builds, deployment, third-party suppliers, secure development lifecycles, software transparency, and supply-chain frameworks. It is for software, platform, DevOps, security, and engineering leaders who want to reduce risk across the entire path from source code to production."
+    },
+    {
+      "ranking": 5,
+      "title": "Zero Trust Networks, 2nd Edition",
+      "authors": [
+        "Razi Rais",
+        "Christina Morillo",
+        "Evan Gilman",
+        "Doug Barth"
+      ],
+      "released": "February 2024",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781492096580/250w/",
+      "url": "https://www.oreilly.com/library/view/zero-trust-networks/9781492096580/",
+      "scores": {
+        "overall": 9.38,
+        "current": 9.3,
+        "durability": 9.7,
+        "practicality": 9.2
+      },
+      "description": "It teaches zero-trust architecture through trust and policy engines, identity-aware access, network design, cloud application, migration strategies, and major NIST, CISA, and DoD frameworks. It is for architects, platform engineers, infrastructure engineers, and security practitioners designing systems where network location is no longer treated as proof of trust."
+    },
+    {
+      "ranking": 6,
+      "title": "Blue Team Handbook: Incident Response",
+      "authors": ["Don Murdoch"],
+      "released": "February 2026",
+      "cover_url": "https://learning.oreilly.com/library/cover/9798341649767/250w/",
+      "url": "https://www.oreilly.com/library/view/blue-team-handbook/9798341649767/",
+      "scores": {
+        "overall": 9.36,
+        "current": 9.8,
+        "durability": 8.8,
+        "practicality": 9.4
+      },
+      "description": "It teaches modern incident response using NIST and SANS lifecycles, MITRE ATT&CK, traffic analysis, forensic techniques, indicators of compromise, Windows and Linux investigation, and field-ready response workflows. It is for SOC analysts, incident responders, security engineers, and technically inclined developers who want concrete defensive procedures rather than only security theory."
+    },
+    {
+      "ranking": 7,
+      "title": "Security Architecture for Hybrid Cloud",
+      "authors": ["Mark Buckwell", "Stefaan Van daele", "Carsten Horst"],
+      "released": "July 2024",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098157760/250w/",
+      "url": "https://www.oreilly.com/library/view/security-architecture-for/9781098157760/",
+      "scores": {
+        "overall": 9.34,
+        "current": 9.5,
+        "durability": 9.3,
+        "practicality": 9.2
+      },
+      "description": "It teaches a structured approach to hybrid-cloud security architecture using threat modeling, zero trust, compliance, security controls, architectural work products, and repeatable solution-design methods. It is for architects and senior engineers who need to integrate security into cloud and application architecture rather than treating it as a separate review stage."
+    },
+    {
+      "ranking": 8,
+      "title": "Learning Cloud Security",
+      "authors": ["Ric Messier"],
+      "released": "June 2026",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098179410/250w/",
+      "url": "https://www.oreilly.com/library/view/learning-cloud-security/9781098179410/",
+      "scores": {
+        "overall": 9.24,
+        "current": 9.8,
+        "durability": 9.1,
+        "practicality": 8.8
+      },
+      "description": "It teaches vendor-neutral cloud-security fundamentals using the CCSP domains, including architecture, data protection, infrastructure, application security, operations, risk, compliance, and emerging trends. It is for experienced IT and security professionals preparing for CCSP or developers and architects who want a systematic map of cloud-security concerns."
+    },
+    {
+      "ranking": 9,
+      "title": "Practical Cloud Security, 2nd Edition",
+      "authors": ["Chris Dotson"],
+      "released": "October 2023",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098148164/250w/",
+      "url": "https://www.oreilly.com/library/view/practical-cloud-security/9781098148164/",
+      "scores": {
+        "overall": 9.13,
+        "current": 8.9,
+        "durability": 9.1,
+        "practicality": 9.4
+      },
+      "description": "It teaches cloud-security practices across identity and access management, data protection, vulnerability management, network security, incident response, privileged access, and multicloud environments. It is for developers, architects, and security engineers who want directly applicable cloud controls grounded in durable principles such as least privilege and defense in depth."
+    },
+    {
+      "ranking": 10,
+      "title": "Privacy and Security for Large Language Models",
+      "authors": ["Baihan Lin"],
+      "released": "January 2026",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098160838/250w/",
+      "url": "https://www.oreilly.com/library/view/privacy-and-security/9781098160838/",
+      "scores": {
+        "overall": 9.06,
+        "current": 9.8,
+        "durability": 8.5,
+        "practicality": 8.8
+      },
+      "description": "It teaches LLM privacy and security using differential privacy, federated learning, homomorphic encryption, secure fine-tuning, deployment defenses, and case studies across sensitive domains. It is for AI engineers and security-conscious developers building personalized or regulated LLM applications where protecting data is as important as model quality."
+    },
+    {
+      "ranking": 11,
+      "title": "Learning Serverless Security",
+      "authors": ["Joshua Arvin Lat"],
+      "released": "February 2026",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098149000/250w/",
+      "url": "https://www.oreilly.com/library/view/learning-serverless-security/9781098149000/",
+      "scores": {
+        "overall": 9.04,
+        "current": 9.8,
+        "durability": 8.1,
+        "practicality": 9.1
+      },
+      "description": "It teaches offensive and defensive security for serverless systems on AWS, Azure, and Google Cloud, including identity mistakes, privilege escalation, vulnerable functions, code auditing, dependency risks, and remediation. It is for cloud and application engineers who actively use serverless platforms and want hands-on experience securing them."
+    },
+    {
+      "ranking": 12,
+      "title": "The Developer's Playbook for Large Language Model Security",
+      "authors": ["Steve Wilson"],
+      "released": "September 2024",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098162191/250w/",
+      "url": "https://www.oreilly.com/library/view/the-developers-playbook/9781098162191/",
+      "scores": {
+        "overall": 8.77,
+        "current": 8.9,
+        "durability": 8.0,
+        "practicality": 9.3
+      },
+      "description": "It teaches the distinctive attack surface of LLM applications using OWASP LLM risks, trust boundaries, prompt-related vulnerabilities, defensive controls, and a process for building secure AI applications. It is for developers and security engineers shipping LLM features who want a practical threat model, although specific risk lists and techniques will evolve quickly."
+    },
+    {
+      "ranking": 13,
+      "title": "Security as Code",
+      "authors": ["BK Sarthak Das", "Virginia Chu"],
+      "released": "January 2023",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098127459/250w/",
+      "url": "https://www.oreilly.com/library/view/security-as-code/9781098127459/",
+      "scores": {
+        "overall": 8.77,
+        "current": 8.4,
+        "durability": 8.8,
+        "practicality": 9.1
+      },
+      "description": "It teaches DevSecOps by automating security in infrastructure and delivery pipelines using infrastructure as code, Kubernetes, AWS tooling, scanning, logging, RBAC, resilience testing, and CI/CD controls. It is for developers, DevOps engineers, and security engineers who want security checks and guardrails to become part of the software-delivery system itself."
+    },
+    {
+      "ranking": 14,
+      "title": "Building a Cyber Risk Management Program",
+      "authors": ["Brian Allen", "Brandon Bapst", "Terry Allan Hicks"],
+      "released": "December 2023",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098147785/250w/",
+      "url": "https://www.oreilly.com/library/view/building-a-cyber/9781098147785/",
+      "scores": {
+        "overall": 8.6,
+        "current": 8.7,
+        "durability": 9.3,
+        "practicality": 7.9
+      },
+      "description": "It teaches how to establish, govern, measure, and sustain an enterprise cyber-risk management program using formal frameworks, executive oversight, legal considerations, and risk-based strategy. It is for security leaders, auditors, architects, and executives; hands-on software engineers will find useful context but less immediately buildable material."
+    },
+    {
+      "ranking": 15,
+      "title": "Intelligent Continuous Security",
+      "authors": ["Marc Hornbeek"],
+      "released": "June 2025",
+      "cover_url": "https://learning.oreilly.com/library/cover/9798341615908/250w/",
+      "url": "https://www.oreilly.com/library/view/intelligent-continuous-security/9798341615908/",
+      "scores": {
+        "overall": 8.43,
+        "current": 9.2,
+        "durability": 7.8,
+        "practicality": 8.2
+      },
+      "description": "It proposes an integrated continuous-security model that combines DevSecOps, SecOps, automation, monitoring, compliance, and AI-assisted security tools across the software lifecycle. It is for security leaders, DevOps practitioners, and decision-makers interested in organizational security transformation, though some of its AI-tooling guidance is likely to age quickly."
+    },
+    {
+      "ranking": 16,
+      "title": "Cybersecurity Ops with bash",
+      "authors": ["Paul Troncone", "Carl Albing"],
+      "released": "April 2019",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781492041306/250w/",
+      "url": "https://www.oreilly.com/library/view/cybersecurity-ops-with/9781492041306/",
+      "scores": {
+        "overall": 8.39,
+        "current": 7.2,
+        "durability": 9.3,
+        "practicality": 8.8
+      },
+      "description": "It teaches how to use bash and standard command-line tools for log analysis, network monitoring, data collection, malware analysis, penetration-testing tasks, permissions, and security administration. It is for Linux-oriented developers, administrators, and security practitioners who want lightweight techniques that remain surprisingly useful because the Unix command line refuses to die."
+    },
+    {
+      "ranking": 17,
+      "title": "Cloud Native Security Cookbook",
+      "authors": ["Josh Armitage"],
+      "released": "April 2022",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098106294/250w/",
+      "url": "https://www.oreilly.com/library/view/cloud-native-security/9781098106294/",
+      "scores": {
+        "overall": 8.25,
+        "current": 7.7,
+        "durability": 7.9,
+        "practicality": 9.1
+      },
+      "description": "It provides practical recipes for securing cloud-native environments across AWS, Azure, and GCP, covering identity, accounts, networking, workloads, data, monitoring, and organizational security practices. It is for cloud, platform, DevOps, and security engineers who want concrete implementation patterns, although provider-specific recipes naturally age faster than the underlying principles."
+    },
+    {
+      "ranking": 18,
+      "title": "Kubernetes Security and Observability",
+      "authors": ["Brendan Creane", "Amit Gupta"],
+      "released": "October 2021",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098107093/250w/",
+      "url": "https://www.oreilly.com/library/view/kubernetes-security-and/9781098107093/",
+      "scores": {
+        "overall": 8.09,
+        "current": 7.2,
+        "durability": 8.3,
+        "practicality": 8.8
+      },
+      "description": "It teaches Kubernetes security across infrastructure, RBAC, secrets, network policy, workload protection, runtime controls, auditing, observability, and operational security strategy. It is for platform, networking, operations, and security engineers running Kubernetes, but its 2021 implementation details make it more useful for principles than as a fully current cluster-hardening reference."
+    },
+    {
+      "ranking": 19,
+      "title": "The Cybersecurity Manager's Guide",
+      "authors": ["Todd Barnum"],
+      "released": "March 2021",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781492076209/250w/",
+      "url": "https://www.oreilly.com/library/view/the-cybersecurity-managers/9781492076209/",
+      "scores": {
+        "overall": 7.84,
+        "current": 7.8,
+        "durability": 9.0,
+        "practicality": 6.9
+      },
+      "description": "It teaches how cybersecurity managers think about security domains, risk, governance, teams, organizational constraints, communication, and building a viable security program with limited resources. It is for new or aspiring security managers rather than hands-on software engineers, so its leadership lessons are durable but its direct practical payoff for coding work is lower."
+    },
+    {
+      "ranking": 20,
+      "title": "Inside Cyber Warfare, 3rd Edition",
+      "authors": ["Jeffrey Caruso"],
+      "released": "September 2024",
+      "cover_url": "https://learning.oreilly.com/library/cover/9781098138509/250w/",
+      "url": "https://www.oreilly.com/library/view/inside-cyber-warfare/9781098138509/",
+      "scores": {
+        "overall": 7.81,
+        "current": 9.0,
+        "durability": 8.2,
+        "practicality": 6.3
+      },
+      "description": "It examines state and nonstate cyber warfare, attribution, offensive operations, critical infrastructure, legal questions, and recent conflicts including Ukraine through contemporary case studies. It is for security leaders, policy-minded technologists, and readers seeking strategic context rather than engineers looking for techniques they can immediately apply to software."
+    }
+  ]
+}
