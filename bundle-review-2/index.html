@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f8f2" />
+    <meta
+      name="description"
+      content="A considered collection of technical books. Explore six curated collections, compare thoughtful rankings, and find your next great read."
+    />
+    <title>Wellread — Good books. Better thinking.</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link
+      rel="preload"
+      href="./assets/fonts/instrument-serif.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="./assets/fonts/dm-sans.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <svg
+      class="icon-definitions"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <symbol id="icon-book" viewBox="0 0 24 24">
+        <path
+          d="M12 6.5C9 4.5 5.8 4 3 5v14c3-1 6-.5 9 1.5 3-2 6-2.5 9-1.5V5c-2.8-1-6-.5-9 1.5Zm0 0v14"
+        />
+      </symbol>
+      <symbol id="icon-bookmark" viewBox="0 0 24 24">
+        <path d="M6 4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17l-6-4-6 4V4Z" />
+      </symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24">
+        <circle cx="10.5" cy="10.5" r="6.5" />
+        <path d="m16 16 4.5 4.5" />
+      </symbol>
+      <symbol id="icon-arrow" viewBox="0 0 24 24">
+        <path d="M5 12h14m-6-6 6 6-6 6" />
+      </symbol>
+      <symbol id="icon-arrow-up" viewBox="0 0 24 24">
+        <path d="M6 18 18 6M6 6h12v12" />
+      </symbol>
+      <symbol id="icon-chevron" viewBox="0 0 24 24">
+        <path d="m7 10 5 5 5-5" />
+      </symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M6 18 18 6" />
+      </symbol>
+      <symbol id="icon-grid" viewBox="0 0 24 24">
+        <rect x="4" y="4" width="6" height="6" rx="1" />
+        <rect x="14" y="4" width="6" height="6" rx="1" />
+        <rect x="4" y="14" width="6" height="6" rx="1" />
+        <rect x="14" y="14" width="6" height="6" rx="1" />
+      </symbol>
+      <symbol id="icon-list" viewBox="0 0 24 24">
+        <path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01" />
+      </symbol>
+      <symbol id="icon-code" viewBox="0 0 24 24">
+        <path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-14-2 18" />
+      </symbol>
+      <symbol id="icon-sparkles" viewBox="0 0 24 24">
+        <path
+          d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4L12 3ZM20 2v4m-2-2h4"
+        />
+      </symbol>
+      <symbol id="icon-layers" viewBox="0 0 24 24">
+        <path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5" />
+      </symbol>
+      <symbol id="icon-terminal" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="16" rx="3" />
+        <path d="m7 9 3 3-3 3m6 0h4" />
+      </symbol>
+      <symbol id="icon-cpu" viewBox="0 0 24 24">
+        <rect x="6" y="6" width="12" height="12" rx="2" />
+        <rect x="9" y="9" width="6" height="6" rx="1" />
+        <path d="M9 3v3m6-3v3m3 3h3m-3 6h3m-6 3v3m-6-3v3M3 9h3m-3 6h3" />
+      </symbol>
+      <symbol id="icon-shield" viewBox="0 0 24 24">
+        <path d="m12 3 8 3v5c0 5-4 8-8 10-4-2-8-5-8-10V6l8-3Z" />
+        <path d="m8 12 3 3 5-6" />
+      </symbol>
+      <symbol id="icon-star" viewBox="0 0 24 24">
+        <path
+          d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"
+        />
+      </symbol>
+      <symbol id="icon-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v6m0-10v.01" />
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path d="m5 12 4 4L19 6" />
+      </symbol>
+      <symbol id="icon-leaf" viewBox="0 0 24 24">
+        <path d="M20 4C9 2 3 6 4 13c1 6 8 7 12 3 3-3 4-7 4-12ZM4 21 15 10" />
+      </symbol>
+    </svg>
+
+    <a class="skip-link" href="#library">Skip to the library</a>
+    <header class="site-header page-width">
+      <a class="brand" href="./" aria-label="Wellread home">
+        <span class="brand-mark"
+          ><svg class="icon"><use href="#icon-book" /></svg
+        ></span>
+        <span>wellread<span class="brand-dot">.</span></span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-link is-active" id="library-nav" aria-current="page">
+          The library
+        </button>
+        <button class="nav-link" id="saved-nav">
+          <svg class="icon"><use href="#icon-bookmark" /></svg
+          ><span>Reading list</span
+          ><span class="saved-count" id="saved-count">0</span>
+        </button>
+      </nav>
+      <button class="header-about text-button" data-open-rankings>
+        Thoughtfully ranked <svg class="icon"><use href="#icon-info" /></svg>
+      </button>
+    </header>
+
+    <main class="page-width">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> FOR THE ENDLESSLY CURIOUS</p>
+          <h1 id="hero-title">Good books.<br /><em>Better thinking.</em></h1>
+          <p class="hero-description">
+            Less searching. More discovering. A considered collection of books
+            to help you build, think, and grow.
+          </p>
+          <div class="hero-meta">
+            <span
+              ><svg class="icon"><use href="#icon-book" /></svg
+              ><strong id="total-books">126</strong> good reads</span
+            >
+            <span class="meta-dot">·</span>
+            <span
+              ><strong id="total-collections">6</strong> curated
+              collections</span
+            >
+          </div>
+        </div>
+        <div class="hero-art">
+          <div class="hero-orbit" aria-hidden="true"></div>
+          <div class="hero-ellipse" aria-hidden="true"></div>
+          <svg class="curation-seal" viewBox="0 0 110 110" aria-hidden="true">
+            <defs>
+              <path
+                id="seal-circle"
+                d="M55,55m-40,0a40,40 0 1,1 80,0a40,40 0 1,1 -80,0"
+              />
+            </defs>
+            <text>
+              <textPath href="#seal-circle" textLength="248">
+                GOOD IDEAS START HERE · GOOD IDEAS START HERE ·
+              </textPath>
+            </text>
+            <path
+              class="seal-star"
+              d="m55 31 4.5 14.5L72 38l-7.5 12.5L79 55l-14.5 4.5L72 72l-12.5-7.5L55 79l-4.5-14.5L38 72l7.5-12.5L31 55l14.5-4.5L38 38l12.5 7.5Z"
+            />
+          </svg>
+          <div id="hero-books" class="hero-books"></div>
+          <span class="hero-twinkle" aria-hidden="true">✳</span>
+          <div class="hero-caption" aria-hidden="true">
+            Your next chapter starts here.
+            <svg viewBox="0 0 72 44">
+              <path d="M2 32C26 46 61 37 61 7m-9 7 10-9 6 12" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="library-section"
+        id="library"
+        aria-labelledby="library-title"
+        tabindex="-1"
+      >
+        <div class="section-heading">
+          <div class="section-title-group">
+            <h2 id="library-title">Explore the shelves<span>.</span></h2>
+            <span class="section-subtitle" id="section-subtitle"
+              >Find something worth your time.</span
+            >
+          </div>
+          <button class="text-button ranking-link" data-open-rankings>
+            How we rank <svg class="icon"><use href="#icon-arrow-up" /></svg>
+          </button>
+        </div>
+        <div
+          class="collection-filters"
+          id="collection-filters"
+          role="group"
+          aria-label="Filter by collection"
+        ></div>
+        <div class="library-toolbar">
+          <div class="search-field">
+            <svg class="icon"><use href="#icon-search" /></svg>
+            <label class="sr-only" for="book-search"
+              >Search books, authors, or ideas</label
+            >
+            <input
+              type="search"
+              id="book-search"
+              placeholder="Search books, authors, or ideas…"
+              autocomplete="off"
+            />
+            <kbd id="search-shortcut" aria-hidden="true">/</kbd>
+            <button
+              class="icon-button clear-search"
+              id="clear-search"
+              aria-label="Clear search"
+              hidden
+            >
+              <svg class="icon"><use href="#icon-close" /></svg>
+            </button>
+          </div>
+          <div class="toolbar-options">
+            <p
+              class="result-count"
+              id="result-count"
+              role="status"
+              aria-live="polite"
+            >
+              Opening the library…
+            </p>
+            <div class="sort-field">
+              <label class="sr-only" for="book-sort">Sort books</label>
+              <select id="book-sort">
+                <option value="overall">Highest rated</option>
+                <option value="current">Current relevance</option>
+                <option value="durability">Most enduring</option>
+                <option value="practicality">Most practical</option>
+                <option value="title">Title: A–Z</option>
+                <option value="ranking">Collection rank</option>
+              </select>
+              <svg class="icon"><use href="#icon-chevron" /></svg>
+            </div>
+            <div class="view-toggle" role="group" aria-label="Book layout">
+              <button
+                class="icon-button is-active"
+                data-layout="grid"
+                aria-label="Grid view"
+                aria-pressed="true"
+              >
+                <svg class="icon"><use href="#icon-grid" /></svg>
+              </button>
+              <button
+                class="icon-button"
+                data-layout="list"
+                aria-label="List view"
+                aria-pressed="false"
+              >
+                <svg class="icon"><use href="#icon-list" /></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="book-grid"
+          class="book-grid"
+          aria-label="Books"
+          aria-busy="true"
+        >
+          <div class="loading-state">
+            <span class="loading-spinner"></span>
+            <p>A little knowledge is on its way…</p>
+          </div>
+        </div>
+        <div class="load-more-section" id="load-more-section" hidden>
+          <p id="showing-count"></p>
+          <div class="reading-progress" aria-hidden="true">
+            <span id="reading-progress"></span>
+          </div>
+          <button class="button button-secondary" id="load-more">
+            A little more to explore
+            <svg class="icon"><use href="#icon-arrow" /></svg>
+          </button>
+        </div>
+        <noscript
+          ><p class="empty-state">
+            Enable JavaScript to explore the library, or
+            <a href="./data.json">view the book data directly</a>.
+          </p></noscript
+        >
+      </section>
+
+      <aside class="closing-note">
+        <span class="closing-icon"
+          ><svg class="icon"><use href="#icon-leaf" /></svg
+        ></span>
+        <div>
+          <h2>Invest in your next idea.</h2>
+          <p>The right book has a way of finding you. Keep exploring.</p>
+        </div>
+        <span class="closing-flourish" aria-hidden="true"
+          >Keep your curiosity.</span
+        >
+      </aside>
+    </main>
+
+    <footer class="site-footer page-width">
+      <a class="brand footer-brand" href="./"
+        ><svg class="icon"><use href="#icon-book" /></svg
+        ><span>wellread.</span></a
+      >
+      <p>A small library. A world of possibility.</p>
+      <a href="./data.json" target="_blank" rel="noopener"
+        >Explore the source <svg class="icon"><use href="#icon-arrow-up" /></svg
+      ></a>
+    </footer>
+
+    <dialog id="book-dialog" class="book-dialog" aria-labelledby="detail-title">
+      <div class="dialog-inner">
+        <button
+          class="icon-button dialog-close"
+          data-close-dialog
+          aria-label="Close book details"
+          autofocus
+        >
+          <svg class="icon"><use href="#icon-close" /></svg>
+        </button>
+        <div id="book-detail"></div>
+      </div>
+    </dialog>
+    <dialog
+      id="rankings-dialog"
+      class="rankings-dialog"
+      aria-labelledby="rankings-title"
+    >
+      <div class="dialog-inner">
+        <button
+          class="icon-button dialog-close"
+          data-close-dialog
+          aria-label="Close ranking information"
+          autofocus
+        >
+          <svg class="icon"><use href="#icon-close" /></svg>
+        </button>
+        <div class="rankings-content" id="rankings-content"></div>
+      </div>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

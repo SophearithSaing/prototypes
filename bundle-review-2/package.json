@@ -1,0 +1,17 @@
+{
+  "name": "wellread",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A considered, cover-led library for curious minds.",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs --dir dist",
+    "check": "node --check app.js && node --check scripts/serve.mjs && node --check scripts/build.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
