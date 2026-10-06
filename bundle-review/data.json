@@ -779,17 +779,67 @@
   },
   {
     "bundle": "Software Architecture",
+    "corrected_inventory": true,
+    "book_count": 19,
     "ranking_method": {
       "current_relevance_weight": 0.35,
       "durability_weight": 0.3,
       "practicality_weight": 0.35,
       "note": "Publication date is used as evidence when judging current relevance, not as a separate score."
     },
-    "cover_source": "Official O'Reilly Learning cover endpoint keyed to each bundled edition ISBN",
+    "cover_source": "Official O'Reilly Learning cover endpoint keyed to each edition's digital ISBN",
     "publisher_url_source": "O'Reilly Media canonical book pages",
     "books": [
       {
         "ranking": 1,
+        "title": "Designing Distributed Systems, 2nd Edition",
+        "authors": ["Brendan Burns"],
+        "released": "December 2024",
+        "tier": "$30.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781098156343/250w/",
+        "url": "https://www.oreilly.com/library/view/designing-distributed-systems/9781098156343/",
+        "scores": {
+          "overall": 9.66,
+          "current": 9.7,
+          "durability": 9.8,
+          "practicality": 9.5
+        },
+        "description": "It teaches reusable patterns for distributed applications, including sidecars, adapters, replicated and sharded services, work queues, coordination, and batch processing. It is for backend, platform, and cloud engineers who want concrete architectural building blocks for designing reliable distributed systems instead of reinventing the same patterns service by service."
+      },
+      {
+        "ranking": 2,
+        "title": "Building Event-Driven Microservices, 2nd Edition",
+        "authors": ["Adam Bellemare"],
+        "released": "September 2025",
+        "tier": "$30.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9798341622180/250w/",
+        "url": "https://www.oreilly.com/library/view/building-event-driven-microservices/9798341622180/",
+        "scores": {
+          "overall": 9.58,
+          "current": 9.8,
+          "durability": 9.3,
+          "practicality": 9.6
+        },
+        "description": "It teaches event-driven microservice design through domain boundaries, event schemas, data contracts, streaming, orchestration, eventual consistency, stateful processing, and integration with existing systems. It is for backend, data, and platform engineers building asynchronous systems where events are a first-class architectural primitive rather than just messages between services."
+      },
+      {
+        "ranking": 3,
+        "title": "Learning Domain-Driven Design",
+        "authors": ["Vlad Khononov"],
+        "released": "October 2021",
+        "tier": "$30.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781098100124/250w/",
+        "url": "https://www.oreilly.com/library/view/learning-domain-driven-design/9781098100124/",
+        "scores": {
+          "overall": 9.58,
+          "current": 9.3,
+          "durability": 9.9,
+          "practicality": 9.6
+        },
+        "description": "It teaches strategic and tactical domain-driven design through subdomains, ubiquitous language, bounded contexts, aggregates, event sourcing, CQRS, communication patterns, EventStorming, and modernization. It is for backend engineers, tech leads, and architects working on complex business software where modeling the domain correctly matters more than choosing another framework."
+      },
+      {
+        "ranking": 4,
         "title": "Software Architecture: The Hard Parts",
         "authors": [
           "Neal Ford",
@@ -797,32 +847,52 @@
           "Pramod Sadalage",
           "Zhamak Dehghani"
         ],
+        "released": "October 2021",
+        "tier": "$30.00",
         "cover_url": "https://learning.oreilly.com/library/cover/9781492086888/250w/",
         "url": "https://www.oreilly.com/library/view/software-architecture-the/9781492086888/",
         "scores": {
-          "overall": 9.49,
+          "overall": 9.55,
           "current": 9.3,
-          "durability": 9.8,
-          "practicality": 9.4
+          "durability": 9.9,
+          "practicality": 9.5
         },
-        "description": "It teaches how to make architecture decisions when there isn't a clear best practice: service granularity, decomposition, coupling, workflows, distributed transactions, data ownership, contracts, and trade-off analysis. It's for senior engineers and architects who already know what microservices are and need to decide when, where, and how to split systems without creating distributed regret."
+        "description": "It teaches how to reason about architectural trade-offs involving service granularity, coupling, decomposition, workflows, distributed transactions, contracts, and data ownership when no universal best practice exists. It is for senior engineers and architects who already know common architecture styles and want to improve the judgment required for messy real-world decisions."
       },
       {
-        "ranking": 2,
-        "title": "Learning Domain-Driven Design",
-        "authors": ["Vlad Khononov"],
-        "cover_url": "https://learning.oreilly.com/library/cover/9781098100124/250w/",
-        "url": "https://www.oreilly.com/library/view/learning-domain-driven-design/9781098100124/",
+        "ranking": 5,
+        "title": "Building Multi-Tenant SaaS Architectures",
+        "authors": ["Tod Golding"],
+        "released": "April 2024",
+        "tier": "$30.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781098140632/250w/",
+        "url": "https://www.oreilly.com/library/view/building-multi-tenant-saas/9781098140632/",
         "scores": {
-          "overall": 9.42,
-          "current": 9.3,
-          "durability": 9.8,
-          "practicality": 9.2
+          "overall": 9.54,
+          "current": 9.6,
+          "durability": 9.4,
+          "practicality": 9.6
         },
-        "description": "It teaches strategic and tactical DDD: business domains, subdomains, ubiquitous language, bounded contexts, aggregates, domain events, context mapping, and introducing DDD into brownfield systems. It's for backend engineers, tech leads, and architects working on complicated business software where the difficult part is modeling the domain rather than basic CRUD."
+        "description": "It teaches multi-tenant SaaS architecture through control and application planes, tenant identity, isolation, data partitioning, onboarding, tiering, noisy-neighbor concerns, microservices, deployment, and tenant-aware operations. It is for software and cloud architects building SaaS products who need to understand how multi-tenancy changes both application design and the operating model around it."
       },
       {
-        "ranking": 3,
+        "ranking": 6,
+        "title": "Learning API Styles",
+        "authors": ["Lukasz Dynowski", "Marcin Dulak"],
+        "released": "July 2025",
+        "tier": "$30.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781098153984/250w/",
+        "url": "https://www.oreilly.com/library/view/learning-api-styles/9781098153984/",
+        "scores": {
+          "overall": 9.52,
+          "current": 9.8,
+          "durability": 9.1,
+          "practicality": 9.6
+        },
+        "description": "It teaches how REST, GraphQL, gRPC, webhooks, WebSocket, messaging APIs, and related styles work from network, application, and architecture perspectives, including their trade-offs, security, and implementation. It is for software developers and architects who need to choose the right communication style for a system instead of reflexively making everything REST."
+      },
+      {
+        "ranking": 7,
         "title": "Building Evolutionary Architectures, 2nd Edition",
         "authors": [
           "Neal Ford",
@@ -830,46 +900,84 @@
           "Patrick Kua",
           "Pramod Sadalage"
         ],
+        "released": "November 2022",
+        "tier": "$30.00",
         "cover_url": "https://learning.oreilly.com/library/cover/9781492097532/250w/",
         "url": "https://www.oreilly.com/library/view/building-evolutionary-architectures/9781492097532/",
         "scores": {
-          "overall": 9.35,
-          "current": 9.2,
-          "durability": 9.7,
-          "practicality": 9.2
+          "overall": 9.45,
+          "current": 9.3,
+          "durability": 9.8,
+          "practicality": 9.3
         },
-        "description": "It teaches how to design systems that can intentionally change through fitness functions, incremental architecture, coupling control, automated governance, and architectural characteristics. It's for architects and senior engineers maintaining systems that need to evolve for years rather than survive one heroic redesign."
+        "description": "It teaches how to design architectures that can change safely through fitness functions, incremental evolution, automated governance, coupling control, and explicit architectural characteristics. It is for senior engineers and architects responsible for systems that must keep adapting for years without degrading into accidental architecture."
       },
       {
-        "ranking": 4,
+        "ranking": 8,
+        "title": "Architecture Patterns with Python",
+        "authors": ["Harry Percival", "Bob Gregory"],
+        "released": "March 2020",
+        "tier": "$15.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781492052197/250w/",
+        "url": "https://www.oreilly.com/library/view/architecture-patterns-with/9781492052197/",
+        "scores": {
+          "overall": 9.41,
+          "current": 8.8,
+          "durability": 9.8,
+          "practicality": 9.7
+        },
+        "description": "It teaches domain modeling and application architecture with concrete Python code using dependency inversion, repositories, Unit of Work, aggregates, message buses, CQRS, events, and service boundaries. It is for developers who learn architecture best by building something tangible and want to see DDD, clean architecture, and event-driven ideas translated into working application code."
+      },
+      {
+        "ranking": 9,
+        "title": "Facilitating Software Architecture",
+        "authors": ["Andrew Harmel-Law"],
+        "released": "November 2024",
+        "tier": "$30.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781098151850/250w/",
+        "url": "https://www.oreilly.com/library/view/facilitating-software-architecture/9781098151850/",
+        "scores": {
+          "overall": 9.32,
+          "current": 9.6,
+          "durability": 9.5,
+          "practicality": 8.9
+        },
+        "description": "It teaches decentralized architecture practices that help teams make sound decisions through facilitation, collaboration, decision records, constraints, feedback, and organizational alignment rather than relying on an ivory-tower architect. It is for staff engineers, architects, and technical leaders who need architecture to work across autonomous teams as a social practice as much as a technical one."
+      },
+      {
+        "ranking": 10,
         "title": "Mastering API Architecture",
         "authors": ["James Gough", "Daniel Bryant", "Matthew Auburn"],
+        "released": "October 2022",
+        "tier": "$30.00",
         "cover_url": "https://learning.oreilly.com/library/cover/9781492090625/250w/",
         "url": "https://www.oreilly.com/library/view/mastering-api-architecture/9781492090625/",
         "scores": {
-          "overall": 9.3,
-          "current": 9.1,
-          "durability": 9.3,
-          "practicality": 9.5
-        },
-        "description": "It teaches API architecture beyond endpoint design: gateways, service meshes, security, OAuth2 and TLS, traffic patterns, cloud migration, C4 diagrams, ADRs, testing, and evolving an API platform. It's for backend engineers and architects responsible for systems where APIs form the structural boundaries between teams and services."
-      },
-      {
-        "ranking": 5,
-        "title": "Foundations of Scalable Systems",
-        "authors": ["Ian Gorton"],
-        "cover_url": "https://learning.oreilly.com/library/cover/9781098106058/250w/",
-        "url": "https://www.oreilly.com/library/view/foundations-of-scalable/9781098106058/",
-        "scores": {
-          "overall": 9.22,
+          "overall": 9.32,
           "current": 9.0,
           "durability": 9.5,
-          "practicality": 9.2
+          "practicality": 9.5
         },
-        "description": "It teaches scalability through replication, caching, load balancing, state management, distributed data, eventual consistency, microservices, asynchronous messaging, and streaming systems. It's for backend engineers and architects who need systematic reasoning about what happens when traffic, data, or system complexity grows."
+        "description": "It teaches API architecture beyond endpoint design, covering API gateways, service meshes, security, OAuth2, TLS, testing, cloud migration, operations, and the evolution of API platforms. It is for backend engineers and architects responsible for APIs as long-lived system and organizational boundaries rather than isolated controller methods."
       },
       {
-        "ranking": 6,
+        "ranking": 11,
+        "title": "Learning Systems Thinking",
+        "authors": ["Diana Montalion"],
+        "released": "July 2024",
+        "tier": "$30.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781098151324/250w/",
+        "url": "https://www.oreilly.com/library/view/learning-systems-thinking/9781098151324/",
+        "scores": {
+          "overall": 9.3,
+          "current": 9.5,
+          "durability": 9.9,
+          "practicality": 8.6
+        },
+        "description": "It teaches systems thinking as a practice for understanding nonlinear interactions, sociotechnical systems, feedback, conceptual integrity, communication, and change in complex organizations. It is for senior engineers and technical leaders who find that many of their hardest problems can no longer be solved by decomposing them into isolated technical pieces."
+      },
+      {
+        "ranking": 12,
         "title": "Software Architecture Metrics",
         "authors": [
           "Christian Ciceri",
@@ -883,146 +991,129 @@
           "Rene Weiss",
           "Eoin Woods"
         ],
+        "released": "May 2022",
+        "tier": "$30.00",
         "cover_url": "https://learning.oreilly.com/library/cover/9781098112226/250w/",
         "url": "https://www.oreilly.com/library/view/software-architecture-metrics/9781098112226/",
         "scores": {
-          "overall": 9.15,
+          "overall": 9.18,
           "current": 9.0,
-          "durability": 9.4,
-          "practicality": 9.1
-        },
-        "description": "It teaches how to measure architecture using practical techniques around maintainability, technical debt, observability, testability, deployability, KPIs, Goal-Question-Metric, and architecture quality. It's for senior developers and architects who want architecture discussions supported by evidence rather than intuition alone."
-      },
-      {
-        "ranking": 7,
-        "title": "Continuous API Management, 2nd Edition",
-        "authors": [
-          "Mehdi Medjaoui",
-          "Erik Wilde",
-          "Ronnie Mitra",
-          "Mike Amundsen"
-        ],
-        "cover_url": "https://learning.oreilly.com/library/cover/9781098103514/250w/",
-        "url": "https://www.oreilly.com/library/view/continuous-api-management/9781098103514/",
-        "scores": {
-          "overall": 9.09,
-          "current": 8.8,
-          "durability": 9.3,
-          "practicality": 9.2
-        },
-        "description": "It teaches API strategy and governance across the full API lifecycle, including standards, decision management, maturity, organizational structures, design, delivery, operation, and continuous improvement. It's aimed at architects, API platform teams, engineering leaders, and organizations managing many APIs rather than developers designing a single endpoint."
-      },
-      {
-        "ranking": 8,
-        "title": "The Art of Agile Development, 2nd Edition",
-        "authors": ["James Shore", "Shane Warden"],
-        "cover_url": "https://learning.oreilly.com/library/cover/9781492080688/250w/",
-        "url": "https://www.oreilly.com/library/view/the-art-of/9781492080688/",
-        "scores": {
-          "overall": 9.01,
-          "current": 8.8,
           "durability": 9.5,
-          "practicality": 8.8
-        },
-        "description": "It teaches practical Agile through XP, Scrum, Lean, DevOps, planning, technical practices, delivery, teamwork, adaptation, and organizational change. It's for developers and engineering leaders who want a coherent development process rather than cargo-culting ceremonies and moving tickets around."
-      },
-      {
-        "ranking": 9,
-        "title": "Monolith to Microservices",
-        "authors": ["Sam Newman"],
-        "cover_url": "https://learning.oreilly.com/library/cover/9781492047834/250w/",
-        "url": "https://www.oreilly.com/library/view/monolith-to-microservices/9781492047834/",
-        "scores": {
-          "overall": 8.98,
-          "current": 8.5,
-          "durability": 9.4,
           "practicality": 9.1
         },
-        "description": "It teaches how to decide whether microservices are appropriate and, when they are, how to incrementally extract functionality and data from existing monoliths while managing coupling and migration risk. It's for engineers and architects migrating real existing systems rather than teams starting greenfield projects and assuming everything needs to become a service."
-      },
-      {
-        "ranking": 10,
-        "title": "Fundamentals of Software Architecture",
-        "authors": ["Mark Richards", "Neal Ford"],
-        "cover_url": "https://learning.oreilly.com/library/cover/9781492043447/250w/",
-        "url": "https://www.oreilly.com/library/view/fundamentals-of-software/9781492043447/",
-        "scores": {
-          "overall": 8.96,
-          "current": 8.2,
-          "durability": 9.7,
-          "practicality": 9.1
-        },
-        "description": "It teaches the breadth of the architect role: architectural characteristics, styles, component thinking, trade-offs, soft skills, governance, and how to think architecturally rather than just design code. It's for experienced developers transitioning toward technical leadership or architecture roles and is a strong general introduction to the discipline, though this bundle contains the older first edition."
-      },
-      {
-        "ranking": 11,
-        "title": "The Software Architect Elevator",
-        "authors": ["Gregor Hohpe"],
-        "cover_url": "https://learning.oreilly.com/library/cover/9781492077534/250w/",
-        "url": "https://www.oreilly.com/library/view/the-software-architect/9781492077534/",
-        "scores": {
-          "overall": 8.93,
-          "current": 8.7,
-          "durability": 9.7,
-          "practicality": 8.5
-        },
-        "description": "It teaches architects how to move between implementation-level details and executive or business-level strategy, covering organizational change, communication, decision-making, governance, platforms, and the architect's role. It's especially valuable for staff and principal engineers, architects, and technical leaders who need to influence both engineers and management."
-      },
-      {
-        "ranking": 12,
-        "title": "Building Event-Driven Microservices",
-        "authors": ["Adam Bellemare"],
-        "cover_url": "https://learning.oreilly.com/library/cover/9781492057888/250w/",
-        "url": "https://www.oreilly.com/library/view/building-event-driven-microservices/9781492057888/",
-        "scores": {
-          "overall": 8.65,
-          "current": 7.8,
-          "durability": 9.0,
-          "practicality": 9.2
-        },
-        "description": "It teaches event streams, event-driven architecture, bounded contexts, event schemas, stateful and stateless services, data communication, and patterns for building event-driven microservice ecosystems. It's for backend, data, and platform engineers building streaming architectures or systems where asynchronous events are first-class communication mechanisms, though this bundle contains the older first edition."
+        "description": "It teaches how to make architecture measurable through maintainability, technical debt, observability, testability, deployability, KPIs, dashboards, and case studies from practicing architects. It is for senior developers and architects who want evidence that an architecture is improving rather than relying on diagrams, taste, and confident opinions."
       },
       {
         "ranking": 13,
-        "title": "Microservices: Up and Running",
-        "authors": ["Ronnie Mitra", "Irakli Nadareishvili"],
-        "cover_url": "https://learning.oreilly.com/library/cover/9781492075448/250w/",
-        "url": "https://www.oreilly.com/library/view/microservices-up-and/9781492075448/",
+        "title": "Building Microservices, 2nd Edition",
+        "authors": ["Sam Newman"],
+        "released": "August 2021",
+        "tier": "$30.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781492034018/250w/",
+        "url": "https://www.oreilly.com/library/view/building-microservices-2nd/9781492034018/",
         "scores": {
-          "overall": 8.49,
-          "current": 7.8,
-          "durability": 8.7,
-          "practicality": 9.0
+          "overall": 9.15,
+          "current": 8.7,
+          "durability": 9.5,
+          "practicality": 9.3
         },
-        "description": "It provides an end-to-end implementation approach to microservices: team topology, service decomposition, data ownership, infrastructure, CI/CD, architecture decisions, and deploying a working system. It's for engineers or teams making their first serious move into microservice architecture and wanting something more concrete than abstract patterns."
+        "description": "It teaches how to model, decompose, communicate between, deploy, test, secure, monitor, and operate microservices while being explicit about when a monolith is the better choice. It is for engineers and architects working with service-based systems who want practical guidance grounded in coupling, domain boundaries, data, and organizational trade-offs."
       },
       {
         "ranking": 14,
-        "title": "Building Micro-Frontends",
-        "authors": ["Luca Mezzalira"],
-        "cover_url": "https://learning.oreilly.com/library/cover/9781492082989/250w/",
-        "url": "https://www.oreilly.com/library/view/building-micro-frontends/9781492082989/",
+        "title": "Fundamentals of Enterprise Architecture",
+        "authors": ["Tanu McCabe"],
+        "released": "September 2024",
+        "tier": "$30.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781098159368/250w/",
+        "url": "https://www.oreilly.com/library/view/fundamentals-of-enterprise/9781098159368/",
         "scores": {
-          "overall": 8.12,
-          "current": 7.4,
-          "durability": 8.4,
-          "practicality": 8.6
+          "overall": 9.12,
+          "current": 9.5,
+          "durability": 9.5,
+          "practicality": 8.4
         },
-        "description": "It teaches how microservice ideas map onto frontend systems: domain ownership, independently deployable frontends, integration patterns, automation, backend interaction, organizational boundaries, and migration strategies. It's for frontend architects, tech leads, or organizations with large frontend teams where a single frontend codebase has become an organizational bottleneck, though this bundle contains the older first edition."
+        "description": "It teaches how to establish an enterprise architecture practice through strategy, enablement, oversight, organizational models, reusable frameworks, assessments, and alignment between technology and business. It is for enterprise architects, senior technologists, and technical leaders who need to shape architecture across an organization rather than inside a single application."
       },
       {
         "ranking": 15,
+        "title": "Building Green Software",
+        "authors": ["Anne Currie", "Sarah Hsu", "Sara Bergman"],
+        "released": "March 2024",
+        "tier": "$30.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781098150617/250w/",
+        "url": "https://www.oreilly.com/library/view/building-green-software/9781098150617/",
+        "scores": {
+          "overall": 9.04,
+          "current": 9.3,
+          "durability": 9.5,
+          "practicality": 8.4
+        },
+        "description": "It teaches how energy use, carbon intensity, hardware longevity, architecture, data, cloud deployment, and operational choices affect the environmental cost of software. It is for developers, architects, and technical leaders who want sustainability to become an engineering constraint they can measure and design for rather than a corporate slogan."
+      },
+      {
+        "ranking": 16,
+        "title": "The Software Architect Elevator",
+        "authors": ["Gregor Hohpe"],
+        "released": "April 2020",
+        "tier": "$15.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781492077534/250w/",
+        "url": "https://www.oreilly.com/library/view/the-software-architect/9781492077534/",
+        "scores": {
+          "overall": 9.03,
+          "current": 8.7,
+          "durability": 9.8,
+          "practicality": 8.7
+        },
+        "description": "It teaches architects how to move between detailed technology decisions and business strategy, with emphasis on communication, organizational change, influence, platforms, and the realities of architecture roles in large enterprises. It is for staff and principal engineers, architects, and technical leaders who need to operate effectively across both the engineering floor and the executive floor."
+      },
+      {
+        "ranking": 17,
+        "title": "Building Medallion Architectures",
+        "authors": ["Piethein Strengholt"],
+        "released": "March 2025",
+        "tier": "$30.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781098178826/250w/",
+        "url": "https://www.oreilly.com/library/view/building-medallion-architectures/9781098178826/",
+        "scores": {
+          "overall": 8.84,
+          "current": 9.7,
+          "durability": 8.7,
+          "practicality": 8.1
+        },
+        "description": "It teaches how to design bronze, silver, and gold data layers with lakehouse patterns, governance, data contracts, security, scaling, and case studies using Azure Databricks and Microsoft Fabric. It is for data engineers and data architects building modern analytics platforms, making it highly practical in that domain but less transferable to general application architecture."
+      },
+      {
+        "ranking": 18,
+        "title": "Semantic Software Design",
+        "authors": ["Eben Hewitt"],
+        "released": "October 2019",
+        "tier": "$15.00",
+        "cover_url": "https://learning.oreilly.com/library/cover/9781492045946/250w/",
+        "url": "https://www.oreilly.com/library/view/semantic-software-design/9781492045946/",
+        "scores": {
+          "overall": 8.31,
+          "current": 8.3,
+          "durability": 9.4,
+          "practicality": 7.4
+        },
+        "description": "It presents a philosophy-driven design method centered on concepts, meaning, context, semantic fields, and a toolbox for shaping large software systems before committing to implementation details. It is for architects and senior technical leaders who enjoy abstract design thinking and large-scale modernization, but it is less immediately actionable than the bundle's pattern- and implementation-oriented books."
+      },
+      {
+        "ranking": 19,
         "title": "Flow Architectures",
         "authors": ["James Urquhart"],
+        "released": "January 2021",
+        "tier": "$30.00",
         "cover_url": "https://learning.oreilly.com/library/cover/9781492075882/250w/",
         "url": "https://www.oreilly.com/library/view/flow-architectures/9781492075882/",
         "scores": {
-          "overall": 7.83,
-          "current": 7.7,
-          "durability": 8.5,
-          "practicality": 7.4
+          "overall": 7.82,
+          "current": 7.8,
+          "durability": 8.7,
+          "practicality": 7.1
         },
-        "description": "It explores event-driven flow architectures at a broader organizational and economic level: real-time data, event streams, integration, APIs, interoperability, and businesses participating in interconnected data flows. It's for architects and technical strategists interested in where event-driven ecosystems can lead rather than someone looking for a cookbook for building their next service."
+        "description": "It explores how real-time event streams, APIs, integration, interoperability, and data flows could reshape businesses and connected digital ecosystems. It is for architects and technology strategists interested in the broader implications of event-driven systems, but it is more conceptual and speculative than a hands-on guide to building one."
       }
     ]
   },
