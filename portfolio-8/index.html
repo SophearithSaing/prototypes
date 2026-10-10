@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#060b12" />
+    <meta
+      name="description"
+      content="A career in motion. Explore the choices, milestones, and possibilities that shape a developer's journey."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <title>Trajectory — A career in motion</title>
+  </head>
+  <body>
+    <canvas id="universe" aria-hidden="true"></canvas>
+    <div class="atmosphere" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a
+        class="brand"
+        href="#journey"
+        aria-label="Trajectory, back to the journey"
+      >
+        <svg
+          class="brand-mark"
+          viewBox="0 0 32 32"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M16 1.5 19.2 12.8 30.5 16 19.2 19.2 16 30.5 12.8 19.2 1.5 16 12.8 12.8Z"
+            stroke="currentColor"
+          />
+          <path
+            d="m16 8 1.8 6.2L24 16l-6.2 1.8L16 24l-1.8-6.2L8 16l6.2-1.8Z"
+            fill="currentColor"
+          />
+        </svg>
+        <span>trajectory<span class="brand-period">.</span></span>
+      </a>
+      <span class="header-note">A CAREER IN MOTION</span>
+      <button class="about-button" id="about-button">
+        Behind the journey <span aria-hidden="true">↗</span>
+      </button>
+    </header>
+
+    <main id="journey" aria-label="Interactive career journey">
+      <section class="intro">
+        <div class="eyebrow"><span></span> THE BEAUTY OF BECOMING</div>
+        <h1>One journey.<br /><em>Infinite possibilities.</em></h1>
+        <p>
+          Some paths we take. Others, we imagine.<br />Every choice brings us a
+          little closer.
+        </p>
+        <button class="follow-button" id="follow-button">
+          <span class="follow-icon" aria-hidden="true">↗</span> Follow my path
+        </button>
+      </section>
+
+      <div class="destination" id="destination">
+        <span class="destination-title"
+          ><span class="live-dot"></span> STILL BECOMING</span
+        >
+        <span class="destination-description"
+          >The next chapter is unwritten.</span
+        >
+      </div>
+
+      <div
+        class="milestone-layer"
+        id="milestones"
+        aria-label="Career milestones"
+      ></div>
+      <div
+        class="alternate-layer"
+        id="alternates"
+        aria-label="Alternate career paths"
+      ></div>
+
+      <div class="origin" id="origin">
+        <span class="origin-eyebrow">THE BEGINNING</span>
+        <span class="origin-title">Curious. Driven.</span>
+        <span class="origin-subtitle">Always building.</span>
+      </div>
+
+      <aside
+        class="chapter-panel"
+        id="chapter-panel"
+        aria-label="Selected chapter"
+        aria-live="polite"
+        hidden
+      >
+        <div class="chapter-topline">
+          <span id="chapter-kicker"></span
+          ><button
+            id="close-chapter"
+            class="icon-button"
+            aria-label="Close chapter details"
+          >
+            ×
+          </button>
+        </div>
+        <h2 id="chapter-title"></h2>
+        <p id="chapter-description"></p>
+        <div class="chapter-skills" id="chapter-skills"></div>
+        <div class="chapter-navigation" id="chapter-navigation">
+          <button
+            id="previous-chapter"
+            class="chapter-step"
+            aria-label="Previous milestone"
+          >
+            ←
+          </button>
+          <span id="chapter-count"></span>
+          <button id="next-chapter" class="chapter-step">
+            Next chapter <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </aside>
+
+      <div class="scene-note">
+        <span class="scene-note-line"></span
+        ><span>Not every possibility<br />has to become a plan.</span>
+      </div>
+    </main>
+
+    <footer class="scene-footer">
+      <div class="legend" aria-label="Path legend">
+        <span class="legend-item"
+          ><span class="legend-dot chosen"></span> The path I chose</span
+        >
+        <button
+          class="legend-item alternate-toggle"
+          id="alternate-toggle"
+          aria-pressed="true"
+          aria-label="Show alternate paths"
+        >
+          <span class="legend-dot alternate"></span><span>Paths not taken</span
+          ><svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path
+              d="M1.5 8s2.3-4 6.5-4 6.5 4 6.5 4-2.3 4-6.5 4-6.5-4-6.5-4Z"
+              stroke="currentColor"
+            />
+            <circle cx="8" cy="8" r="1.8" stroke="currentColor" />
+          </svg>
+        </button>
+      </div>
+      <span class="explore-hint"
+        ><svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <path
+            d="M9 1v16M1 9h16m-11-5 3-3 3 3M6 14l3 3 3-3M4 6 1 9l3 3m10-6 3 3-3 3"
+            stroke="currentColor"
+            stroke-width=".8"
+          />
+        </svg>
+        MOVE TO EXPLORE</span
+      >
+      <button class="reset-button" id="reset-button">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path
+            d="M3 5.2A5.5 5.5 0 1 1 2.5 10M3 1.5v4h4"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        Reset view
+      </button>
+    </footer>
+
+    <dialog
+      class="about-dialog"
+      id="about-dialog"
+      aria-labelledby="about-title"
+    >
+      <button
+        class="dialog-close icon-button"
+        id="close-about"
+        aria-label="Close about the journey"
+      >
+        ×
+      </button>
+      <div class="eyebrow"><span></span> A CAREER IN MOTION</div>
+      <h2 id="about-title">
+        A little curiosity.<br /><em>A world of possibility.</em>
+      </h2>
+      <p>
+        A journey from building for the web to leading with Node.js. Each golden
+        point is a real chapter; each blue thread is a path that could have
+        been.
+      </p>
+      <p>
+        Select a milestone to explore the work behind it, or wander into an
+        alternate possibility. The next chapter? Still being written.
+      </p>
+      <div class="about-stats">
+        <div><strong>04</strong><span>Career chapters</span></div>
+        <div><strong>04</strong><span>Other possibilities</span></div>
+        <div><strong>∞</strong><span>Room to grow</span></div>
+      </div>
+      <div class="about-signoff">
+        <span class="live-dot"></span> BUILT ON CURIOSITY. ALWAYS IN PROGRESS.
+      </div>
+    </dialog>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
