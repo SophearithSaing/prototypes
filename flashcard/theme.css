@@ -1,0 +1,384 @@
+/* Color-only theme shared by the gallery and the mobile mockups. */
+:root {
+  --serif: "Lora Variable", Georgia, serif;
+  --sans: "DM Sans Variable", sans-serif;
+  --ink: #333537;
+  --muted: #81817d;
+  --canvas: #f7f4ee;
+  --surface: #fcfaf6;
+  --paper: #fffdf8;
+  --surface-muted: #f2efe8;
+  --border: #e5e0d7;
+  --accent: #587591;
+  --accent-muted: #7e97af;
+  --accent-soft: #eaf0f6;
+  --accent-border: #ccd8e4;
+  --accent-pale: #b8c8d8;
+  --text-faint: #a09e98;
+  --review-surface: #f3ede4;
+  --review-ink: #a28a73;
+  /* Compatibility aliases for the base stylesheet's original tokens. */
+  --green: var(--accent);
+  --light-green: var(--accent-soft);
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline-color: var(--accent);
+}
+
+.sidebar,
+.toolbar,
+.zoom-control {
+  background: var(--surface);
+}
+
+main {
+  background-image: radial-gradient(#dfd9cf 0.65px, transparent 0.65px);
+}
+
+.phone,
+.phone-nav {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.phone {
+  box-shadow:
+    0 3px 5px #33353704,
+    0 8px 22px #33353704;
+}
+
+.battery::before,
+.home-indicator {
+  background: var(--ink);
+}
+
+.project-label,
+.nav-link,
+.nav-count,
+.principle,
+.principle p,
+.sidebar-bottom > p,
+.version,
+.breadcrumb,
+.concept-tag,
+.saved,
+.eyebrow,
+.intro > div > p,
+.intro-note > span:last-child,
+.canvas-hint,
+.zoom-control > span,
+.section-description,
+.section-count,
+.screen-label,
+.app-muted,
+.small-greeting,
+.streak-panel > div > span,
+.app-section-title > .icon,
+.featured-deck p,
+.deck-meta,
+.phone-nav > div,
+.app-search,
+.app-tabs,
+.deck-row span:not(.deck-symbol),
+.deck-row > .icon,
+.import-inline,
+.phone-top,
+.deck-stats span,
+.app-section-title > span,
+.word-preview > span:last-child,
+.field-label > span,
+.direction-select > span,
+.field-hint,
+.quantity-options > span,
+.session-estimate,
+.session-estimate > span,
+.settings-row,
+.settings-row .icon,
+.gentle-note,
+.screen-caption,
+.practice-top,
+.practice-meta,
+.practice-meta i,
+.card-language,
+.pronunciation,
+.card-prompt,
+.practice-bottom > p,
+.practice-footnote,
+.example,
+.example-translation,
+.practice-bottom > .encouragement,
+.practice-bottom > .encouragement-sub,
+.result-stats strong > span,
+.result-stats > div > span:last-child,
+.review-label,
+.review-word span,
+.review-note,
+.editing-deck,
+.input-field small,
+.editor-note,
+.drop-zone > span,
+.import-file span,
+.import-preview > div:not(.field-label),
+.format-row > div > span,
+.page-footer {
+  color: var(--muted);
+}
+
+.breadcrumb > span:not(.concept-tag),
+.screen-index {
+  color: var(--text-faint);
+}
+
+.breadcrumb strong,
+.field-label,
+.deck-stats strong,
+.card-word,
+.translation-label,
+.result-stats strong,
+.review-word strong,
+.input-field,
+.import-file strong,
+.format-row strong {
+  color: var(--ink);
+}
+
+.brand-dot,
+h1 em,
+.intro-note em,
+.canvas-title .icon,
+.zoom-control button,
+.phone h3 em,
+.phone-nav .selected,
+.title-dot,
+.square-icon,
+.app-tabs .active,
+.import-inline > span,
+.outline-button,
+.direction-select > .icon,
+.practice-meta > span:last-child,
+.text-button,
+.review-word > .icon,
+.footer-brand {
+  color: var(--accent);
+}
+
+.intro-note p {
+  color: var(--muted) !important;
+}
+
+.brand-icon,
+.app-button,
+.grade-buttons .correct {
+  background: var(--accent);
+  color: var(--paper);
+}
+
+.brand-icon span {
+  color: var(--accent-pale);
+}
+
+.status-dot,
+.eyebrow > span,
+.caption-dot,
+.deck-progress span,
+.session-progress > span,
+.app-tabs .active::after,
+.toggle.on,
+.radio.selected::after {
+  background: var(--accent-muted);
+}
+
+.nav-link.active,
+.screen-total,
+.section-number,
+.pill,
+.streak-icon,
+.deck-symbol,
+.deck-symbol.blue,
+.app-tabs b,
+.direction-select b,
+.transfer-icon,
+.result-icon.green {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.nav-link:hover,
+.zoom-control button:hover:not(:disabled) {
+  background: var(--surface-muted);
+}
+
+.flow-button {
+  background: var(--paper);
+  color: var(--accent);
+}
+
+.flow-button:hover {
+  background: var(--accent-soft);
+}
+
+.phone,
+.concept-tag,
+.flow-button,
+.canvas-toolbar,
+.zoom-control,
+.phone-nav,
+.featured-deck,
+.square-icon,
+.app-search,
+.app-tabs,
+.deck-row,
+.deck-stats,
+.deck-stats > div,
+.outline-button,
+.word-preview,
+.direction-select,
+.quantity-options > span,
+.flashcard,
+.art-ring,
+.result-stats,
+.result-stats > div,
+.review-word,
+.editing-deck,
+.input-field,
+.import-file,
+.import-preview > div:not(.field-label),
+.export-deck,
+.format-row,
+.radio,
+.page-footer {
+  border-color: var(--border);
+}
+
+.streak-panel,
+.featured-deck,
+.app-search,
+.direction-select,
+.flashcard,
+.art-ring,
+.input-field,
+.drop-zone,
+.export-deck {
+  background: var(--surface-muted);
+}
+
+.avatar {
+  background: var(--accent-soft);
+  border-color: var(--surface);
+  color: var(--accent);
+}
+
+.week-dots span {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--accent) !important;
+}
+
+.week-dots .today {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper) !important;
+}
+
+.deck-progress,
+.session-progress,
+.toggle,
+.result-icon.neutral {
+  background: #e4e1db;
+}
+
+.result-icon.neutral {
+  color: var(--muted);
+}
+
+.quantity-options .chosen,
+.format-row.selected {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.radio.selected {
+  border-color: var(--accent);
+}
+
+.flashcard.revealed,
+.import-file {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+}
+
+.import-file,
+.drop-zone {
+  color: var(--accent);
+}
+
+.drop-zone {
+  border-color: var(--accent-border);
+}
+
+.import-preview .preview-head {
+  background: var(--accent-soft);
+  color: var(--accent) !important;
+}
+
+.card-divider {
+  background: var(--accent-border);
+}
+
+.note-star,
+.card-decoration,
+.art-spark,
+.footer-spark {
+  color: var(--accent-pale);
+}
+
+.art-stem {
+  background: var(--accent-muted);
+}
+
+.art-leaf,
+.art-dot {
+  background: var(--accent-pale);
+}
+
+.leaf-two {
+  background: var(--accent-muted);
+}
+
+.leaf-three {
+  background: #d3dfeb;
+}
+
+.revisit-card {
+  background: var(--review-surface) !important;
+  border-color: #e6dccf;
+}
+
+.revisit-chip {
+  background: #eae0d3;
+  color: var(--review-ink);
+}
+
+.palette span {
+  background: var(--ink);
+}
+
+.palette span:nth-child(2) {
+  background: var(--accent);
+}
+
+.palette span:nth-child(3) {
+  background: var(--accent-pale);
+}
+
+.palette span:nth-child(4) {
+  background: #e7dfd2;
+}
+
+.palette span:nth-child(5) {
+  background: var(--paper);
+  border-color: var(--border);
+}

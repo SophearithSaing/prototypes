@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f4ee" />
+    <meta
+      name="description"
+      content="Meet Echo: a thoughtful mobile flashcard app for learning languages. Explore twelve detailed app screens and the complete learning flow."
+    />
+    <title>Echo — A little practice. A world of possibility.</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23587591'/%3E%3Ctext x='11' y='29' font-family='Georgia,serif' font-size='29' font-style='italic' fill='%23fff'%3Ee%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/theme.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="#overview" aria-label="Echo overview"
+        ><span class="brand-icon">e<span>·</span></span
+        >echo<span class="brand-dot">.</span></a
+      >
+      <div class="project-label">THE DESIGN SPACE</div>
+      <nav class="navigation" aria-label="Screen groups">
+        <a class="nav-link active" href="#overview" data-section="overview"
+          ><span data-icon="grid"></span> All screens
+          <span class="nav-count">12</span></a
+        >
+        <a class="nav-link" href="#practice" data-section="practice"
+          ><span data-icon="layers"></span> Practice flow
+          <span class="nav-count">4</span></a
+        >
+        <a class="nav-link" href="#collection" data-section="collection"
+          ><span data-icon="folder"></span> Your collection
+          <span class="nav-count">4</span></a
+        >
+      </nav>
+      <div class="sidebar-divider"></div>
+      <div class="project-label">MADE FOR THE EVERYDAY</div>
+      <div class="principle">
+        <span data-icon="leaf"></span>
+        <div>
+          Less, but better.
+          <p>A quieter way to learn.</p>
+        </div>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="palette">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <p>A little intention.<br />A lot of possibility.</p>
+        <div class="version">
+          <span class="status-dot"></span> CONCEPT 01 <span>© 2026</span>
+        </div>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header class="toolbar">
+        <div class="breadcrumb">
+          Workspace <span>/</span> <strong>Echo mobile</strong
+          ><span class="concept-tag">CONCEPT</span>
+        </div>
+        <div class="toolbar-actions">
+          <span class="saved"
+            ><span class="status-dot"></span> All screens in one place</span
+          ><button
+            class="flow-button"
+            id="export-screens"
+            title="Download all 12 mockups, the color palette, and design tokens in a ZIP"
+          >
+            <span data-icon="download"></span>
+            <span class="export-button-label">Export screens</span></button
+          ><button class="flow-button" id="view-flow">
+            <span data-icon="play"></span> View practice flow
+          </button>
+        </div>
+      </header>
+      <main>
+        <section class="intro" aria-labelledby="page-title">
+          <div>
+            <div class="eyebrow">
+              <span></span> A MINDFUL LANGUAGE-LEARNING APP
+            </div>
+            <h1 id="page-title">Small steps. <em>New worlds.</em></h1>
+            <p>
+              Meet Echo. Simple flashcards, meaningful progress.<br />A little
+              space to make a new language your own.
+            </p>
+          </div>
+          <div class="intro-note">
+            <span class="note-star">✳</span>
+            <p>Built around words.<br />Designed around <em>you.</em></p>
+            <span>iOS APP · 12 SCREENS</span>
+          </div>
+        </section>
+        <div class="canvas-toolbar">
+          <div class="canvas-title">
+            <span data-icon="grid"></span> Screen overview
+            <span class="screen-total">12</span>
+          </div>
+          <div class="canvas-options">
+            <span class="canvas-hint"
+              >A static look at the complete experience</span
+            >
+            <div class="zoom-control">
+              <button id="zoom-out" aria-label="Zoom out">−</button
+              ><span id="zoom-value" aria-live="polite">100%</span
+              ><button id="zoom-in" aria-label="Zoom in">+</button>
+            </div>
+          </div>
+        </div>
+        <section class="screen-section" id="overview">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">01</span>
+              <h2>A place to begin</h2>
+              <span class="section-description"
+                >From a fresh start to your next session.</span
+              >
+            </div>
+            <span class="section-count">04 SCREENS</span>
+          </div>
+          <div class="screen-grid" id="overview-screens"></div>
+        </section>
+        <section class="screen-section" id="practice">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">02</span>
+              <h2>Make it stick</h2>
+              <span class="section-description"
+                >Think, reveal, reflect. At your own pace.</span
+              >
+            </div>
+            <span class="section-count">04 SCREENS</span>
+          </div>
+          <div class="screen-grid" id="practice-screens"></div>
+        </section>
+        <section class="screen-section" id="collection">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">03</span>
+              <h2>Make it your own</h2>
+              <span class="section-description"
+                >A collection that grows with you.</span
+              >
+            </div>
+            <span class="section-count">04 SCREENS</span>
+          </div>
+          <div class="screen-grid" id="collection-screens"></div>
+        </section>
+        <footer class="page-footer">
+          <a class="footer-brand" href="#overview">echo.</a
+          ><span>Less noise. More knowing.</span
+          ><span
+            >Made for the joy of learning
+            <span class="footer-spark">✳</span></span
+          >
+        </footer>
+      </main>
+    </div>
+    <div
+      id="export-status"
+      class="export-status"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      hidden
+    ></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

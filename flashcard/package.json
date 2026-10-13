@@ -1,0 +1,20 @@
+{
+  "name": "echo-screen-gallery",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "devDependencies": {
+    "vite": "^6.1.0"
+  },
+  "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/lora": "^5.3.0",
+    "html-to-image": "^1.11.13",
+    "jszip": "^3.10.2"
+  }
+}
