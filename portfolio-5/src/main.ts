@@ -1,5 +1,5 @@
 import "./style.css";
-import { boardItems, milestones, type BoardItem } from "./data";
+import { boardItems, milestones, skills, type BoardItem } from "./data";
 import { createCareerScene, type CareerScene } from "./scene";
 
 const $ = <T extends HTMLElement = HTMLElement>(selector: string) =>
@@ -27,7 +27,9 @@ function selectItem(item: BoardItem) {
   );
   $("#next-stop").hidden = !item.year;
   $("#next-stop").firstChild!.textContent =
-    item.id === "2024" ? "Back to the beginning " : "Next milestone ";
+    item.id === milestones[milestones.length - 1].id
+      ? "Back to the beginning "
+      : "Next milestone ";
   card.hidden = false;
 }
 
@@ -48,17 +50,22 @@ $("#reset-view").addEventListener("click", () => {
   scene?.reset();
   closeSelection();
 });
-document.querySelectorAll<HTMLButtonElement>("[data-item]").forEach((button) =>
-  button.addEventListener("click", () => {
-    const item = boardItems.find((entry) => entry.id === button.dataset.item);
-    if (item) selectItem(item);
+$(".board-accessibility").replaceChildren(
+  ...boardItems.map((item) => {
+    const button = document.createElement("button");
+    button.dataset.item = item.id;
+    button.textContent = item.year
+      ? `${item.year} — ${item.title}`
+      : item.title;
+    button.addEventListener("click", () => selectItem(item));
+    return button;
   }),
 );
 
 const dialogContent: Record<string, { label: string; html: string }> = {
   about: {
     label: "A little about me",
-    html: '<h2>Engineer by trade.<br><span class="green-text">Builder at heart.</span></h2><p>I’m Alex, a software engineer who loves the space where thoughtful design meets good engineering. I turn complex ideas into useful, intuitive digital experiences.</p><p>This board is a map of that journey. Every connection represents a new skill, a fresh challenge, or a step forward.</p><div class="dialog-stat-row"><div><strong>7+</strong><span>Years of building</span></div><div><strong>6</strong><span>Connected disciplines</span></div><div><strong>∞</strong><span>Things to explore</span></div></div>',
+    html: `<h2>Engineer by trade.<br><span class="green-text">Builder at heart.</span></h2><p>I’m Alex, a software engineer who loves the space where thoughtful design meets good engineering. I turn complex ideas into useful, intuitive digital experiences.</p><p>This board is a map of that journey. Every connection represents a new skill, a fresh challenge, or a step forward.</p><div class="dialog-stat-row"><div><strong>${new Date().getFullYear() - Number(milestones[0].year)}+</strong><span>Years of building</span></div><div><strong>${skills.length}</strong><span>Connected disciplines</span></div><div><strong>∞</strong><span>Things to explore</span></div></div>`,
   },
   projects: {
     label: "Selected work / 01—03",
@@ -89,7 +96,7 @@ function navigate(section: string) {
     return;
   }
   if (section === "skills") {
-    selectItem(boardItems.find((item) => item.id === "react")!);
+    selectItem(skills[0]);
     return;
   }
   const content = dialogContent[section];

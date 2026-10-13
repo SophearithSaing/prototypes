@@ -84,27 +84,19 @@ function drawIcon(ctx: CanvasRenderingContext2D, id: string, color: string) {
   ctx.lineWidth = 5;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  if (id === "react") {
-    for (const rotation of [0, Math.PI / 3, -Math.PI / 3]) {
-      ctx.save();
-      ctx.rotate(rotation);
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 75, 28, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-    }
+  ctx.textAlign = "center";
+  if (id === "php") {
     ctx.beginPath();
-    ctx.arc(0, 0, 9, 0, Math.PI * 2);
-    ctx.fill();
-  } else if (id === "typescript") {
-    ctx.strokeStyle = "#139fe7";
+    ctx.ellipse(0, 0, 82, 45, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.font = 'italic 600 58px "DM Sans", sans-serif';
+    ctx.fillText("php", -3, 18);
+  } else if (id === "js") {
     ctx.lineWidth = 4;
     ctx.strokeRect(-60, -52, 120, 108);
-    ctx.fillStyle = "#139fe7";
-    ctx.font = '500 69px "DM Sans", sans-serif';
-    ctx.textAlign = "center";
-    ctx.fillText("TS", 2, 34);
-  } else if (id === "node") {
+    ctx.font = '600 69px "DM Sans", sans-serif';
+    ctx.fillText("JS", 2, 34);
+  } else if (id === "magento" || id === "node" || id === "nest") {
     ctx.beginPath();
     for (let i = 0; i < 6; i++) {
       const a = (Math.PI / 3) * i - Math.PI / 2;
@@ -115,57 +107,44 @@ function drawIcon(ctx: CanvasRenderingContext2D, id: string, color: string) {
     ctx.closePath();
     ctx.stroke();
     ctx.font = '600 60px "DM Sans", sans-serif';
-    ctx.textAlign = "center";
-    ctx.fillText("JS", 0, 22);
-  } else if (id === "system") {
-    ctx.lineWidth = 4;
-    for (const y of [-27, 0, 27]) {
-      ctx.beginPath();
-      ctx.moveTo(-67, y);
-      ctx.lineTo(0, y + 33);
-      ctx.lineTo(67, y);
-      if (y === -27) {
-        ctx.lineTo(0, y - 33);
-        ctx.closePath();
-      }
-      ctx.stroke();
-    }
-  } else if (id === "three") {
-    ctx.lineWidth = 3;
+    ctx.fillText(id === "node" ? "JS" : id === "magento" ? "M" : "N", 0, 22);
+  } else if (id === "angular") {
     ctx.beginPath();
-    ctx.moveTo(-67, -43);
-    ctx.lineTo(67, -43);
-    ctx.lineTo(26, 61);
+    ctx.moveTo(0, -66);
+    ctx.lineTo(62, -43);
+    ctx.lineTo(51, 38);
+    ctx.lineTo(0, 68);
+    ctx.lineTo(-51, 38);
+    ctx.lineTo(-62, -43);
     ctx.closePath();
     ctx.stroke();
+    ctx.font = '600 84px "DM Sans", sans-serif';
+    ctx.fillText("A", 0, 30);
+  } else if (id === "hyperleder-fabric") {
+    const nodes = [
+      [-48, -28],
+      [48, -28],
+      [0, 50],
+    ];
     ctx.beginPath();
-    ctx.moveTo(-67, -43);
-    ctx.lineTo(15, -17);
-    ctx.lineTo(67, -43);
-    ctx.moveTo(15, -17);
-    ctx.lineTo(26, 61);
+    ctx.moveTo(-24, -28);
+    ctx.lineTo(24, -28);
+    ctx.moveTo(-36, -7);
+    ctx.lineTo(-12, 29);
+    ctx.moveTo(36, -7);
+    ctx.lineTo(12, 29);
     ctx.stroke();
-  } else if (id === "cicd") {
-    ctx.lineWidth = 7;
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.bezierCurveTo(-26, -45, -85, -47, -85, 0);
-    ctx.bezierCurveTo(-85, 47, -26, 45, 0, 0);
-    ctx.bezierCurveTo(26, -45, 85, -47, 85, 0);
-    ctx.bezierCurveTo(85, 47, 26, 45, 0, 0);
-    ctx.stroke();
-    ctx.strokeStyle = "#13231d";
-    ctx.lineWidth = 11;
-    ctx.beginPath();
-    ctx.moveTo(-5, 9);
-    ctx.lineTo(5, -9);
-    ctx.stroke();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 6;
-    ctx.beginPath();
-    ctx.moveTo(-11, 16);
-    ctx.lineTo(11, -16);
-    ctx.stroke();
+    for (const [x, y] of nodes) {
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const angle = (Math.PI / 3) * i;
+        const px = x + Math.cos(angle) * 24;
+        const py = y + Math.sin(angle) * 24;
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
   }
   ctx.restore();
 }
@@ -191,10 +170,10 @@ function tileTexture(item: BoardItem) {
     ctx.fillStyle = "#edf2f2";
     ctx.textAlign = "center";
     ctx.font = '400 59px "DM Sans", sans-serif';
-    if (item.id === "system") {
-      ctx.fillText("System", 256, 303);
-      ctx.fillText("Design", 256, 361);
-    } else ctx.fillText(item.title, 256, 324);
+    const lines = item.lines ?? [item.title];
+    lines.forEach((line, index) =>
+      ctx.fillText(line, 256, lines.length > 1 ? 303 + index * 58 : 324, 448),
+    );
   });
 }
 
@@ -499,74 +478,73 @@ export function createCareerScene(
   // Each skill trace follows the same right-angle/45-degree language as a real PCB.
   const branches = [
     {
-      color: "#00dce7",
+      color: "#22d8de",
       points: [
         [-4.7, 0.05],
-        [-4.45, -0.57],
-        [-4.0, -0.57],
-        [-3.78, -0.82],
-        [-3.78, -1.5],
+        [-4.7, -0.55],
+        [-5.3, -0.55],
+        [-5.7, -0.95],
+        [-5.7, -1.42],
       ],
     },
     {
-      color: "#1de4df",
+      color: "#20e2df",
+      points: [
+        [-4.7, 0.05],
+        [-4.7, -0.55],
+        [-4.1, -0.55],
+        [-3.7, -0.95],
+        [-3.7, -1.42],
+      ],
+    },
+    {
+      color: "#20f0e9",
       points: [
         [-1.55, 0.8],
-        [-1.65, 0.08],
-        [-2.12, -0.23],
-        [-2.38, -1.3],
-        [-2.24, -1.49],
-        [-1.68, -1.49],
-        [-1.55, -1.64],
-        [-1.55, -2.05],
+        [-1.55, -0.6],
+        [-1.25, -0.9],
+        [-1.25, -1.97],
       ],
     },
     {
-      color: "#2de4d6",
-      points: [
-        [-1.65, 0.08],
-        [-0.8, -0.95],
-        [-0.08, -0.95],
-        [0.47, -1.53],
-        [0.4, -3.68],
-      ],
-    },
-    {
-      color: "#82e96b",
+      color: "#a0ed59",
       points: [
         [1.9, 1.35],
-        [1, 0.67],
-        [0.89, 0.06],
-        [1.12, -0.17],
-        [1.75, -0.67],
-        [1.78, -1.46],
+        [1.9, 0.35],
+        [1.5, -0.05],
+        [1.5, -0.37],
+        [1.9, -0.77],
       ],
     },
     {
-      color: "#a2eb59",
+      color: "#8be652",
       points: [
         [1.9, 1.35],
-        [1.9, 0.5],
-        [2.23, 0.17],
-        [2.9, -0.6],
-        [4.37, -0.6],
+        [2.75, 0.5],
+        [3.25, 0.5],
+        [3.55, 0.2],
+        [3.55, -3.25],
+        [3.1, -3.7],
+        [2.72, -3.7],
       ],
     },
     {
-      color: "#a2eb59",
-      points: [
-        [3.5, -0.6],
-        [3.58, -2.35],
-        [3.78, -2.6],
-        [4.48, -2.6],
-      ],
-    },
-    {
-      color: "#8cdc5e",
+      color: "#6ae7ab",
       points: [
         [5.7, 1.75],
-        [5.06, 1.24],
-        [5.09, 0.04],
+        [5.7, 0.9],
+        [5.3, 0.5],
+        [5.3, 0.03],
+      ],
+    },
+    {
+      color: "#9bec5a",
+      points: [
+        [5.7, 1.75],
+        [6.6, 0.85],
+        [6.6, -2.6],
+        [6.2, -3.0],
+        [6.12, -3.0],
       ],
     },
   ];
@@ -660,7 +638,7 @@ export function createCareerScene(
     board.add(marker);
     markerGroups.set(item.id, marker);
     const color = new THREE.Color(item.color);
-    const isLast = item.id === "2024",
+    const isLast = item.id === milestones[milestones.length - 1].id,
       radius = isLast ? 0.34 : 0.265;
     const halo = new THREE.Mesh(
       new THREE.PlaneGeometry(1.55, 1.55),
@@ -753,8 +731,8 @@ export function createCareerScene(
       ctx.fillText(item.year!, 256, 91);
       ctx.font = '400 67px "DM Sans", sans-serif';
       ctx.fillStyle = "#f2f4f3";
-      ctx.fillText(item.lines![0], 256, 189);
-      ctx.fillText(item.lines![1], 256, 269);
+      ctx.fillText(item.lines![0], 256, 189, 464);
+      ctx.fillText(item.lines![1], 256, 269, 464);
     });
     const label = new THREE.Mesh(
       new THREE.PlaneGeometry(2.04, 1.95),
@@ -782,7 +760,7 @@ export function createCareerScene(
   for (const item of skills) {
     const [x, y] = item.position;
     const tileWidth = 1.64,
-      tileHeight = item.id === "system" ? 1.58 : 1.46;
+      tileHeight = (item.lines?.length ?? 1) > 1 ? 1.58 : 1.46;
     const tile = new THREE.Group();
     tile.position.set(x, y, 0.1);
     tile.userData.baseZ = 0.1;
