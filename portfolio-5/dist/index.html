@@ -16,8 +16,8 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/assets/index-B5xgNuQm.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BOc5I2zK.css" />
+    <script type="module" crossorigin src="/assets/index-L02tw7n2.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Bgad1osq.css" />
   </head>
   <body>
     <div id="app">
@@ -43,110 +43,294 @@
         </button>
       </header>
 
-      <main id="home" class="hero">
-        <div class="ambient-light" aria-hidden="true"></div>
-        <section class="intro" aria-labelledby="hero-title">
-          <div class="eyebrow">
-            <span class="status-dot"></span>Three.js powered resume
+      <main>
+        <section id="home" class="hero" aria-labelledby="hero-title">
+          <div class="ambient-light" aria-hidden="true"></div>
+          <section class="intro" aria-labelledby="hero-title">
+            <div class="eyebrow">
+              <span class="status-dot"></span>Three.js powered resume
+            </div>
+            <h1 id="hero-title">
+              My <span class="green-text">career.</span><br /><span
+                class="cyan-text"
+                >Visualized.</span
+              >
+            </h1>
+            <div class="intro-rule" aria-hidden="true"></div>
+            <p class="description">
+              An interactive 3D map of my journey,<br class="desktop-break" />
+              skills, and growth — built with code<br class="desktop-break" />
+              and designed for exploration.
+            </p>
+            <button class="explore-button" id="explore">
+              Explore my journey
+              <span
+                ><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 12h14m-6-6 6 6-6 6" /></svg
+              ></span>
+            </button>
+          </section>
+
+          <div
+            class="scene-container"
+            id="scene-container"
+            role="region"
+            aria-label="Interactive 3D career circuit board. Drag to rotate, Ctrl + scroll to zoom. Select a milestone or skill to learn more."
+          >
+            <canvas
+              id="career-canvas"
+              aria-label="3D career board"
+              tabindex="0"
+            ></canvas>
+            <div class="loading" id="loading">
+              <span></span>Connecting the dots
+            </div>
           </div>
-          <h1 id="hero-title">
-            My <span class="green-text">career.</span><br /><span
-              class="cyan-text"
-              >Visualized.</span
+
+          <div class="interaction-guide">
+            <svg
+              class="mouse-icon"
+              viewBox="0 0 38 60"
+              fill="none"
+              aria-hidden="true"
             >
-          </h1>
-          <div class="intro-rule" aria-hidden="true"></div>
-          <p class="description">
-            An interactive 3D map of my journey,<br class="desktop-break" />
-            skills, and growth — built with code<br class="desktop-break" />
-            and designed for exploration.
-          </p>
-          <button class="explore-button" id="explore">
-            Explore my journey
-            <span
-              ><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M5 12h14m-6-6 6 6-6 6" /></svg
-            ></span>
-          </button>
+              <rect x="1" y="1" width="36" height="58" rx="18" />
+              <path d="M19 1v24" />
+              <path class="mouse-wheel" d="M19 10v10" />
+            </svg>
+            <div>
+              <span class="drag-instruction">Drag to rotate</span
+              ><span class="zoom-instruction">Ctrl + scroll to zoom</span>
+            </div>
+            <button
+              class="reset-view"
+              id="reset-view"
+              aria-label="Reset board view"
+              title="Reset board view"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 10a8 8 0 1 1 1 7M4 4v6h6" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="board-legend" aria-label="Board legend">
+            <div>
+              <span class="legend-line career-line"></span
+              ><span>Career path</span>
+            </div>
+            <div>
+              <span class="legend-line skill-line"></span
+              ><span>Skill path</span>
+            </div>
+          </div>
+
+          <div
+            class="selection-card"
+            id="selection-card"
+            hidden
+            aria-live="polite"
+          >
+            <div class="selection-topline">
+              <span id="selection-eyebrow"></span
+              ><button id="close-selection" aria-label="Close details">
+                ×
+              </button>
+            </div>
+            <h2 id="selection-title"></h2>
+            <p id="selection-description"></p>
+            <div id="selection-tags" class="selection-tags"></div>
+            <button class="next-stop" id="next-stop">
+              Next milestone <span>↗</span>
+            </button>
+          </div>
+
+          <div
+            class="board-accessibility"
+            aria-label="Explore board items"
+          ></div>
+          <div class="corner-coordinate" aria-hidden="true">
+            <span class="live-indicator"></span>Currently building what’s next
+            <span class="coordinate-separator">/</span>
+            <span class="version">V.2026</span>
+          </div>
+          <a
+            class="activity-jump"
+            href="#activity"
+            aria-label="Explore my GitHub activity"
+          >
+            The daily practice <span aria-hidden="true">↓</span>
+          </a>
         </section>
 
-        <div
-          class="scene-container"
-          id="scene-container"
-          role="region"
-          aria-label="Interactive 3D career circuit board. Drag to rotate, scroll to zoom. Select a milestone or skill to learn more."
+        <section
+          class="activity-section"
+          id="activity"
+          aria-labelledby="activity-title"
         >
-          <canvas
-            id="career-canvas"
-            aria-label="3D career board"
-            tabindex="0"
-          ></canvas>
-          <div class="loading" id="loading">
-            <span></span>Connecting the dots
+          <div class="activity-heading">
+            <div>
+              <p class="activity-eyebrow">
+                <span>02</span> / The daily practice
+              </p>
+              <h2 id="activity-title">
+                Small commits.<br /><span class="green-text"
+                  >Lasting progress.</span
+                >
+              </h2>
+            </div>
+            <div class="activity-intro">
+              <p>
+                A little progress, every day. A new perspective on the work
+                behind the journey — one day, one column, one contribution at a
+                time.
+              </p>
+              <a
+                class="activity-profile"
+                id="activity-profile"
+                href="https://github.com/SophearithSaing"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M2 12h6m8 0h6" />
+                </svg>
+                <span id="activity-username">@SophearithSaing</span
+                ><span aria-hidden="true">↗</span>
+              </a>
+            </div>
           </div>
-        </div>
 
-        <div class="interaction-guide">
-          <svg
-            class="mouse-icon"
-            viewBox="0 0 38 60"
-            fill="none"
-            aria-hidden="true"
-          >
-            <rect x="1" y="1" width="36" height="58" rx="18" />
-            <path d="M19 1v24" />
-            <path class="mouse-wheel" d="M19 10v10" />
-          </svg>
-          <div>
-            <span class="drag-instruction">Drag to rotate</span
-            ><span class="zoom-instruction">Scroll to zoom</span>
-          </div>
-          <button
-            class="reset-view"
-            id="reset-view"
-            aria-label="Reset board view"
-            title="Reset board view"
-          >
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M4 10a8 8 0 1 1 1 7M4 4v6h6" />
-            </svg>
-          </button>
-        </div>
+          <div class="activity-panel">
+            <div class="activity-toolbar">
+              <div class="activity-panel-title">
+                <span class="live-indicator"></span> Contribution landscape
+                <span class="activity-dimension">3D</span>
+              </div>
+              <label class="activity-period-label"
+                >Period
+                <select id="activity-period">
+                  <option value="last">Past year</option>
+                </select>
+              </label>
+            </div>
+            <div class="activity-range-row">
+              <span id="activity-range"
+                >A year of contributions, in a new dimension</span
+              ><span id="activity-status" role="status">GitHub activity</span>
+            </div>
 
-        <div class="board-legend" aria-label="Board legend">
-          <div>
-            <span class="legend-line career-line"></span
-            ><span>Career path</span>
-          </div>
-          <div>
-            <span class="legend-line skill-line"></span><span>Skill path</span>
-          </div>
-        </div>
+            <div
+              class="activity-graph is-loading"
+              id="activity-graph"
+              aria-busy="true"
+            >
+              <div class="activity-viewport" id="activity-viewport">
+                <div class="activity-canvas-wrap">
+                  <canvas
+                    id="activity-canvas"
+                    tabindex="0"
+                    role="img"
+                    aria-label="3D daily GitHub contribution graph. Taller columns represent more contributions."
+                    aria-describedby="activity-controls activity-inspector"
+                  ></canvas>
+                </div>
+              </div>
+              <div class="activity-state" id="activity-state" role="status">
+                <span class="activity-state-mark" aria-hidden="true"
+                  ><i></i><i></i><i></i><i></i><i></i
+                ></span>
+                <p id="activity-message">Connecting the days…</p>
+                <button id="activity-retry" hidden>
+                  Try again <span aria-hidden="true">↗</span>
+                </button>
+              </div>
+            </div>
 
-        <div
-          class="selection-card"
-          id="selection-card"
-          hidden
-          aria-live="polite"
-        >
-          <div class="selection-topline">
-            <span id="selection-eyebrow"></span
-            ><button id="close-selection" aria-label="Close details">×</button>
-          </div>
-          <h2 id="selection-title"></h2>
-          <p id="selection-description"></p>
-          <div id="selection-tags" class="selection-tags"></div>
-          <button class="next-stop" id="next-stop">
-            Next milestone <span>↗</span>
-          </button>
-        </div>
+            <div class="activity-graph-footer">
+              <div
+                class="activity-inspector"
+                id="activity-inspector"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                <span class="activity-day-marker" aria-hidden="true"></span>
+                <div>
+                  <strong id="activity-day-count"
+                    >Every day tells a story</strong
+                  ><span id="activity-day-date"
+                    >Hover or tap a column to explore</span
+                  >
+                </div>
+              </div>
+              <div
+                class="activity-scale"
+                aria-label="Column height and color increase with daily contributions"
+              >
+                <span>Less</span>
+                <div aria-hidden="true">
+                  <i></i><i></i><i></i><i></i><i></i>
+                </div>
+                <span>More</span>
+              </div>
+            </div>
 
-        <div class="board-accessibility" aria-label="Explore board items"></div>
-        <div class="corner-coordinate" aria-hidden="true">
-          <span class="live-indicator"></span>Currently building what’s next
-          <span class="coordinate-separator">/</span>
-          <span class="version">V.2026</span>
-        </div>
+            <dl class="activity-stats">
+              <div>
+                <dt>Total contributions</dt>
+                <dd id="activity-total">—</dd>
+              </div>
+              <div>
+                <dt>Active days</dt>
+                <dd id="activity-active-days">—</dd>
+              </div>
+              <div>
+                <dt>Longest streak <span>/ days</span></dt>
+                <dd id="activity-streak">—</dd>
+              </div>
+              <div>
+                <dt>Best day <span>/ contributions</span></dt>
+                <dd id="activity-best">—</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="activity-notes">
+            <p id="activity-controls">
+              Hover or tap to inspect · Arrow keys to explore · Swipe across the
+              year on mobile
+            </p>
+            <p>Height reflects daily activity.</p>
+          </div>
+          <div class="activity-source-row">
+            <p>
+              From my GitHub calendar. Includes commits, pull requests, issues,
+              and reviews.
+            </p>
+            <details
+              class="activity-daily-list"
+              id="activity-daily-list"
+              hidden
+            >
+              <summary>View daily activity</summary>
+              <div class="activity-table-wrap">
+                <table>
+                  <caption>
+                    Daily GitHub contributions
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Date</th>
+                      <th scope="col">Contributions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="activity-table-body"></tbody>
+                </table>
+              </div>
+            </details>
+          </div>
+        </section>
       </main>
     </div>
 

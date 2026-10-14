@@ -137,7 +137,7 @@
 }
 @media (max-width: 760px) {
   body {
-    overflow: hidden !important;
+    overflow-x: hidden !important;
   }
   .header {
     height: 72px !important;

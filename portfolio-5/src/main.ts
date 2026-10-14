@@ -1,6 +1,7 @@
 import "./style.css";
 import { boardItems, milestones, skills, type BoardItem } from "./data";
 import { createCareerScene, type CareerScene } from "./scene";
+import { initActivity } from "./activity";
 
 const $ = <T extends HTMLElement = HTMLElement>(selector: string) =>
   document.querySelector<T>(selector)!;
@@ -8,6 +9,10 @@ let scene: CareerScene | undefined;
 let selectedItem: BoardItem | undefined;
 const card = $("#selection-card");
 const dialog = $<HTMLDialogElement>("#info-dialog");
+const scrollBehavior = window.matchMedia("(prefers-reduced-motion: reduce)")
+  .matches
+  ? "instant"
+  : "smooth";
 
 function selectItem(item: BoardItem) {
   selectedItem = item;
@@ -89,13 +94,16 @@ function navigate(section: string) {
   if (section === "home") {
     scene?.reset();
     closeSelection();
+    window.scrollTo({ top: 0, behavior: scrollBehavior });
     return;
   }
   if (section === "experience") {
+    $("#home").scrollIntoView({ behavior: scrollBehavior });
     selectItem(milestones[0]);
     return;
   }
   if (section === "skills") {
+    $("#home").scrollIntoView({ behavior: scrollBehavior });
     selectItem(skills[0]);
     return;
   }
@@ -168,6 +176,10 @@ async function init() {
 }
 
 void init();
+const disposeActivity = initActivity($("#activity"));
 window.addEventListener("pagehide", (event) => {
-  if (!event.persisted) scene?.dispose();
+  if (!event.persisted) {
+    scene?.dispose();
+    disposeActivity();
+  }
 });

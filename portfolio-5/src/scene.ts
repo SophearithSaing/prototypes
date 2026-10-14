@@ -861,6 +861,7 @@ export function createCareerScene(
   let moved = false;
   let disposed = false;
   let visible = !document.hidden;
+  let inViewport = true;
 
   function pick(event: PointerEvent) {
     const rect = canvas.getBoundingClientRect();
@@ -926,6 +927,7 @@ export function createCareerScene(
     }
   }
   function onWheel(event: WheelEvent) {
+    if (!event.ctrlKey && !event.metaKey) return;
     event.preventDefault();
     zoom = THREE.MathUtils.clamp(zoom - event.deltaY * 0.00055, 0.78, 1.35);
   }
@@ -996,9 +998,13 @@ export function createCareerScene(
     visible = !document.hidden;
   };
   document.addEventListener("visibilitychange", onVisibility);
+  const visibilityObserver = new IntersectionObserver(([entry]) => {
+    inViewport = entry.isIntersecting;
+  });
+  visibilityObserver.observe(container);
   let lastTime = 0;
   function animate(time: number) {
-    if (disposed || !visible) return;
+    if (disposed || !visible || !inViewport) return;
     const delta = Math.min((time - lastTime) / 1000, 0.05);
     lastTime = time;
     const ease = reducedMotion ? 1 : 1 - Math.exp(-delta * 9);
@@ -1043,6 +1049,7 @@ export function createCareerScene(
       disposed = true;
       renderer.setAnimationLoop(null);
       observer.disconnect();
+      visibilityObserver.disconnect();
       canvas.removeEventListener("pointerdown", onPointerDown);
       canvas.removeEventListener("pointermove", onPointerMove);
       canvas.removeEventListener("pointerup", onPointerUp);
