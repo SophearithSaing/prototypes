@@ -1,0 +1,135 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@500;600;650;700&display=swap");
+
+:root {
+  font-family: "Inter", Arial, sans-serif;
+  color: white;
+  background: #231642;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#scene {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+body {
+  overscroll-behavior: none;
+}
+#scene {
+  position: relative;
+  isolation: isolate;
+}
+#city {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  cursor: grab;
+  touch-action: none;
+}
+#city:active {
+  cursor: grabbing;
+}
+#labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.city-label {
+  --accent: #8c5cff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: max-content;
+  height: 56px;
+  border: 1px solid #ffffff21;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 22px;
+  color: white;
+  font:
+    600 21px/1 "Inter",
+    Arial,
+    sans-serif;
+  letter-spacing: -0.6px;
+  white-space: nowrap;
+  background: linear-gradient(115deg, #9163ff, #6032ee);
+  box-shadow:
+    inset 0 1px 0 #ffffff13,
+    0 5px 26px #190c4420;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  transform-origin: 0 0;
+  transition:
+    filter 0.25s,
+    box-shadow 0.25s;
+}
+.city-label:hover,
+.city-label:focus-visible {
+  filter: brightness(1.15);
+  box-shadow:
+    0 0 28px color-mix(in srgb, var(--accent) 35%, transparent),
+    inset 0 1px 0 #ffffff40;
+  outline: none;
+}
+.city-label svg {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.city-label[data-name="fullstack"] {
+  --accent: #ff4c9d;
+  background: linear-gradient(110deg, #ff639c, #e51987);
+}
+.city-label[data-name="mobile"] {
+  --accent: #ff7972;
+  background: linear-gradient(110deg, #ff836f, #ff585c);
+}
+.city-label[data-name="backend"] {
+  --accent: #4f8bff;
+  background: linear-gradient(110deg, #5799ff, #3864ff);
+}
+.city-label[data-name="ai"] {
+  --accent: #9a5dff;
+  background: linear-gradient(110deg, #a56cff, #6539f8);
+}
+.label-leader {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.label-leader path {
+  fill: none;
+  stroke-width: 4;
+  opacity: 0.9;
+}
+.label-leader circle {
+  fill: #fff7ff;
+  stroke-width: 4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .city-label {
+    transition: none;
+  }
+}

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#231642" />
+    <meta
+      name="description"
+      content="A little city of big ideas. An interactive, glowing Three.js neighborhood."
+    />
+    <title>Neon Neighborhood</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23271b4b'/%3E%3Cpath d='m32 11 23 12-23 12L9 23Zm-23 22 23 12 23-12M9 43l23 12 23-12' fill='none' stroke='%23dc9aff' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <main
+      id="scene"
+      aria-label="An interactive isometric city, with Frontend, Backend, Full-Stack, Mobile App, and Trained Model buildings"
+    >
+      <canvas
+        id="city"
+        aria-label="A glowing miniature technology city. Drag to look around and scroll to zoom."
+      ></canvas>
+      <div id="labels" aria-label="City neighborhoods"></div>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
